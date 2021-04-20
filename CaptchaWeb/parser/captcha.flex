@@ -186,18 +186,6 @@ Script = {c} "_" {s}{r}{c}{i}{p}{t}{i}{n}{g}
 	"text-align"
 	{ return symbol(ALIGN, yytext()); }
 
-	{Q} "left" {Q}
-	{ return symbol(LEFT, yytext()); }
-
-	{Q} "right" {Q}
-	{ return symbol(RIGHT, yytext()); }
-
-	{Q} "center" {Q}
-	{ return symbol(CENTER, yytext()); }
-
-	{Q} "justify" {Q}
-	{ return symbol(JUSTIFY, yytext()); }
-
 	"type"
 	{ return symbol(TYPE, yytext()); }
 
@@ -284,9 +272,38 @@ Script = {c} "_" {s}{r}{c}{i}{p}{t}{i}{n}{g}
 	"@global"
 	{ return symbol(GLOBAL, yytext()); }
 
+	/* font-family */
+	{Q} "Courier" {Q}
+	{ return symbol(FONTF_VALUE, yytext()); }
+
+	{Q} "Verdana" {Q}
+	{ return symbol(FONTF_VALUE, yytext()); }
+
+	{Q} "Arial" {Q}
+	{ return symbol(FONTF_VALUE, yytext()); }
+
+	{Q} "Geneva" {Q}
+	{ return symbol(FONTF_VALUE, yytext()); }
+
+	{Q} "sans-serif" {Q}
+	{ return symbol(FONTF_VALUE, yytext()); }
+
+	/* text-align */
+	{Q} "left" {Q}
+	{ return symbol(ALING_VALUE, yytext()); }
+
+	{Q} "right" {Q}
+	{ return symbol(ALING_VALUE, yytext()); }
+
+	{Q} "center" {Q}
+	{ return symbol(ALING_VALUE, yytext()); }
+
+	{Q} "justify" {Q}
+	{ return symbol(ALING_VALUE, yytext()); }
+
 	/* colors */
 	{Q} {Color} {Q}
-	{ return symbol(HEX, yytext()); }
+	{ return symbol(COLOUR, yytext()); }
 
 	{Q} "black" {Q}
 	{ return symbol(COLOUR, yytext()); }

@@ -36,13 +36,13 @@ parser code {:
 
 
 terminal GCIC, HEAD, TITLE, LINK, BODY, SPAM, INPUT, TXTAREA, SELECT, OPTION, DIV, IMG, BR, BUTTON, H1, PARAGRAPH, SCRIPT, HREF, BCKGRND, COLOR, FONTS;
-terminal FONTF, ALIGN, LEFT, RIGHT, CENTER, JUSTIFY, TYPE, ID, NAME, COLS, ROW, CLASS, SRC, WIDTH, HEIGHT, ALT, CLICK, INTEGER, DECIMAL, BOOL, TRUE, FALSE;
+terminal FONTF, ALIGN, ALING_VALUE, TYPE, ID, NAME, COLS, ROW, CLASS, SRC, WIDTH, HEIGHT, ALT, CLICK, INTEGER, DECIMAL, BOOL, TRUE, FALSE;
 terminal CHAR, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_N, ALERT, EXIT, GLOBAL, HEX, COLOUR, INTQ, PIXEL, PERCENTG, ID_, INT, DEC;
 terminal GREATER, SMALLER, LBRACE, RBRACE, LBRACKET, RBRACKET, COLON, SEMI, EQEQ, NEQ, GRTREQ, SMLLREQ, OR, AND, NOT, PLUS, MINUS, TIMES, DIVIDE;
-terminal URL, LPAREN, RPAREN, EQUAL, STRING, PERCNTG, ROWS, QUOTE, ERROR;
+terminal URL, LPAREN, RPAREN, EQUAL, STRING, PERCNTG, ROWS, FONTF_VALUE, QUOTE, ERROR;
 
 non terminal id, name, opt, optB, clgcic, makeOptB, gcic;
-non terminal params, head, title, link, href;
+non terminal params, head, title, link, href, bckgrnd_clr, color, font_size, font_family;
 
 /* Etiqueta de apertura <C_GCIC> */
 gcic ::=
@@ -94,6 +94,9 @@ opt ::=
 				id
 				| name
 				| href
+				| bckgrnd_clr
+				| font_size
+				| font_family
 				| error
 				;
 
@@ -118,6 +121,34 @@ href ::=
 				| error EQUAL URL
 				| HREF error URL
 				| HREF EQUAL error
+				;
+
+/* background / color */
+bckgrnd_clr ::=
+				color EQUAL COLOUR
+				| error EQUAL COLOUR
+				| color error COLOUR
+				| color EQUAL error
+				;
+
+/* background / color */
+color ::=
+				BCKGRND
+				| COLOR
+				;
+
+font_size ::=
+				FONTS EQUAL PIXEL
+				| error EQUAL PIXEL
+				| FONTS error PIXEL
+				| FONTS EQUAL error
+				;
+
+font_family ::=
+				FONTF EQUAL FONTF_VALUE
+				| error EQUAL FONTF_VALUE
+				| FONTF error FONTF_VALUE
+				| FONTF EQUAL error
 				;
 
 /* Cierre etiqueta </C_GCIC> */
