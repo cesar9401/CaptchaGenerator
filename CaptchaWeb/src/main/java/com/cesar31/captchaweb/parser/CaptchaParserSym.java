@@ -84,6 +84,7 @@ public class CaptchaParserSym {
   public static final int ID = 27;
   public static final int CLICK = 36;
   public static final int COLOR = 21;
+  public static final int ON_LOAD = 94;
   public static final int HEAD = 3;
   public static final int ALERT = 51;
   public static final int COLON = 68;
@@ -196,7 +197,8 @@ public class CaptchaParserSym {
   "ERROR",
   "TYPE_VALUE",
   "ALIGN_VALUE",
-  "CLASS_VALUE"
+  "CLASS_VALUE",
+  "ON_LOAD"
   };
 }
 

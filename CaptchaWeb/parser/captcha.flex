@@ -272,6 +272,10 @@ Script = {c} "_" {s}{r}{c}{i}{p}{t}{i}{n}{g}
 	"@global"
 	{ return symbol(GLOBAL, yytext()); }
 
+	/* reserved words for script */
+	"ON_LOAD"
+	{ return symbol(ON_LOAD, yytext()); }
+
 	/* font-family */
 	{Q} "Courier" {Q}
 	{ return symbol(FONTF_VALUE, yytext()); }

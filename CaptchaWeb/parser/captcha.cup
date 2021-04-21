@@ -34,17 +34,18 @@ parser code {:
 
 :}
 
-
 terminal GCIC, HEAD, TITLE, LINK, BODY, SPAM, INPUT, TXTAREA, SELECT, OPTION, DIV, IMG, BR, BUTTON, H1, PARAGRAPH, SCRIPT, HREF, BCKGRND, COLOR, FONTS;
 terminal FONTF, ALIGN, ALING_VALUE, TYPE, ID, NAME, COLS, ROW, CLASS, SRC, WIDTH, HEIGHT, ALT, CLICK, INTEGER, DECIMAL, BOOL, TRUE, FALSE;
 terminal CHAR, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_N, ALERT, EXIT, GLOBAL, HEX, COLOUR, INTQ, PIXEL, PERCENTG, ID_, INT, DEC;
 terminal GREATER, SMALLER, LBRACE, RBRACE, LBRACKET, RBRACKET, COLON, SEMI, EQEQ, NEQ, GRTREQ, SMLLREQ, OR, AND, NOT, PLUS, MINUS, TIMES, DIVIDE;
 terminal URL, LPAREN, RPAREN, EQUAL, STRING, PERCNTG, ROWS, FONTF_VALUE, QUOTE, ERROR;
 terminal TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE;
+terminal ON_LOAD;
 
 non terminal id, name, opt, optB, clgcic, makeOptB, gcic;
 non terminal params, head, title, link, bckgrnd_clr, font_size, font_family;
 non terminal text_align, type, cls_rws, cols_rows, clss, url, href_src, width_height, w_h, pxl_per;
+non terminal alt, body, spam, input, txtarea, select, option, div, img, br, button, h1, paragraph;
 
 non terminal String color;
 
@@ -78,6 +79,67 @@ link ::=
 				SMALLER LINK params GREATER
 				;
 
+/* <C_BODY> */
+body ::=
+				SMALLER BODY params GREATER
+				;
+
+/* <C_SPAM> */
+spam ::=
+				SMALLER SPAM params GREATER
+				;
+
+/* <C_INPUT> */
+input ::=
+				SMALLER INPUT params GREATER
+				;
+
+/* <C_TEXTAREA> */
+txtarea ::=
+				SMALLER TXTAREA params GREATER
+				;
+
+/* <C_SELECT> */
+select ::=
+				SMALLER SELECT params GREATER
+				;
+
+/* <C_OPTION> */
+option ::=
+				SMALLER OPTION GREATER
+				;
+
+/* <C_DIV> */
+div ::=
+				SMALLER DIV params GREATER
+				;
+
+/* <C_IMG> */
+img ::=
+				SMALLER IMG params GREATER
+				;
+
+/* <C_BR> */
+br ::=
+				SMALLER BR GREATER
+				;
+
+/* <C_BR> */
+button ::=
+				SMALLER BUTTON params GREATER
+				;
+
+/* <C_H1> */
+h1 ::=
+				SMALLER H1 params GREATER
+				;
+
+/* <C_P> */
+paragraph ::=
+				SMALLER PARAGRAPH params GREATER
+				;
+
+/* parametros para las etiquetas */
 params ::=
 				makeOptB
 				|
@@ -106,6 +168,7 @@ opt ::=
 				| cols_rows
 				| clss
 				| width_height
+				| alt
 				| error
 				;
 
@@ -218,6 +281,14 @@ w_h ::=
 pxl_per ::=
 				PIXEL
 				| PERCNTG
+				;
+
+/* alt */
+alt ::=
+				ALT EQUAL STRING
+				// | error EQUAL STRING // alt ::= error ...  and name ::= error ...
+				| ALT error STRING
+				| ALT EQUAL error
 				;
 
 /* Cierre etiqueta </C_GCIC> */
