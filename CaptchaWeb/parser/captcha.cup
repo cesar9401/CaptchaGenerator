@@ -40,9 +40,13 @@ terminal FONTF, ALIGN, ALING_VALUE, TYPE, ID, NAME, COLS, ROW, CLASS, SRC, WIDTH
 terminal CHAR, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_N, ALERT, EXIT, GLOBAL, HEX, COLOUR, INTQ, PIXEL, PERCENTG, ID_, INT, DEC;
 terminal GREATER, SMALLER, LBRACE, RBRACE, LBRACKET, RBRACKET, COLON, SEMI, EQEQ, NEQ, GRTREQ, SMLLREQ, OR, AND, NOT, PLUS, MINUS, TIMES, DIVIDE;
 terminal URL, LPAREN, RPAREN, EQUAL, STRING, PERCNTG, ROWS, FONTF_VALUE, QUOTE, ERROR;
+terminal TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE;
 
 non terminal id, name, opt, optB, clgcic, makeOptB, gcic;
-non terminal params, head, title, link, href, bckgrnd_clr, color, font_size, font_family;
+non terminal params, head, title, link, bckgrnd_clr, font_size, font_family;
+non terminal text_align, type, cls_rws, cols_rows, clss, url, href_src, width_height, w_h, pxl_per;
+
+non terminal String color;
 
 /* Etiqueta de apertura <C_GCIC> */
 gcic ::=
@@ -93,10 +97,15 @@ optB ::=
 opt ::=
 				id
 				| name
-				| href
+				| href_src
 				| bckgrnd_clr
 				| font_size
 				| font_family
+				| text_align
+				| type
+				| cols_rows
+				| clss
+				| width_height
 				| error
 				;
 
@@ -116,11 +125,17 @@ name ::=
 				| NAME EQUAL error
 				;
 
-href ::=
-				HREF EQUAL URL:s
+/* href/src */
+href_src ::=
+				url EQUAL URL:s
 				| error EQUAL URL
-				| HREF error URL
-				| HREF EQUAL error
+				| url error URL
+				| url EQUAL error
+				;
+
+url ::=
+				HREF
+				| SRC
 				;
 
 /* background / color */
@@ -134,12 +149,14 @@ bckgrnd_clr ::=
 /* background / color */
 color ::=
 				BCKGRND
+					{: RESULT = "background"; :}
 				| COLOR
+					{: RESULT = "color"; :}
 				;
 
 font_size ::=
 				FONTS EQUAL PIXEL
-				| error EQUAL PIXEL
+				// | error EQUAL PIXEL
 				| FONTS error PIXEL
 				| FONTS EQUAL error
 				;
@@ -149,6 +166,58 @@ font_family ::=
 				| error EQUAL FONTF_VALUE
 				| FONTF error FONTF_VALUE
 				| FONTF EQUAL error
+				;
+
+text_align ::=
+				ALIGN EQUAL ALIGN_VALUE
+				| error EQUAL ALIGN_VALUE
+				| ALIGN error ALIGN_VALUE
+				| ALIGN EQUAL error
+				;
+
+/* type for inputs */
+type ::=
+				TYPE EQUAL TYPE_VALUE
+				| error EQUAL TYPE_VALUE
+				| TYPE error TYPE_VALUE
+				| TYPE EQUAL error
+				;
+
+cols_rows ::=
+				cls_rws EQUAL INTQ
+				| error EQUAL INTQ
+				| cls_rws error INTQ
+				| cls_rws EQUAL error
+				;
+
+cls_rws ::=
+				COLS
+				| ROWS
+				;
+
+clss ::=
+				CLASS EQUAL CLASS_VALUE
+				| error EQUAL CLASS_VALUE
+				| CLASS error CLASS_VALUE
+				| CLASS EQUAL error
+				;
+
+/* width/height */
+width_height ::=
+				w_h EQUAL pxl_per
+				| error EQUAL pxl_per
+				| w_h error pxl_per
+				| w_h EQUAL error
+				;
+
+w_h ::=
+				WIDTH
+				| HEIGHT
+				;
+
+pxl_per ::=
+				PIXEL
+				| PERCNTG
 				;
 
 /* Cierre etiqueta </C_GCIC> */

@@ -290,16 +290,16 @@ Script = {c} "_" {s}{r}{c}{i}{p}{t}{i}{n}{g}
 
 	/* text-align */
 	{Q} "left" {Q}
-	{ return symbol(ALING_VALUE, yytext()); }
+	{ return symbol(ALIGN_VALUE, yytext()); }
 
 	{Q} "right" {Q}
-	{ return symbol(ALING_VALUE, yytext()); }
+	{ return symbol(ALIGN_VALUE, yytext()); }
 
 	{Q} "center" {Q}
-	{ return symbol(ALING_VALUE, yytext()); }
+	{ return symbol(ALIGN_VALUE, yytext()); }
 
 	{Q} "justify" {Q}
-	{ return symbol(ALING_VALUE, yytext()); }
+	{ return symbol(ALIGN_VALUE, yytext()); }
 
 	/* colors */
 	{Q} {Color} {Q}
@@ -352,6 +352,26 @@ Script = {c} "_" {s}{r}{c}{i}{p}{t}{i}{n}{g}
 
 	{Q} "aqua" {Q}
 	{ return symbol(COLOUR, yytext()); }
+
+	/* type */
+	{Q} "text" {Q}
+	{ return symbol(TYPE_VALUE, yytext()); }
+
+	{Q} "number" {Q}
+	{ return symbol(TYPE_VALUE, yytext()); }
+
+	{Q} "radio" {Q}
+	{ return symbol(TYPE_VALUE, yytext()); }
+
+	{Q} "checkbox" {Q}
+	{ return symbol(TYPE_VALUE, yytext()); }
+
+	/* class */
+	{Q} "row" {Q}
+	{ return symbol(CLASS_VALUE, yytext()); }
+
+	{Q} "col" {Q}
+	{ return symbol(CLASS_VALUE, yytext()); }
 
 	/* measures */
 	{IntegerQuote}

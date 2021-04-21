@@ -33,7 +33,7 @@ public class CaptchaParser extends java_cup.runtime.lr_parser {
   /** Production table. */
   protected static final short _production_table[][] = 
     unpackFromStrings(new String[] {
-    "\000\072\000\002\010\006\000\002\002\004\000\002\010" +
+    "\000\132\000\002\010\006\000\002\002\004\000\002\010" +
     "\006\000\002\010\006\000\002\010\006\000\002\012\005" +
     "\000\002\012\005\000\002\012\005\000\002\012\005\000" +
     "\002\013\005\000\002\013\005\000\002\013\005\000\002" +
@@ -41,17 +41,26 @@ public class CaptchaParser extends java_cup.runtime.lr_parser {
     "\002\000\002\007\004\000\002\007\003\000\002\005\005" +
     "\000\002\005\005\000\002\004\003\000\002\004\003\000" +
     "\002\004\003\000\002\004\003\000\002\004\003\000\002" +
-    "\004\003\000\002\004\003\000\002\002\005\000\002\002" +
-    "\005\000\002\002\005\000\002\002\005\000\002\003\005" +
-    "\000\002\003\005\000\002\003\005\000\002\003\005\000" +
-    "\002\015\005\000\002\015\005\000\002\015\005\000\002" +
-    "\015\005\000\002\016\005\000\002\016\005\000\002\016" +
-    "\005\000\002\016\005\000\002\017\003\000\002\017\003" +
-    "\000\002\020\005\000\002\020\005\000\002\020\005\000" +
-    "\002\020\005\000\002\021\005\000\002\021\005\000\002" +
-    "\021\005\000\002\021\005\000\002\006\006\000\002\006" +
-    "\006\000\002\006\006\000\002\006\006\000\002\006\006" +
-    "" });
+    "\004\003\000\002\004\003\000\002\004\003\000\002\004" +
+    "\003\000\002\004\003\000\002\004\003\000\002\004\003" +
+    "\000\002\002\005\000\002\002\005\000\002\002\005\000" +
+    "\002\002\005\000\002\003\005\000\002\003\005\000\002" +
+    "\003\005\000\002\003\005\000\002\026\005\000\002\026" +
+    "\005\000\002\026\005\000\002\026\005\000\002\025\003" +
+    "\000\002\025\003\000\002\015\005\000\002\015\005\000" +
+    "\002\015\005\000\002\015\005\000\002\032\003\000\002" +
+    "\032\003\000\002\016\005\000\002\016\005\000\002\016" +
+    "\005\000\002\017\005\000\002\017\005\000\002\017\005" +
+    "\000\002\017\005\000\002\020\005\000\002\020\005\000" +
+    "\002\020\005\000\002\020\005\000\002\021\005\000\002" +
+    "\021\005\000\002\021\005\000\002\021\005\000\002\023" +
+    "\005\000\002\023\005\000\002\023\005\000\002\023\005" +
+    "\000\002\022\003\000\002\022\003\000\002\024\005\000" +
+    "\002\024\005\000\002\024\005\000\002\024\005\000\002" +
+    "\027\005\000\002\027\005\000\002\027\005\000\002\027" +
+    "\005\000\002\030\003\000\002\030\003\000\002\031\003" +
+    "\000\002\031\003\000\002\006\006\000\002\006\006\000" +
+    "\002\006\006\000\002\006\006\000\002\006\006" });
 
   /** Access to production table. */
   public short[][] production_table() {return _production_table;}
@@ -59,53 +68,83 @@ public class CaptchaParser extends java_cup.runtime.lr_parser {
   /** Parse-action table. */
   protected static final short[][] _action_table = 
     unpackFromStrings(new String[] {
-    "\000\112\000\006\003\004\101\005\001\002\000\004\004" +
-    "\112\001\002\000\006\003\010\004\011\001\002\000\004" +
+    "\000\171\000\006\003\004\101\005\001\002\000\004\004" +
+    "\171\001\002\000\006\003\010\004\011\001\002\000\004" +
     "\002\007\001\002\000\004\002\000\001\002\000\006\100" +
     "\ufff2\104\015\001\002\000\010\003\ufff2\100\ufff2\104\015" +
     "\001\002\000\010\003\ufff0\100\ufff0\104\ufff0\001\002\000" +
-    "\010\003\ufff3\100\ufff3\104\015\001\002\000\006\003\106" +
-    "\100\105\001\002\000\022\003\032\025\034\026\022\027" +
-    "\016\030\027\031\035\035\031\036\033\001\002\000\006" +
-    "\003\uffd5\126\uffd5\001\002\000\006\003\uffea\105\uffea\001" +
-    "\002\000\006\003\uffeb\105\uffeb\001\002\000\006\003\uffec" +
-    "\105\uffec\001\002\000\006\003\uffd6\126\uffd6\001\002\000" +
-    "\006\003\uffed\105\uffed\001\002\000\006\003\103\105\104" +
-    "\001\002\000\006\003\uffe9\105\uffe9\001\002\000\006\003" +
-    "\076\126\077\001\002\000\006\003\071\126\072\001\002" +
-    "\000\006\003\uffe8\105\uffe8\001\002\000\006\003\064\126" +
-    "\065\001\002\000\010\003\uffe7\105\uffe7\126\055\001\002" +
-    "\000\006\003\050\126\051\001\002\000\006\003\043\126" +
-    "\044\001\002\000\006\003\036\126\037\001\002\000\004" +
-    "\132\042\001\002\000\006\003\040\132\041\001\002\000" +
-    "\006\003\uffcd\105\uffcd\001\002\000\006\003\uffd0\105\uffd0" +
-    "\001\002\000\006\003\uffce\105\uffce\001\002\000\004\123" +
-    "\047\001\002\000\006\003\046\123\045\001\002\000\006" +
-    "\003\uffde\105\uffde\001\002\000\006\003\uffdb\105\uffdb\001" +
-    "\002\000\006\003\uffdc\105\uffdc\001\002\000\004\127\054" +
-    "\001\002\000\006\003\053\127\052\001\002\000\006\003" +
-    "\uffe2\105\uffe2\001\002\000\006\003\uffdf\105\uffdf\001\002" +
-    "\000\006\003\uffe0\105\uffe0\001\002\000\016\071\063\073" +
-    "\061\075\057\123\056\127\060\132\062\001\002\000\006" +
-    "\003\uffdd\105\uffdd\001\002\000\006\003\uffe5\105\uffe5\001" +
-    "\002\000\006\003\uffe1\105\uffe1\001\002\000\006\003\uffd3" +
-    "\105\uffd3\001\002\000\006\003\uffcf\105\uffcf\001\002\000" +
-    "\006\003\uffd9\105\uffd9\001\002\000\004\075\070\001\002" +
-    "\000\006\003\067\075\066\001\002\000\006\003\uffe6\105" +
-    "\uffe6\001\002\000\006\003\uffe3\105\uffe3\001\002\000\006" +
-    "\003\uffe4\105\uffe4\001\002\000\004\073\075\001\002\000" +
-    "\006\003\074\073\073\001\002\000\006\003\uffd4\105\uffd4" +
-    "\001\002\000\006\003\uffd1\105\uffd1\001\002\000\006\003" +
-    "\uffd2\105\uffd2\001\002\000\004\071\102\001\002\000\006" +
-    "\003\100\071\101\001\002\000\006\003\uffd7\105\uffd7\001" +
-    "\002\000\006\003\uffda\105\uffda\001\002\000\006\003\uffd8" +
-    "\105\uffd8\001\002\000\010\003\uffee\100\uffee\104\uffee\001" +
-    "\002\000\010\003\uffef\100\uffef\104\uffef\001\002\000\004" +
-    "\002\001\001\002\000\004\002\ufffd\001\002\000\010\003" +
-    "\ufff1\100\ufff1\104\ufff1\001\002\000\004\100\111\001\002" +
-    "\000\004\002\ufffe\001\002\000\006\100\ufff2\104\015\001" +
-    "\002\000\004\100\114\001\002\000\004\002\uffff\001\002" +
-    "" });
+    "\010\003\ufff3\100\ufff3\104\015\001\002\000\006\003\165" +
+    "\100\164\001\002\000\042\003\045\025\017\026\041\027" +
+    "\030\030\053\031\024\032\032\034\037\035\036\036\031" +
+    "\037\050\041\021\042\035\043\025\044\043\131\047\001" +
+    "\002\000\006\003\162\105\163\001\002\000\006\003\uffd5" +
+    "\126\uffd5\001\002\000\006\003\uffe8\105\uffe8\001\002\000" +
+    "\006\003\155\126\156\001\002\000\006\003\uffe6\105\uffe6" +
+    "\001\002\000\006\003\uffe4\105\uffe4\001\002\000\006\003" +
+    "\150\126\151\001\002\000\006\003\uffb0\126\uffb0\001\002" +
+    "\000\006\003\143\126\144\001\002\000\006\003\uffe7\105" +
+    "\uffe7\001\002\000\006\003\uffce\126\uffce\001\002\000\006" +
+    "\003\136\126\137\001\002\000\006\003\131\126\132\001" +
+    "\002\000\006\003\uffe9\105\uffe9\001\002\000\006\003\uffea" +
+    "\105\uffea\001\002\000\006\003\uffd4\126\uffd4\001\002\000" +
+    "\006\003\124\126\125\001\002\000\006\003\117\126\120" +
+    "\001\002\000\006\003\112\126\113\001\002\000\006\003" +
+    "\uffcf\126\uffcf\001\002\000\006\003\uffed\105\uffed\001\002" +
+    "\000\006\003\uffaf\126\uffaf\001\002\000\006\003\uffe3\105" +
+    "\uffe3\001\002\000\010\003\uffe2\105\uffe2\126\077\001\002" +
+    "\000\006\003\072\126\073\001\002\000\006\003\uffb9\126" +
+    "\uffb9\001\002\000\006\003\uffba\126\uffba\001\002\000\006" +
+    "\003\uffe5\105\uffe5\001\002\000\006\003\uffeb\105\uffeb\001" +
+    "\002\000\006\003\065\126\066\001\002\000\006\003\056" +
+    "\126\057\001\002\000\006\003\uffec\105\uffec\001\002\000" +
+    "\006\073\061\130\063\001\002\000\010\003\062\073\061" +
+    "\130\063\001\002\000\006\003\uffb4\105\uffb4\001\002\000" +
+    "\006\003\uffae\105\uffae\001\002\000\006\003\uffb1\105\uffb1" +
+    "\001\002\000\006\003\uffad\105\uffad\001\002\000\006\003" +
+    "\uffb2\105\uffb2\001\002\000\004\073\071\001\002\000\006" +
+    "\003\070\073\067\001\002\000\006\003\uffcd\105\uffcd\001" +
+    "\002\000\006\003\uffcb\105\uffcb\001\002\000\006\003\uffcc" +
+    "\105\uffcc\001\002\000\004\071\076\001\002\000\006\003" +
+    "\074\071\075\001\002\000\006\003\uffd0\105\uffd0\001\002" +
+    "\000\006\003\uffd3\105\uffd3\001\002\000\006\003\uffd1\105" +
+    "\uffd1\001\002\000\030\071\110\072\102\073\061\075\101" +
+    "\123\106\127\104\130\063\132\103\135\111\136\100\137" +
+    "\107\001\002\000\006\003\uffc5\105\uffc5\001\002\000\006" +
+    "\003\uffe0\105\uffe0\001\002\000\006\003\uffbd\105\uffbd\001" +
+    "\002\000\006\003\uffc9\105\uffc9\001\002\000\006\003\uffdc" +
+    "\105\uffdc\001\002\000\006\003\uffb3\105\uffb3\001\002\000" +
+    "\006\003\uffd8\105\uffd8\001\002\000\006\003\uffb7\105\uffb7" +
+    "\001\002\000\006\003\uffd2\105\uffd2\001\002\000\006\003" +
+    "\uffc1\105\uffc1\001\002\000\004\072\116\001\002\000\006" +
+    "\003\114\072\115\001\002\000\006\003\uffbb\105\uffbb\001" +
+    "\002\000\006\003\uffbe\105\uffbe\001\002\000\006\003\uffbc" +
+    "\105\uffbc\001\002\000\004\135\123\001\002\000\006\003" +
+    "\121\135\122\001\002\000\006\003\uffbf\105\uffbf\001\002" +
+    "\000\006\003\uffc2\105\uffc2\001\002\000\006\003\uffc0\105" +
+    "\uffc0\001\002\000\004\075\130\001\002\000\006\003\127" +
+    "\075\126\001\002\000\006\003\uffe1\105\uffe1\001\002\000" +
+    "\006\003\uffde\105\uffde\001\002\000\006\003\uffdf\105\uffdf" +
+    "\001\002\000\004\136\135\001\002\000\006\003\133\136" +
+    "\134\001\002\000\006\003\uffc3\105\uffc3\001\002\000\006" +
+    "\003\uffc6\105\uffc6\001\002\000\006\003\uffc4\105\uffc4\001" +
+    "\002\000\004\127\142\001\002\000\006\003\141\127\140" +
+    "\001\002\000\006\003\uffdd\105\uffdd\001\002\000\006\003" +
+    "\uffda\105\uffda\001\002\000\006\003\uffdb\105\uffdb\001\002" +
+    "\000\004\123\147\001\002\000\006\003\146\123\145\001" +
+    "\002\000\006\003\uffd9\105\uffd9\001\002\000\006\003\uffd6" +
+    "\105\uffd6\001\002\000\006\003\uffd7\105\uffd7\001\002\000" +
+    "\004\132\154\001\002\000\006\003\152\132\153\001\002" +
+    "\000\006\003\uffc7\105\uffc7\001\002\000\006\003\uffca\105" +
+    "\uffca\001\002\000\006\003\uffc8\105\uffc8\001\002\000\004" +
+    "\137\161\001\002\000\006\003\157\137\160\001\002\000" +
+    "\006\003\uffb5\105\uffb5\001\002\000\006\003\uffb8\105\uffb8" +
+    "\001\002\000\006\003\uffb6\105\uffb6\001\002\000\010\003" +
+    "\uffee\100\uffee\104\uffee\001\002\000\010\003\uffef\100\uffef" +
+    "\104\uffef\001\002\000\004\002\001\001\002\000\004\002" +
+    "\ufffd\001\002\000\010\003\ufff1\100\ufff1\104\ufff1\001\002" +
+    "\000\004\100\170\001\002\000\004\002\ufffe\001\002\000" +
+    "\006\100\ufff2\104\015\001\002\000\004\100\173\001\002" +
+    "\000\004\002\uffff\001\002" });
 
   /** Access to parse-action table. */
   public short[][] action_table() {return _action_table;}
@@ -113,15 +152,29 @@ public class CaptchaParser extends java_cup.runtime.lr_parser {
   /** <code>reduce_goto</code> table. */
   protected static final short[][] _reduce_table = 
     unpackFromStrings(new String[] {
-    "\000\112\000\004\010\005\001\001\000\002\001\001\000" +
+    "\000\171\000\004\010\005\001\001\000\002\001\001\000" +
     "\002\001\001\000\002\001\001\000\002\001\001\000\010" +
-    "\005\011\007\012\011\107\001\001\000\010\005\011\007" +
-    "\012\011\013\001\001\000\002\001\001\000\004\005\106" +
-    "\001\001\000\002\001\001\000\022\002\022\003\020\004" +
-    "\023\015\017\016\016\017\025\020\024\021\027\001\001" +
+    "\005\011\007\012\011\166\001\001\000\010\005\011\007" +
+    "\012\011\013\001\001\000\002\001\001\000\004\005\165" +
+    "\001\001\000\002\001\001\000\042\002\041\003\054\004" +
+    "\015\015\033\016\032\017\017\020\026\021\021\022\037" +
+    "\023\050\024\022\025\025\026\051\027\043\030\053\032" +
+    "\045\001\001\000\002\001\001\000\002\001\001\000\002" +
+    "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
+    "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
     "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
     "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
     "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
+    "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
+    "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
+    "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
+    "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
+    "\001\000\004\031\063\001\001\000\004\031\057\001\001" +
+    "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
+    "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
+    "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
+    "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
+    "\000\002\001\001\000\002\001\001\000\004\031\104\001" +
     "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
     "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
     "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
@@ -137,8 +190,11 @@ public class CaptchaParser extends java_cup.runtime.lr_parser {
     "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
     "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
     "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
-    "\001\001\000\002\001\001\000\010\005\011\007\012\011" +
-    "\112\001\001\000\002\001\001\000\002\001\001" });
+    "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
+    "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
+    "\000\002\001\001\000\002\001\001\000\010\005\011\007" +
+    "\012\011\171\001\001\000\002\001\001\000\002\001\001" +
+    "" });
 
   /** Access to <code>reduce_goto</code> table. */
   public short[][] reduce_table() {return _reduce_table;}
@@ -432,7 +488,7 @@ class CUP$CaptchaParser$actions {
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 22: // opt ::= href 
+          case 22: // opt ::= href_src 
             {
               Object RESULT =null;
 
@@ -468,7 +524,7 @@ class CUP$CaptchaParser$actions {
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 26: // opt ::= error 
+          case 26: // opt ::= text_align 
             {
               Object RESULT =null;
 
@@ -477,7 +533,52 @@ class CUP$CaptchaParser$actions {
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 27: // id ::= ID EQUAL ID_ 
+          case 27: // opt ::= type 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("opt",2, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 28: // opt ::= cols_rows 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("opt",2, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 29: // opt ::= clss 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("opt",2, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 30: // opt ::= width_height 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("opt",2, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 31: // opt ::= error 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("opt",2, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 32: // id ::= ID EQUAL ID_ 
             {
               Object RESULT =null;
 		int sleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).left;
@@ -489,7 +590,7 @@ class CUP$CaptchaParser$actions {
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 28: // id ::= error EQUAL ID_ 
+          case 33: // id ::= error EQUAL ID_ 
             {
               Object RESULT =null;
 
@@ -498,7 +599,7 @@ class CUP$CaptchaParser$actions {
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 29: // id ::= ID error ID_ 
+          case 34: // id ::= ID error ID_ 
             {
               Object RESULT =null;
 
@@ -507,7 +608,7 @@ class CUP$CaptchaParser$actions {
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 30: // id ::= ID EQUAL error 
+          case 35: // id ::= ID EQUAL error 
             {
               Object RESULT =null;
 
@@ -516,7 +617,7 @@ class CUP$CaptchaParser$actions {
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 31: // name ::= NAME EQUAL STRING 
+          case 36: // name ::= NAME EQUAL STRING 
             {
               Object RESULT =null;
 		int sleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).left;
@@ -528,7 +629,7 @@ class CUP$CaptchaParser$actions {
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 32: // name ::= error EQUAL STRING 
+          case 37: // name ::= error EQUAL STRING 
             {
               Object RESULT =null;
 
@@ -537,7 +638,7 @@ class CUP$CaptchaParser$actions {
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 33: // name ::= NAME error STRING 
+          case 38: // name ::= NAME error STRING 
             {
               Object RESULT =null;
 
@@ -546,7 +647,7 @@ class CUP$CaptchaParser$actions {
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 34: // name ::= NAME EQUAL error 
+          case 39: // name ::= NAME EQUAL error 
             {
               Object RESULT =null;
 
@@ -555,172 +656,415 @@ class CUP$CaptchaParser$actions {
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 35: // href ::= HREF EQUAL URL 
+          case 40: // href_src ::= url EQUAL URL 
             {
               Object RESULT =null;
 		int sleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).left;
 		int sright = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).right;
 		Object s = (Object)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.peek()).value;
 
-              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("href",11, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("href_src",20, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 36: // href ::= error EQUAL URL 
+          case 41: // href_src ::= error EQUAL URL 
             {
               Object RESULT =null;
 
-              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("href",11, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("href_src",20, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 37: // href ::= HREF error URL 
+          case 42: // href_src ::= url error URL 
             {
               Object RESULT =null;
 
-              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("href",11, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("href_src",20, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 38: // href ::= HREF EQUAL error 
+          case 43: // href_src ::= url EQUAL error 
             {
               Object RESULT =null;
 
-              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("href",11, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("href_src",20, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 39: // bckgrnd_clr ::= color EQUAL COLOUR 
+          case 44: // url ::= HREF 
             {
               Object RESULT =null;
 
-              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("bckgrnd_clr",12, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("url",19, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 40: // bckgrnd_clr ::= error EQUAL COLOUR 
+          case 45: // url ::= SRC 
             {
               Object RESULT =null;
 
-              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("bckgrnd_clr",12, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("url",19, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 41: // bckgrnd_clr ::= color error COLOUR 
+          case 46: // bckgrnd_clr ::= color EQUAL COLOUR 
             {
               Object RESULT =null;
 
-              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("bckgrnd_clr",12, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("bckgrnd_clr",11, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 42: // bckgrnd_clr ::= color EQUAL error 
+          case 47: // bckgrnd_clr ::= error EQUAL COLOUR 
             {
               Object RESULT =null;
 
-              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("bckgrnd_clr",12, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("bckgrnd_clr",11, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 43: // color ::= BCKGRND 
+          case 48: // bckgrnd_clr ::= color error COLOUR 
             {
               Object RESULT =null;
 
-              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("color",13, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("bckgrnd_clr",11, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 44: // color ::= COLOR 
+          case 49: // bckgrnd_clr ::= color EQUAL error 
             {
               Object RESULT =null;
 
-              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("color",13, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("bckgrnd_clr",11, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 45: // font_size ::= FONTS EQUAL PIXEL 
+          case 50: // color ::= BCKGRND 
+            {
+              String RESULT =null;
+		 RESULT = "background"; 
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("color",24, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 51: // color ::= COLOR 
+            {
+              String RESULT =null;
+		 RESULT = "color"; 
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("color",24, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 52: // font_size ::= FONTS EQUAL PIXEL 
             {
               Object RESULT =null;
 
-              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("font_size",14, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("font_size",12, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 46: // font_size ::= error EQUAL PIXEL 
+          case 53: // font_size ::= FONTS error PIXEL 
             {
               Object RESULT =null;
 
-              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("font_size",14, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("font_size",12, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 47: // font_size ::= FONTS error PIXEL 
+          case 54: // font_size ::= FONTS EQUAL error 
             {
               Object RESULT =null;
 
-              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("font_size",14, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("font_size",12, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 48: // font_size ::= FONTS EQUAL error 
+          case 55: // font_family ::= FONTF EQUAL FONTF_VALUE 
             {
               Object RESULT =null;
 
-              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("font_size",14, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("font_family",13, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 49: // font_family ::= FONTF EQUAL FONTF_VALUE 
+          case 56: // font_family ::= error EQUAL FONTF_VALUE 
             {
               Object RESULT =null;
 
-              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("font_family",15, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("font_family",13, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 50: // font_family ::= error EQUAL FONTF_VALUE 
+          case 57: // font_family ::= FONTF error FONTF_VALUE 
             {
               Object RESULT =null;
 
-              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("font_family",15, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("font_family",13, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 51: // font_family ::= FONTF error FONTF_VALUE 
+          case 58: // font_family ::= FONTF EQUAL error 
             {
               Object RESULT =null;
 
-              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("font_family",15, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("font_family",13, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 52: // font_family ::= FONTF EQUAL error 
+          case 59: // text_align ::= ALIGN EQUAL ALIGN_VALUE 
             {
               Object RESULT =null;
 
-              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("font_family",15, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("text_align",14, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 53: // clgcic ::= SMALLER DIVIDE GCIC GREATER 
+          case 60: // text_align ::= error EQUAL ALIGN_VALUE 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("text_align",14, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 61: // text_align ::= ALIGN error ALIGN_VALUE 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("text_align",14, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 62: // text_align ::= ALIGN EQUAL error 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("text_align",14, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 63: // type ::= TYPE EQUAL TYPE_VALUE 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("type",15, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 64: // type ::= error EQUAL TYPE_VALUE 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("type",15, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 65: // type ::= TYPE error TYPE_VALUE 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("type",15, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 66: // type ::= TYPE EQUAL error 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("type",15, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 67: // cols_rows ::= cls_rws EQUAL INTQ 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("cols_rows",17, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 68: // cols_rows ::= error EQUAL INTQ 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("cols_rows",17, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 69: // cols_rows ::= cls_rws error INTQ 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("cols_rows",17, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 70: // cols_rows ::= cls_rws EQUAL error 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("cols_rows",17, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 71: // cls_rws ::= COLS 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("cls_rws",16, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 72: // cls_rws ::= ROWS 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("cls_rws",16, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 73: // clss ::= CLASS EQUAL CLASS_VALUE 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("clss",18, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 74: // clss ::= error EQUAL CLASS_VALUE 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("clss",18, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 75: // clss ::= CLASS error CLASS_VALUE 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("clss",18, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 76: // clss ::= CLASS EQUAL error 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("clss",18, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 77: // width_height ::= w_h EQUAL pxl_per 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("width_height",21, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 78: // width_height ::= error EQUAL pxl_per 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("width_height",21, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 79: // width_height ::= w_h error pxl_per 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("width_height",21, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 80: // width_height ::= w_h EQUAL error 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("width_height",21, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 81: // w_h ::= WIDTH 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("w_h",22, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 82: // w_h ::= HEIGHT 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("w_h",22, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 83: // pxl_per ::= PIXEL 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("pxl_per",23, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 84: // pxl_per ::= PERCNTG 
+            {
+              Object RESULT =null;
+
+              CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("pxl_per",23, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
+            }
+          return CUP$CaptchaParser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 85: // clgcic ::= SMALLER DIVIDE GCIC GREATER 
             {
               Object RESULT =null;
 
@@ -729,7 +1073,7 @@ class CUP$CaptchaParser$actions {
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 54: // clgcic ::= error DIVIDE GCIC GREATER 
+          case 86: // clgcic ::= error DIVIDE GCIC GREATER 
             {
               Object RESULT =null;
 
@@ -738,7 +1082,7 @@ class CUP$CaptchaParser$actions {
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 55: // clgcic ::= SMALLER error GCIC GREATER 
+          case 87: // clgcic ::= SMALLER error GCIC GREATER 
             {
               Object RESULT =null;
 
@@ -747,7 +1091,7 @@ class CUP$CaptchaParser$actions {
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 56: // clgcic ::= SMALLER DIVIDE error GREATER 
+          case 88: // clgcic ::= SMALLER DIVIDE error GREATER 
             {
               Object RESULT =null;
 
@@ -756,7 +1100,7 @@ class CUP$CaptchaParser$actions {
           return CUP$CaptchaParser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 57: // clgcic ::= SMALLER DIVIDE GCIC error 
+          case 89: // clgcic ::= SMALLER DIVIDE GCIC error 
             {
               Object RESULT =null;
 
