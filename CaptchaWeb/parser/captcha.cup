@@ -40,12 +40,14 @@ terminal CHAR, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_N, AL
 terminal GREATER, SMALLER, LBRACE, RBRACE, LBRACKET, RBRACKET, COLON, SEMI, EQEQ, NEQ, GRTREQ, SMLLREQ, OR, AND, NOT, PLUS, MINUS, TIMES, DIVIDE;
 terminal URL, LPAREN, RPAREN, EQUAL, STRING, PERCNTG, ROWS, FONTF_VALUE, QUOTE, ERROR;
 terminal TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE;
-terminal ON_LOAD;
+terminal ON_LOAD, ONCLICK;
 
-non terminal id, name, opt, optB, clgcic, makeOptB, gcic;
+non terminal id, name, opt, gcic;
 non terminal params, head, title, link, bckgrnd_clr, font_size, font_family;
 non terminal text_align, type, cls_rws, cols_rows, clss, url, href_src, width_height, w_h, pxl_per;
 non terminal alt, body, spam, input, txtarea, select, option, div, img, br, button, h1, paragraph;
+non terminal param, onclick;
+non terminal clgcic, clhead, cltitle, cllink, clbody, clspam, clinput, cltxtarea, clselect, cloption, cldiv, climg, clbutton, clh1, clparagraph;
 
 non terminal String color;
 
@@ -54,7 +56,6 @@ gcic ::=
 				SMALLER GCIC params GREATER
 				| error GCIC params GREATER
 				| SMALLER error params GREATER
-				// | SMALLER GCIC error GREATER
 				| SMALLER GCIC params error
 				;
 
@@ -77,82 +78,116 @@ title ::=
 /* <C_LINK> */
 link ::=
 				SMALLER LINK params GREATER
+				| error LINK params GREATER
+				| SMALLER error params GREATER
+				| SMALLER LINK params error
 				;
 
 /* <C_BODY> */
 body ::=
 				SMALLER BODY params GREATER
+				| error BODY params GREATER
+				| SMALLER error params GREATER
+				| SMALLER BODY params error
 				;
 
 /* <C_SPAM> */
 spam ::=
 				SMALLER SPAM params GREATER
+				| error SPAM params GREATER
+				| SMALLER error params GREATER
+				| SMALLER SPAM params error
 				;
 
 /* <C_INPUT> */
 input ::=
 				SMALLER INPUT params GREATER
+				| error INPUT params GREATER
+				| SMALLER error params GREATER
+				| SMALLER INPUT params error
 				;
 
 /* <C_TEXTAREA> */
 txtarea ::=
 				SMALLER TXTAREA params GREATER
+				| error TXTAREA params GREATER
+				| SMALLER error params GREATER
+				| SMALLER TXTAREA params error
 				;
 
 /* <C_SELECT> */
 select ::=
 				SMALLER SELECT params GREATER
+				| error SELECT params GREATER
+				| SMALLER error params GREATER
+				| SMALLER SELECT params error
 				;
 
 /* <C_OPTION> */
 option ::=
 				SMALLER OPTION GREATER
+				| error OPTION GREATER
+				| SMALLER error GREATER
+				| SMALLER OPTION error
 				;
 
 /* <C_DIV> */
 div ::=
 				SMALLER DIV params GREATER
+				| error DIV params GREATER
+				| SMALLER error params GREATER
+				| SMALLER DIV params error
 				;
 
 /* <C_IMG> */
 img ::=
 				SMALLER IMG params GREATER
+				| error IMG params GREATER
+				| SMALLER error params GREATER
+				| SMALLER IMG params error
 				;
 
 /* <C_BR> */
 br ::=
 				SMALLER BR GREATER
+				| error BR GREATER
+				| SMALLER error GREATER
+				| SMALLER BR error
 				;
 
-/* <C_BR> */
+/* <C_BUTTON> */
 button ::=
 				SMALLER BUTTON params GREATER
+				| error BUTTON params GREATER
+				| SMALLER error params GREATER
+				| SMALLER BUTTON params error
 				;
 
 /* <C_H1> */
 h1 ::=
 				SMALLER H1 params GREATER
+				| error H1 params GREATER
+				| SMALLER error params GREATER
+				| SMALLER H1 params error
 				;
 
 /* <C_P> */
 paragraph ::=
 				SMALLER PARAGRAPH params GREATER
+				| error PARAGRAPH params GREATER
+				| SMALLER error params GREATER
+				| SMALLER PARAGRAPH params error
 				;
 
-/* parametros para las etiquetas */
+/* parametros de las etiquetas */
 params ::=
-				makeOptB
+				params param
 				|
 				;
 
-makeOptB ::=
-				makeOptB optB
-				| optB
-				;
-
-optB ::=
+param ::=
 				LBRACKET opt RBRACKET
-				// | error opt RBRACKET
+				| error opt RBRACKET
 				| LBRACKET opt error
 				;
 
@@ -196,9 +231,12 @@ href_src ::=
 				| url EQUAL error
 				;
 
+/* href/src */
 url ::=
 				HREF
+					{: RESULT = "href"; :}
 				| SRC
+					{: RESULT = "src"; :}
 				;
 
 /* background / color */
@@ -291,11 +329,142 @@ alt ::=
 				| ALT EQUAL error
 				;
 
-/* Cierre etiqueta </C_GCIC> */
+/* onclick */
+onclick ::=
+				CLICK EQUAL ONCLICK
+				;
+/* --------------- Etiquetas de cierre --------------- */
+/* </C_GCIC> */
 clgcic ::=
 				SMALLER DIVIDE GCIC GREATER
 				| error DIVIDE GCIC GREATER
 				| SMALLER error GCIC GREATER
 				| SMALLER DIVIDE error GREATER
 				| SMALLER DIVIDE GCIC error
+				;
+
+/* </C_HEAD> */
+clhead ::=
+				SMALLER DIVIDE HEAD GREATER
+				| error DIVIDE HEAD GREATER
+				| SMALLER error HEAD GREATER
+				| SMALLER DIVIDE error GREATER
+				| SMALLER DIVIDE HEAD error
+				;
+
+/* </C_TITLE> */
+cltitle ::=
+				SMALLER DIVIDE TITLE GREATER
+				| error DIVIDE TITLE GREATER
+				| SMALLER error TITLE GREATER
+				| SMALLER DIVIDE error GREATER
+				| SMALLER DIVIDE TITLE error
+				;
+
+/* </C_LINK> */
+cllink ::=
+				SMALLER DIVIDE LINK GREATER
+				| error DIVIDE LINK GREATER
+				| SMALLER error LINK GREATER
+				| SMALLER DIVIDE error GREATER
+				| SMALLER DIVIDE LINK error
+				;
+
+/* </C_BODY> */
+clbody ::=
+				SMALLER DIVIDE BODY GREATER
+				| error DIVIDE BODY GREATER
+				| SMALLER error BODY GREATER
+				| SMALLER DIVIDE error GREATER
+				| SMALLER DIVIDE BODY error
+				;
+
+/* </C_SPAM> */
+clspam ::=
+				SMALLER DIVIDE SPAM GREATER
+				| error DIVIDE SPAM GREATER
+				| SMALLER error SPAM GREATER
+				| SMALLER DIVIDE error GREATER
+				| SMALLER DIVIDE SPAM error
+				;
+
+/* </C_INPUT> */
+clinput ::=
+				SMALLER DIVIDE INPUT GREATER
+				| error DIVIDE INPUT GREATER
+				| SMALLER error INPUT GREATER
+				| SMALLER DIVIDE error GREATER
+				| SMALLER DIVIDE INPUT error
+				;
+
+/* </C_TEXTAREA> */
+cltxtarea ::=
+				SMALLER DIVIDE TXTAREA GREATER
+				| error DIVIDE TXTAREA GREATER
+				| SMALLER error TXTAREA GREATER
+				| SMALLER DIVIDE error GREATER
+				| SMALLER DIVIDE TXTAREA error
+				;
+
+/* </C_SELECT> */
+clselect ::=
+				SMALLER DIVIDE SELECT GREATER
+				| error DIVIDE SELECT GREATER
+				| SMALLER error SELECT GREATER
+				| SMALLER DIVIDE error GREATER
+				| SMALLER DIVIDE SELECT error
+				;
+
+/* </C_OPTION> */
+cloption ::=
+				SMALLER DIVIDE OPTION GREATER
+				| error DIVIDE OPTION GREATER
+				| SMALLER error OPTION GREATER
+				| SMALLER DIVIDE error GREATER
+				| SMALLER DIVIDE OPTION error
+				;
+
+/* </C_DIV> */
+cldiv ::=
+				SMALLER DIVIDE DIV GREATER
+				| error DIVIDE DIV GREATER
+				| SMALLER error DIV GREATER
+				| SMALLER DIVIDE error GREATER
+				| SMALLER DIVIDE DIV error
+				;
+
+/* </C_IMG> */
+climg ::=
+				SMALLER DIVIDE IMG GREATER
+				| error DIVIDE IMG GREATER
+				| SMALLER error IMG GREATER
+				| SMALLER DIVIDE error GREATER
+				| SMALLER DIVIDE IMG error
+				;
+
+/* </C_BUTTON> */
+clbutton ::=
+				SMALLER DIVIDE BUTTON GREATER
+				| error DIVIDE BUTTON GREATER
+				| SMALLER error BUTTON GREATER
+				| SMALLER DIVIDE error GREATER
+				| SMALLER DIVIDE BUTTON error
+				;
+
+/* </C_H1> */
+clh1 ::=
+				SMALLER DIVIDE H1 GREATER
+				| error DIVIDE H1 GREATER
+				| SMALLER error H1 GREATER
+				| SMALLER DIVIDE error GREATER
+				| SMALLER DIVIDE H1 error
+				;
+
+/* </C_P> */
+clparagraph ::=
+				SMALLER DIVIDE PARAGRAPH GREATER
+				| error DIVIDE PARAGRAPH GREATER
+				| SMALLER error PARAGRAPH GREATER
+				| SMALLER DIVIDE error GREATER
+				| SMALLER DIVIDE PARAGRAPH error
 				;

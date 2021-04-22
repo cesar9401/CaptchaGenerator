@@ -62,6 +62,9 @@ Color = #[0-9a-fA-F]{6}
 /* Input con comillas */
 Str = {Q} [^\r\n\"\\]+ {Q}
 
+/* String para llamada a funciones entre comillas */
+OnClick = {Q} \w+ "(" ")" {Q}
+
 /* url */
 Url = {Q} "http" "s"? ":" "/"{2,2} [\w\-\.]+ "." \w{2,5} "/"? \S* {Q}
 
@@ -387,7 +390,11 @@ Script = {c} "_" {s}{r}{c}{i}{p}{t}{i}{n}{g}
 	{Percentage}
 	{ return symbol(PERCNTG, yytext()); }
 
+	{OnClick}
+	{ return symbol(ONCLICK, yytext()); }
+
 	/* Id */
+
 	{Id}
 	{ return symbol(ID_, yytext()); }
 

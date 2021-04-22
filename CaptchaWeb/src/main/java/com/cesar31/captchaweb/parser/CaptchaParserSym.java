@@ -96,6 +96,7 @@ public class CaptchaParserSym {
   public static final int GLOBAL = 53;
   public static final int OPTION = 11;
   public static final int TYPE_VALUE = 91;
+  public static final int ONCLICK = 95;
   public static final int STRING = 85;
   public static final int COLOUR = 55;
   public static final int RANDOM_C = 49;
@@ -198,7 +199,8 @@ public class CaptchaParserSym {
   "TYPE_VALUE",
   "ALIGN_VALUE",
   "CLASS_VALUE",
-  "ON_LOAD"
+  "ON_LOAD",
+  "ONCLICK"
   };
 }
 
