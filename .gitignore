@@ -1,9 +1,9 @@
-# CaptchaWeb
-CaptchaWeb/target/
-CaptchaWeb/nb-configuration.xml
+# Files project
+target/
+nb-configuration.xml
 
 # .sh, java generated classes by cup and lex
-CaptchaWeb/parser/*.sh
-CaptchaWeb/parser/*.java
-CaptchaWeb/parser/*.java~
+parser/*.sh
+parser/*.java
+parser/*.java~
 
