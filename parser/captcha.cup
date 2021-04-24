@@ -20,7 +20,7 @@ parser code {:
 		List<String> expected = new ArrayList<>();
 		List<Integer> tokens = expected_token_ids();
 
-		System.out.printf("Se encontro: %s, linea %d columna %d, se esperaba -> ", cur_token.value, cur_token.left, cur_token.right);
+		System.out.printf("Se encontro: %s -> (%s), linea %d columna %d, se esperaba -> ", cur_token.value, symbl_name_from_id(cur_token.sym), cur_token.left, cur_token.right);
 		for(Integer i : tokens) {
 			expected.add(symbl_name_from_id(i));
 			System.out.printf("%s, ", symbl_name_from_id(i));
@@ -40,7 +40,7 @@ terminal CHAR, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_N, AL
 terminal GREATER, SMALLER, LBRACE, RBRACE, LBRACKET, RBRACKET, COLON, SEMI, EQEQ, NEQ, GRTREQ, SMLLREQ, OR, AND, NOT, PLUS, MINUS, TIMES, DIVIDE;
 terminal URL, LPAREN, RPAREN, EQUAL, STRING, PERCNTG, ROWS, FONTF_VALUE, QUOTE, ERROR;
 terminal TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE;
-terminal ON_LOAD, ONCLICK;
+terminal ON_LOAD, ONCLICK, IN;
 
 non terminal id, name, opt, gcic;
 non terminal params, head, title, link, bckgrnd_clr, font_size, font_family;
@@ -48,8 +48,105 @@ non terminal text_align, type, cls_rws, cols_rows, clss, url, href_src, width_he
 non terminal alt, body, spam, input, txtarea, select, option, div, img, br, button, h1, paragraph;
 non terminal param, onclick;
 non terminal clgcic, clhead, cltitle, cllink, clbody, clspam, clinput, cltxtarea, clselect, cloption, cldiv, climg, clbutton, clh1, clparagraph;
+non terminal c_gcic, c_title, c_link, c_spam, c_h1, c_button, c_p, c_img, c_input, c_txtarea, c_option, make_option, c_select, c_div;
+non terminal c_head, head_opt, h_opt;
 
+non terminal List<String> in;
 non terminal String color;
+
+c_gcic ::=
+				c_head
+				;
+
+c_head ::=
+				head head_opt clhead
+				;
+
+head_opt ::=
+				head_opt h_opt
+				| h_opt;
+
+h_opt ::=
+				c_title
+				| c_link
+				;
+
+c_title ::=
+				title in:list cltitle
+					{:
+						System.out.println("Titulo: " + list);
+					:}
+				;
+
+c_link ::=
+				link cllink
+				;
+
+c_spam ::=
+				spam in:list clspam
+					{:
+						System.out.println("Spam: " + list);
+					:}
+				;
+
+c_h1 ::=
+				h1 in:list clh1
+					{:
+						System.out.println("h1: " + list);
+					:}
+				;
+
+c_p ::=
+				paragraph in:list clparagraph
+					{: System.out.println("paragraph: " + list); :}
+				;
+
+c_input ::=
+				input clinput
+				;
+
+c_txtarea ::=
+				txtarea cltxtarea;
+
+c_button ::=
+				button in:list clbutton
+					{: System.out.println("button: " + list); :}
+				;
+
+c_select ::=
+				select make_option clselect
+				;
+
+make_option ::=
+				make_option c_option
+				|
+				;
+
+c_option ::=
+				option in:list cloption
+					{: System.out.println("option: " + list); :}
+				;
+
+c_img ::=
+				img climg
+				;
+
+c_div ::=
+				div cldiv;
+
+/* contet for p and h1 */
+in ::=
+			in:str IN:s
+				{:
+					str.add(s.toString());
+					RESULT = str;
+				:}
+			| /* lambda */
+				{:
+					List<String> str = new ArrayList<>();
+					RESULT = str;
+				:}
+			;
 
 /* Etiqueta de apertura <C_GCIC> */
 gcic ::=
@@ -71,7 +168,7 @@ head ::=
 title ::=
 				SMALLER TITLE GREATER
 				| error TITLE GREATER
-				| SMALLER error GREATER
+				// | SMALLER error GREATER
 				| SMALLER TITLE error
 				;
 
@@ -80,7 +177,7 @@ link ::=
 				SMALLER LINK params GREATER
 				| error LINK params GREATER
 				| SMALLER error params GREATER
-				| SMALLER LINK params error
+				// | SMALLER LINK params error
 				;
 
 /* <C_BODY> */
@@ -96,7 +193,7 @@ spam ::=
 				SMALLER SPAM params GREATER
 				| error SPAM params GREATER
 				| SMALLER error params GREATER
-				| SMALLER SPAM params error
+				// | SMALLER SPAM params error
 				;
 
 /* <C_INPUT> */
@@ -104,7 +201,7 @@ input ::=
 				SMALLER INPUT params GREATER
 				| error INPUT params GREATER
 				| SMALLER error params GREATER
-				| SMALLER INPUT params error
+				// | SMALLER INPUT params error
 				;
 
 /* <C_TEXTAREA> */
@@ -112,7 +209,7 @@ txtarea ::=
 				SMALLER TXTAREA params GREATER
 				| error TXTAREA params GREATER
 				| SMALLER error params GREATER
-				| SMALLER TXTAREA params error
+				// | SMALLER TXTAREA params error
 				;
 
 /* <C_SELECT> */
@@ -120,7 +217,7 @@ select ::=
 				SMALLER SELECT params GREATER
 				| error SELECT params GREATER
 				| SMALLER error params GREATER
-				| SMALLER SELECT params error
+				// | SMALLER SELECT params error
 				;
 
 /* <C_OPTION> */
@@ -136,7 +233,7 @@ div ::=
 				SMALLER DIV params GREATER
 				| error DIV params GREATER
 				| SMALLER error params GREATER
-				| SMALLER DIV params error
+				// | SMALLER DIV params error
 				;
 
 /* <C_IMG> */
@@ -144,7 +241,7 @@ img ::=
 				SMALLER IMG params GREATER
 				| error IMG params GREATER
 				| SMALLER error params GREATER
-				| SMALLER IMG params error
+				// | SMALLER IMG params error
 				;
 
 /* <C_BR> */
@@ -160,7 +257,7 @@ button ::=
 				SMALLER BUTTON params GREATER
 				| error BUTTON params GREATER
 				| SMALLER error params GREATER
-				| SMALLER BUTTON params error
+				// | SMALLER BUTTON params error
 				;
 
 /* <C_H1> */
@@ -168,7 +265,7 @@ h1 ::=
 				SMALLER H1 params GREATER
 				| error H1 params GREATER
 				| SMALLER error params GREATER
-				| SMALLER H1 params error
+				// | SMALLER H1 params error
 				;
 
 /* <C_P> */
@@ -176,7 +273,7 @@ paragraph ::=
 				SMALLER PARAGRAPH params GREATER
 				| error PARAGRAPH params GREATER
 				| SMALLER error params GREATER
-				| SMALLER PARAGRAPH params error
+				// | SMALLER PARAGRAPH params error
 				;
 
 /* parametros de las etiquetas */
@@ -204,12 +301,13 @@ opt ::=
 				| clss
 				| width_height
 				| alt
+				| onclick
 				| error
 				;
 
 id ::=
 				ID EQUAL ID_:s
-				{: System.out.println("id = " + s); :}
+				{: System.out.println("id: " + s); :}
 				| error EQUAL ID_
 				| ID error ID_
 				| ID EQUAL error
@@ -225,7 +323,8 @@ name ::=
 
 /* href/src */
 href_src ::=
-				url EQUAL URL:s
+				url:p EQUAL URL:s
+					{: System.out.println(p + ": " + s); :}
 				| error EQUAL URL
 				| url error URL
 				| url EQUAL error
@@ -241,7 +340,8 @@ url ::=
 
 /* background / color */
 bckgrnd_clr ::=
-				color EQUAL COLOUR
+				color EQUAL COLOUR:s
+					{: System.out.println("Color: " + s); :}
 				| error EQUAL COLOUR
 				| color error COLOUR
 				| color EQUAL error
@@ -256,21 +356,24 @@ color ::=
 				;
 
 font_size ::=
-				FONTS EQUAL PIXEL
+				FONTS EQUAL PIXEL:s
+					{: System.out.println("font-size: " + s); :}
 				// | error EQUAL PIXEL
 				| FONTS error PIXEL
 				| FONTS EQUAL error
 				;
 
 font_family ::=
-				FONTF EQUAL FONTF_VALUE
+				FONTF EQUAL FONTF_VALUE:s
+					{: System.out.println("font-family: " + s); :}
 				| error EQUAL FONTF_VALUE
 				| FONTF error FONTF_VALUE
 				| FONTF EQUAL error
 				;
 
 text_align ::=
-				ALIGN EQUAL ALIGN_VALUE
+				ALIGN EQUAL ALIGN_VALUE:s
+					{: System.out.println("align: " + s); :}
 				| error EQUAL ALIGN_VALUE
 				| ALIGN error ALIGN_VALUE
 				| ALIGN EQUAL error
@@ -278,14 +381,16 @@ text_align ::=
 
 /* type for inputs */
 type ::=
-				TYPE EQUAL TYPE_VALUE
+				TYPE EQUAL TYPE_VALUE:s
+					{: System.out.println("type: " + s); :}
 				| error EQUAL TYPE_VALUE
 				| TYPE error TYPE_VALUE
 				| TYPE EQUAL error
 				;
 
 cols_rows ::=
-				cls_rws EQUAL INTQ
+				cls_rws:p EQUAL INTQ:s
+					{: System.out.println(p + ": " + s); :}
 				| error EQUAL INTQ
 				| cls_rws error INTQ
 				| cls_rws EQUAL error
@@ -293,11 +398,14 @@ cols_rows ::=
 
 cls_rws ::=
 				COLS
+					{: RESULT = "cols"; :}
 				| ROWS
+					{: RESULT = "rows"; :}
 				;
 
 clss ::=
-				CLASS EQUAL CLASS_VALUE
+				CLASS EQUAL CLASS_VALUE:s
+					{: System.out.println("class: " + s); :}
 				| error EQUAL CLASS_VALUE
 				| CLASS error CLASS_VALUE
 				| CLASS EQUAL error
@@ -305,7 +413,8 @@ clss ::=
 
 /* width/height */
 width_height ::=
-				w_h EQUAL pxl_per
+				w_h EQUAL pxl_per:s
+					{: System.out.println("width/height: " + s); :}
 				| error EQUAL pxl_per
 				| w_h error pxl_per
 				| w_h EQUAL error
@@ -317,13 +426,16 @@ w_h ::=
 				;
 
 pxl_per ::=
-				PIXEL
-				| PERCNTG
+				PIXEL:s
+					{: RESULT = s; :}
+				| PERCNTG:s
+					{: RESULT = s; :}
 				;
 
 /* alt */
 alt ::=
-				ALT EQUAL STRING
+				ALT EQUAL STRING:s
+					{: System.out.println("alt: " + s); :}
 				// | error EQUAL STRING // alt ::= error ...  and name ::= error ...
 				| ALT error STRING
 				| ALT EQUAL error
@@ -331,7 +443,11 @@ alt ::=
 
 /* onclick */
 onclick ::=
-				CLICK EQUAL ONCLICK
+				CLICK EQUAL ONCLICK:s
+					{: System.out.println("onclick: " + s); :}
+				| error EQUAL ONCLICK
+				| CLICK error ONCLICK
+				| CLICK EQUAL error
 				;
 /* --------------- Etiquetas de cierre --------------- */
 /* </C_GCIC> */

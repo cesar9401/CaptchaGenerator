@@ -7,3 +7,5 @@ parser/*.sh
 parser/*.java
 parser/*.java~
 
+# archivos de prueba
+*.gcic

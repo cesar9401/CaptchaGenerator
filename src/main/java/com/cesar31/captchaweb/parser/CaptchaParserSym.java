@@ -72,6 +72,7 @@ public class CaptchaParserSym {
   public static final int MINUS = 78;
   public static final int SCRIPT = 18;
   public static final int SRC = 32;
+  public static final int IN = 96;
   public static final int BODY = 6;
   public static final int HREF = 19;
   public static final int TITLE = 4;
@@ -200,7 +201,8 @@ public class CaptchaParserSym {
   "ALIGN_VALUE",
   "CLASS_VALUE",
   "ON_LOAD",
-  "ONCLICK"
+  "ONCLICK",
+  "IN"
   };
 }
 

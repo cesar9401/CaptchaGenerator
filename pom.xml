@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.cesar31.captchaweb</groupId>
-    <artifactId>CaptchaWeb</artifactId>
+    <artifactId>CaptchaGenerator</artifactId>
     <version>1.0</version>
     <packaging>war</packaging>
-    <name>CaptchaWeb</name>
+    <name>CapchaGenerator</name>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>

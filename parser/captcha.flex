@@ -68,6 +68,9 @@ OnClick = {Q} \w+ "(" ")" {Q}
 /* url */
 Url = {Q} "http" "s"? ":" "/"{2,2} [\w\-\.]+ "." \w{2,5} "/"? \S* {Q}
 
+/* Entrada para etiquetas */
+In = [\w\"\'\?\.\*\\\^\(\)\+\{\}¿,¡@#$%&:;!]+
+
 /* no case-sensitive */
 a = [aA]
 b = [bB]
@@ -394,9 +397,11 @@ Script = {c} "_" {s}{r}{c}{i}{p}{t}{i}{n}{g}
 	{ return symbol(ONCLICK, yytext()); }
 
 	/* Id */
-
 	{Id}
 	{ return symbol(ID_, yytext()); }
+
+	{Url}
+	{ return symbol(URL, yytext()); }
 
 	{Str}
 	{ return symbol(STRING, yytext()); }
@@ -407,9 +412,6 @@ Script = {c} "_" {s}{r}{c}{i}{p}{t}{i}{n}{g}
 
 	{Decimal}
 	{ return symbol(DECIMAL, yytext()); }
-
-	{Url}
-	{ return symbol(URL, yytext()); }
 
 	/* simbols and operators */
 	"<"
@@ -478,13 +480,15 @@ Script = {c} "_" {s}{r}{c}{i}{p}{t}{i}{n}{g}
 	")"
 	{ return symbol(RPAREN, yytext()); }
 
+	{In}
+	{ return symbol(IN, yytext()); }
+
 	/* coments and whitspaces(line terminator) */
 	{Comment}
 	{ /* Ignore */ }
 
 	{WhiteSpace}
 	{ /* Ignore */ }
-
 }
 
 [^]
