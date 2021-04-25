@@ -51,6 +51,7 @@ Decimal = {Integer} \. \d+
 
 /* string and char */
 string = {Q} ([^\r\n\"]|[\n])* {Q}
+char = {Qs} [^\r\n\']? {Qs}
 
 /* Id */
 Id = {Q} [\_\-\$\w]+ {Q}
@@ -60,6 +61,9 @@ IdV = [a-zA-Z]\w*
 
 /* Quote */
 Q = \"
+
+/* Simple Quote */
+Qs = \'
 
 /* measure */
 Pixels = {Q} {Integer} "px" {Q}
@@ -252,7 +256,7 @@ Script = {c} "_" {s}{c}{r}{i}{p}{t}{i}{n}{g}
 	{ return symbol(FALSE, yytext()); }
 
 	"char"
-	{ return symbol(CHAR, yytext()); }
+	{ return symbol(CHR, yytext()); }
 
 	"string"
 	{ return symbol(STR, yytext()); }
@@ -418,6 +422,9 @@ Script = {c} "_" {s}{c}{r}{i}{p}{t}{i}{n}{g}
 
 	{string}
 	{ return symbol(STRING, getString(yytext())); }
+
+	{char}
+	{ return symbol(CHAR, getString(yytext())); }
 
 	/* numbers */
 	{Integer}

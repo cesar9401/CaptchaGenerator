@@ -14,16 +14,19 @@ public class ParserTest {
     public static void main(String[] args) {
         
         String path = "html.gcic";
+        char ch1 = '?';
+        int entero = (int) ch1;
+        System.out.println("entero = " + entero);
         
         boolean val1 = true && false || !false && true && !(false && true || false);
         boolean val2 = !(3 > 2 || 75 != 3) && !false;
         boolean val3 = "cadena1" == "cadena1";
-        System.out.println(val3);
+        //System.out.println(val3);
 
         DBHandler db = new DBHandler();
         String input = db.readData(path);
         
-        //System.out.println(input);
+        System.out.println(input);
         System.out.println("\n");
 
         // getTokens(input);

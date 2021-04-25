@@ -36,12 +36,13 @@ parser code {:
 
 terminal GCIC, HEAD, TITLE, LINK, BODY, SPAM, INPUT, TXTAREA, SELECT, OPTION, DIV, IMG, BR, BUTTON, H1, PARAGRAPH, SCRIPT, HREF, BCKGRND, COLOR, FONTS;
 terminal FONTF, ALIGN, ALING_VALUE, TYPE, ID, NAME, COLS, ROW, CLASS, SRC, WIDTH, HEIGHT, ALT, CLICK, INTEGER, DECIMAL, BOOL, TRUE, FALSE;
-terminal CHAR, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_N, ALERT, EXIT, GLOBAL, HEX, COLOUR, INTQ, PIXEL, PERCENTG, ID_, INT, DEC;
+terminal CHR, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_N, ALERT, EXIT, GLOBAL, HEX, COLOUR, INTQ, PIXEL, PERCENTG, ID_, INT, DEC;
 terminal GREATER, SMALLER, LBRACE, RBRACE, LBRACKET, RBRACKET, COLON, SEMI, EQEQ, NEQ, GRTREQ, SMLLREQ, OR, AND, NOT, PLUS, MINUS, TIMES, DIVIDE;
 terminal URL, LPAREN, RPAREN, EQUAL, PERCNTG, ROWS, FONTF_VALUE, QUOTE, ERROR;
 terminal TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE, COMMA;
 terminal ON_LOAD, ONCLICK, IN, ID_V;
 terminal String STRING;
+terminal CHAR;
 
 non terminal id, name, opt, gcic;
 non terminal params, head, title, link, bckgrnd_clr, font_size, font_family;
@@ -52,6 +53,7 @@ non terminal clgcic, clhead, cltitle, cllink, clbody, clspam, clinput, cltxtarea
 non terminal c_gcic, c_title, c_link, c_spam, c_h1, c_button, c_paragraph, c_img, c_input, c_txtarea, c_option, make_option, c_select, c_div;
 non terminal c_head, head_opt, h_opt, c_body, body_opt, b_opt, str, c_script;
 non terminal make_script, int_stat, make_int, str_stat, make_str, dec_stat, make_dec, bool_stat, make_bool;
+non terminal char_stat, make_char;
 
 non terminal Double s, t, u, v;
 non terminal List<String> in;
@@ -113,6 +115,7 @@ scripting ::=
 				| STR make_str SEMI
 				| DEC make_dec SEMI
 				| BOOL make_bool SEMI
+				| CHR make_char SEMI
 				;
 
 make_int ::=
@@ -122,7 +125,7 @@ make_int ::=
 
 int_stat ::=
 				mode ID_V:p EQUAL s:n1
-				{: System.out.println("integer: " + p + " -> " + n1.intValue()); :}
+					{: System.out.println("integer: " + p + " -> " + n1.intValue()); :}
 				| mode ID_V
 				;
 
@@ -133,7 +136,7 @@ make_dec ::=
 
 dec_stat ::=
 				mode ID_V:p EQUAL s:d1
-				{: System.out.println("decimal: " + p + " -> " + Math.round(d1 * 10000d)/10000d); :}
+					{: System.out.println("decimal: " + p + " -> " + Math.round(d1 * 10000d)/10000d); :}
 				| mode ID_V
 				;
 
@@ -144,7 +147,18 @@ make_bool ::=
 
 bool_stat ::=
 				mode ID_V:p EQUAL a:s
-				{: System.out.println("boolean: " + p + " -> " + s); :}
+					{: System.out.println("boolean: " + p + " -> " + s); :}
+				| mode ID_V
+				;
+
+make_char ::=
+				make_char COMMA char_stat
+				| char_stat
+				;
+
+char_stat ::=
+				mode ID_V:p EQUAL CHAR:ch
+					{: System.out.println("char: " + p + " -> " + ch); :}
 				| mode ID_V
 				;
 
@@ -155,7 +169,7 @@ make_str ::=
 
 str_stat ::=
 				mode ID_V:p EQUAL w:s1
-				{: System.out.println("string: " + p + " -> " + s1); :}
+					{: System.out.println("string: " + p + " -> " + s1); :}
 				| mode ID_V
 				;
 
@@ -187,6 +201,7 @@ u ::=
 v ::=
 				INTEGER:n1 {: RESULT = Double.valueOf(n1.toString()); :}
 				| DECIMAL:n1 {: RESULT = Double.valueOf(n1.toString()); :}
+				| CHAR:n1 {: RESULT = (double)((int) n1.toString().charAt(0)); :}
 				| LPAREN s:n2 RPAREN {: RESULT = n2; :}
 				;
 /* Operaciones aritmeticas */
@@ -205,6 +220,7 @@ x ::=
 				| ID_:s1 {: RESULT = s1.toString(); :}
 				| INTEGER:s1 {: RESULT = s1.toString(); :}
 				| DECIMAL:s1 {: RESULT = s1.toString(); :}
+				| CHAR:s1 {: RESULT = s1.toString(); :}
 				// | s: s1 {: RESULT = s1.toString(); :}
 				;
 /* Concatenar string */
