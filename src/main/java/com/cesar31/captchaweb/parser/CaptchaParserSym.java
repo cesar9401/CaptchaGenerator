@@ -11,16 +11,17 @@ public class CaptchaParserSym {
   public static final int LETIMPAR = 47;
   public static final int TIMES = 79;
   public static final int BOOL = 39;
-  public static final int ALIGN_VALUE = 92;
+  public static final int ALIGN_VALUE = 91;
   public static final int H1 = 16;
   public static final int TYPE = 26;
   public static final int HEX = 54;
-  public static final int ROWS = 87;
+  public static final int ROWS = 86;
   public static final int SEMI = 69;
   public static final int ASC = 44;
   public static final int NAME = 28;
   public static final int ROW = 30;
   public static final int ID_ = 59;
+  public static final int COMMA = 93;
   public static final int ALT = 35;
   public static final int RBRACE = 65;
   public static final int RPAREN = 83;
@@ -29,8 +30,8 @@ public class CaptchaParserSym {
   public static final int LPAREN = 82;
   public static final int NOT = 76;
   public static final int FALSE = 41;
-  public static final int PERCNTG = 86;
-  public static final int ERROR = 90;
+  public static final int PERCNTG = 85;
+  public static final int ERROR = 89;
   public static final int DEC = 61;
   public static final int STR = 43;
   public static final int FONTS = 22;
@@ -43,11 +44,11 @@ public class CaptchaParserSym {
   public static final int TRUE = 40;
   public static final int PIXEL = 57;
   public static final int PLUS = 77;
-  public static final int QUOTE = 89;
+  public static final int QUOTE = 88;
   public static final int DIVIDE = 80;
   public static final int EQUAL = 84;
   public static final int COLS = 29;
-  public static final int FONTF_VALUE = 88;
+  public static final int FONTF_VALUE = 87;
   public static final int ALIGN = 24;
   public static final int DECIMAL = 38;
   public static final int CHAR = 42;
@@ -79,7 +80,7 @@ public class CaptchaParserSym {
   public static final int OR = 74;
   public static final int error = 1;
   public static final int EXIT = 52;
-  public static final int CLASS_VALUE = 93;
+  public static final int CLASS_VALUE = 92;
   public static final int BCKGRND = 20;
   public static final int DESC = 45;
   public static final int ID = 27;
@@ -96,9 +97,10 @@ public class CaptchaParserSym {
   public static final int RBRACKET = 67;
   public static final int GLOBAL = 53;
   public static final int OPTION = 11;
-  public static final int TYPE_VALUE = 91;
+  public static final int TYPE_VALUE = 90;
+  public static final int ID_V = 97;
+  public static final int STRING = 98;
   public static final int ONCLICK = 95;
-  public static final int STRING = 85;
   public static final int COLOUR = 55;
   public static final int RANDOM_C = 49;
   public static final int SMALLER = 63;
@@ -191,7 +193,6 @@ public class CaptchaParserSym {
   "LPAREN",
   "RPAREN",
   "EQUAL",
-  "STRING",
   "PERCNTG",
   "ROWS",
   "FONTF_VALUE",
@@ -200,9 +201,12 @@ public class CaptchaParserSym {
   "TYPE_VALUE",
   "ALIGN_VALUE",
   "CLASS_VALUE",
+  "COMMA",
   "ON_LOAD",
   "ONCLICK",
-  "IN"
+  "IN",
+  "ID_V",
+  "STRING"
   };
 }
 

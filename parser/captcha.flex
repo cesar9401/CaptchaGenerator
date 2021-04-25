@@ -23,6 +23,10 @@ import java_cup.runtime.*;
 		private Symbol symbol(int type, Object object) {
 			return new Symbol(type, yyline + 1, yycolumn + 1, object);
 		}
+
+		private String getString(String str) {
+			return str.substring(1, str.length() - 1);
+		}
 %}
 
 %eofval{
@@ -45,8 +49,14 @@ Comment = {EndOfLineComment} | {BlockComment}
 Integer = 0|[1-9][0-9]*
 Decimal = {Integer} \. \d+
 
+/* string and char */
+string = {Q} ([^\r\n\"]|[\n])* {Q}
+
 /* Id */
 Id = {Q} [\_\-\$\w]+ {Q}
+
+/* Id Variable */
+IdV = [a-zA-Z]\w*
 
 /* Quote */
 Q = \"
@@ -57,10 +67,10 @@ Percentage = {Q} {Integer} "%" {Q}
 IntegerQuote = {Q} {Integer} {Q}
 
 /* Hexadecimal */
-Color = #[0-9a-fA-F]{6}
+Color = #([0-9a-fA-F]{6}|[0-9a-fA-F]{3})
 
 /* Input con comillas */
-Str = {Q} [^\r\n\"\\]+ {Q}
+// Str = {Q} [^\r\n\"\\]+ {Q}
 
 /* String para llamada a funciones entre comillas */
 OnClick = {Q} \w+ "(" ")" {Q}
@@ -69,7 +79,7 @@ OnClick = {Q} \w+ "(" ")" {Q}
 Url = {Q} "http" "s"? ":" "/"{2,2} [\w\-\.]+ "." \w{2,5} "/"? \S* {Q}
 
 /* Entrada para etiquetas */
-In = [\w\"\'\?\.\*\\\^\(\)\+\{\}¿,¡@#$%&:;!]+
+In = [\w\"\'\?\.\\\^\{\}¿¡#$%&:]+
 
 /* no case-sensitive */
 a = [aA]
@@ -115,7 +125,7 @@ Br = {c} "_" {b}{r}
 Button = {c} "_" {b}{u}{t}{t}{o}{n}
 H1 = {c} "_" {h} "1"
 Paragraph = {c} "_" {p}
-Script = {c} "_" {s}{r}{c}{i}{p}{t}{i}{n}{g}
+Script = {c} "_" {s}{c}{r}{i}{p}{t}{i}{n}{g}
 
 %%
 
@@ -284,127 +294,130 @@ Script = {c} "_" {s}{r}{c}{i}{p}{t}{i}{n}{g}
 
 	/* font-family */
 	{Q} "Courier" {Q}
-	{ return symbol(FONTF_VALUE, yytext()); }
+	{ return symbol(FONTF_VALUE, getString(yytext())); }
 
 	{Q} "Verdana" {Q}
-	{ return symbol(FONTF_VALUE, yytext()); }
+	{ return symbol(FONTF_VALUE, getString(yytext())); }
 
 	{Q} "Arial" {Q}
-	{ return symbol(FONTF_VALUE, yytext()); }
+	{ return symbol(FONTF_VALUE, getString(yytext())); }
 
 	{Q} "Geneva" {Q}
-	{ return symbol(FONTF_VALUE, yytext()); }
+	{ return symbol(FONTF_VALUE, getString(yytext())); }
 
 	{Q} "sans-serif" {Q}
-	{ return symbol(FONTF_VALUE, yytext()); }
+	{ return symbol(FONTF_VALUE, getString(yytext())); }
 
 	/* text-align */
 	{Q} "left" {Q}
-	{ return symbol(ALIGN_VALUE, yytext()); }
+	{ return symbol(ALIGN_VALUE, getString(yytext())); }
 
 	{Q} "right" {Q}
-	{ return symbol(ALIGN_VALUE, yytext()); }
+	{ return symbol(ALIGN_VALUE, getString(yytext())); }
 
 	{Q} "center" {Q}
-	{ return symbol(ALIGN_VALUE, yytext()); }
+	{ return symbol(ALIGN_VALUE, getString(yytext())); }
 
 	{Q} "justify" {Q}
-	{ return symbol(ALIGN_VALUE, yytext()); }
+	{ return symbol(ALIGN_VALUE, getString(yytext())); }
 
 	/* colors */
 	{Q} {Color} {Q}
-	{ return symbol(COLOUR, yytext()); }
+	{ return symbol(COLOUR, getString(yytext())); }
 
 	{Q} "black" {Q}
-	{ return symbol(COLOUR, yytext()); }
+	{ return symbol(COLOUR, getString(yytext())); }
 
 	{Q} "olive" {Q}
-	{ return symbol(COLOUR, yytext()); }
+	{ return symbol(COLOUR, getString(yytext())); }
 
 	{Q} "teal" {Q}
-	{ return symbol(COLOUR, yytext()); }
+	{ return symbol(COLOUR, getString(yytext())); }
 
 	{Q} "red" {Q}
-	{ return symbol(COLOUR, yytext()); }
+	{ return symbol(COLOUR, getString(yytext())); }
 
 	{Q} "blue" {Q}
-	{ return symbol(COLOUR, yytext()); }
+	{ return symbol(COLOUR, getString(yytext())); }
 
 	{Q} "maroon" {Q}
-	{ return symbol(COLOUR, yytext()); }
+	{ return symbol(COLOUR, getString(yytext())); }
 
 	{Q} "navy" {Q}
-	{ return symbol(COLOUR, yytext()); }
+	{ return symbol(COLOUR, getString(yytext())); }
 
 	{Q} "gray" {Q}
-	{ return symbol(COLOUR, yytext()); }
+	{ return symbol(COLOUR, getString(yytext())); }
 
 	{Q} "lime" {Q}
-	{ return symbol(COLOUR, yytext()); }
+	{ return symbol(COLOUR, getString(yytext())); }
 
 	{Q} "fuchsia" {Q}
-	{ return symbol(COLOUR, yytext()); }
+	{ return symbol(COLOUR, getString(yytext())); }
 
 	{Q} "green" {Q}
-	{ return symbol(COLOUR, yytext()); }
+	{ return symbol(COLOUR, getString(yytext())); }
 
 	{Q} "white" {Q}
-	{ return symbol(COLOUR, yytext()); }
+	{ return symbol(COLOUR, getString(yytext())); }
 
 	{Q} "purple" {Q}
-	{ return symbol(COLOUR, yytext()); }
+	{ return symbol(COLOUR, getString(yytext())); }
 
 	{Q} "silver" {Q}
-	{ return symbol(COLOUR, yytext()); }
+	{ return symbol(COLOUR, getString(yytext())); }
 
 	{Q} "yellow" {Q}
-	{ return symbol(COLOUR, yytext()); }
+	{ return symbol(COLOUR, getString(yytext())); }
 
 	{Q} "aqua" {Q}
-	{ return symbol(COLOUR, yytext()); }
+	{ return symbol(COLOUR, getString(yytext())); }
 
 	/* type */
 	{Q} "text" {Q}
-	{ return symbol(TYPE_VALUE, yytext()); }
+	{ return symbol(TYPE_VALUE, getString(yytext())); }
 
 	{Q} "number" {Q}
-	{ return symbol(TYPE_VALUE, yytext()); }
+	{ return symbol(TYPE_VALUE, getString(yytext())); }
 
 	{Q} "radio" {Q}
-	{ return symbol(TYPE_VALUE, yytext()); }
+	{ return symbol(TYPE_VALUE, getString(yytext())); }
 
 	{Q} "checkbox" {Q}
-	{ return symbol(TYPE_VALUE, yytext()); }
+	{ return symbol(TYPE_VALUE, getString(yytext())); }
 
 	/* class */
 	{Q} "row" {Q}
-	{ return symbol(CLASS_VALUE, yytext()); }
+	{ return symbol(CLASS_VALUE, getString(yytext())); }
 
 	{Q} "col" {Q}
-	{ return symbol(CLASS_VALUE, yytext()); }
+	{ return symbol(CLASS_VALUE, getString(yytext())); }
 
 	/* measures */
 	{IntegerQuote}
-	{ return symbol(INTQ, yytext()); }
+	{ return symbol(INTQ, getString(yytext())); }
 
 	{Pixels}
-	{ return symbol(PIXEL, yytext()); }
+	{ return symbol(PIXEL, getString(yytext())); }
 
 	{Percentage}
-	{ return symbol(PERCNTG, yytext()); }
+	{ return symbol(PERCNTG, getString(yytext())); }
 
 	{OnClick}
-	{ return symbol(ONCLICK, yytext()); }
+	{ return symbol(ONCLICK, getString(yytext())); }
+
+	{IdV}
+	{ return symbol(ID_V, yytext()); }
 
 	/* Id */
 	{Id}
-	{ return symbol(ID_, yytext()); }
+	{ return symbol(ID_, getString(yytext())); }
 
 	{Url}
-	{ return symbol(URL, yytext()); }
+	{ return symbol(URL, getString(yytext())); }
 
-	{Str}
-	{ return symbol(STRING, yytext()); }
+	{string}
+	{ return symbol(STRING, getString(yytext())); }
 
 	/* numbers */
 	{Integer}
@@ -479,6 +492,9 @@ Script = {c} "_" {s}{r}{c}{i}{p}{t}{i}{n}{g}
 
 	")"
 	{ return symbol(RPAREN, yytext()); }
+
+	","
+	{ return symbol(COMMA, yytext()); }
 
 	{In}
 	{ return symbol(IN, yytext()); }

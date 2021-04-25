@@ -38,24 +38,30 @@ terminal GCIC, HEAD, TITLE, LINK, BODY, SPAM, INPUT, TXTAREA, SELECT, OPTION, DI
 terminal FONTF, ALIGN, ALING_VALUE, TYPE, ID, NAME, COLS, ROW, CLASS, SRC, WIDTH, HEIGHT, ALT, CLICK, INTEGER, DECIMAL, BOOL, TRUE, FALSE;
 terminal CHAR, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_N, ALERT, EXIT, GLOBAL, HEX, COLOUR, INTQ, PIXEL, PERCENTG, ID_, INT, DEC;
 terminal GREATER, SMALLER, LBRACE, RBRACE, LBRACKET, RBRACKET, COLON, SEMI, EQEQ, NEQ, GRTREQ, SMLLREQ, OR, AND, NOT, PLUS, MINUS, TIMES, DIVIDE;
-terminal URL, LPAREN, RPAREN, EQUAL, STRING, PERCNTG, ROWS, FONTF_VALUE, QUOTE, ERROR;
-terminal TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE;
-terminal ON_LOAD, ONCLICK, IN;
+terminal URL, LPAREN, RPAREN, EQUAL, PERCNTG, ROWS, FONTF_VALUE, QUOTE, ERROR;
+terminal TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE, COMMA;
+terminal ON_LOAD, ONCLICK, IN, ID_V;
+terminal String STRING;
 
 non terminal id, name, opt, gcic;
 non terminal params, head, title, link, bckgrnd_clr, font_size, font_family;
 non terminal text_align, type, cls_rws, cols_rows, clss, url, href_src, width_height, w_h, pxl_per;
-non terminal alt, body, spam, input, txtarea, select, option, div, img, br, button, h1, paragraph;
+non terminal alt, body, spam, input, txtarea, select, option, div, img, br, button, h1, paragraph, script, scripting;
 non terminal param, onclick;
-non terminal clgcic, clhead, cltitle, cllink, clbody, clspam, clinput, cltxtarea, clselect, cloption, cldiv, climg, clbutton, clh1, clparagraph;
-non terminal c_gcic, c_title, c_link, c_spam, c_h1, c_button, c_p, c_img, c_input, c_txtarea, c_option, make_option, c_select, c_div;
-non terminal c_head, head_opt, h_opt;
+non terminal clgcic, clhead, cltitle, cllink, clbody, clspam, clinput, cltxtarea, clselect, cloption, cldiv, climg, clbutton, clh1, clparagraph, clscript;
+non terminal c_gcic, c_title, c_link, c_spam, c_h1, c_button, c_paragraph, c_img, c_input, c_txtarea, c_option, make_option, c_select, c_div;
+non terminal c_head, head_opt, h_opt, c_body, body_opt, b_opt, str, c_script;
+non terminal make_script, int_stat, make_int, str_stat, make_str, dec_stat, make_dec, bool_stat, make_bool;
 
+non terminal Double s, t, u, v;
 non terminal List<String> in;
-non terminal String color;
+non terminal String color, w, x;
+non terminal Boolean mode, boolean_val;
+non terminal Boolean a, b, c, d, comp;
 
+/* gramatica principal */
 c_gcic ::=
-				c_head
+				gcic c_head c_body clgcic
 				;
 
 c_head ::=
@@ -71,11 +77,180 @@ h_opt ::=
 				| c_link
 				;
 
+c_body ::= body body_opt clbody
+				;
+
+body_opt ::=
+				body_opt b_opt
+				|
+				;
+
+b_opt ::=
+				c_h1
+				| c_paragraph
+				|	c_spam
+				| c_input
+				| c_txtarea
+				| c_select
+				| c_img
+				| c_button
+				| c_div
+				| br
+				| c_script
+				;
+
+c_script ::=
+				script make_script clscript
+				;
+
+make_script ::=
+				make_script scripting
+				|
+				;
+
+scripting ::=
+				INT make_int SEMI
+				| STR make_str SEMI
+				| DEC make_dec SEMI
+				| BOOL make_bool SEMI
+				;
+
+make_int ::=
+				make_int COMMA int_stat
+				| int_stat
+				;
+
+int_stat ::=
+				mode ID_V:p EQUAL s:n1
+				{: System.out.println("integer: " + p + " -> " + n1.intValue()); :}
+				| mode ID_V
+				;
+
+make_dec ::=
+				make_dec COMMA dec_stat
+				| dec_stat
+				;
+
+dec_stat ::=
+				mode ID_V:p EQUAL s:d1
+				{: System.out.println("decimal: " + p + " -> " + Math.round(d1 * 10000d)/10000d); :}
+				| mode ID_V
+				;
+
+make_bool ::=
+				make_bool COMMA bool_stat
+				| bool_stat
+				;
+
+bool_stat ::=
+				mode ID_V:p EQUAL a:s
+				{: System.out.println("boolean: " + p + " -> " + s); :}
+				| mode ID_V
+				;
+
+make_str ::=
+				make_str COMMA str_stat
+				| str_stat
+				;
+
+str_stat ::=
+				mode ID_V:p EQUAL w:s1
+				{: System.out.println("string: " + p + " -> " + s1); :}
+				| mode ID_V
+				;
+
+mode ::=
+				GLOBAL:s
+				{: RESULT = true; :}
+				|
+				{: RESULT = false; :}
+				;
+
+/* Operaciones aritmeticas */
+s ::=
+				s:n1 PLUS t:n2 {: RESULT = n1 + n2; :}
+				| s:n1 MINUS t:n2 {: RESULT = n1 - n2; :}
+				| t:n1 {: RESULT = n1; :}
+				;
+
+t ::=
+				t:n1 TIMES u:n2 {: RESULT = n1 * n2; :}
+				| t:n1 DIVIDE u:n2 {: RESULT = n1 / n2; :}
+				| u:n1 {: RESULT = n1; :}
+				;
+
+u ::=
+				MINUS u:n1 {: RESULT = -n1; :}
+				| v:n1 {: RESULT = n1; :}
+				;
+
+v ::=
+				INTEGER:n1 {: RESULT = Double.valueOf(n1.toString()); :}
+				| DECIMAL:n1 {: RESULT = Double.valueOf(n1.toString()); :}
+				| LPAREN s:n2 RPAREN {: RESULT = n2; :}
+				;
+/* Operaciones aritmeticas */
+
+/* Concatenar string */
+w ::=
+				w:s1 PLUS x:s2
+					{:
+						RESULT = s1.concat(s2);
+					:}
+				| x:s1 {: RESULT = s1; :}
+				;
+
+x ::=
+				STRING:s1 {: RESULT = s1.toString(); :}
+				| ID_:s1 {: RESULT = s1.toString(); :}
+				| INTEGER:s1 {: RESULT = s1.toString(); :}
+				| DECIMAL:s1 {: RESULT = s1.toString(); :}
+				// | s: s1 {: RESULT = s1.toString(); :}
+				;
+/* Concatenar string */
+
+/* Operaciones logicas */
+a ::=
+        a:b1 OR b:b2 {: RESULT = b1 || b2; :}
+        | b:b1 {: RESULT = b1; :}
+        ;
+
+b ::=
+        b:b1 AND c:b2 {: RESULT = b1 && b2; :}
+        | c:b1 {: RESULT = b1; :}
+        ;
+
+c ::=
+        NOT d:b1 {: RESULT = !b1; :}
+        | d:b1 {: RESULT = b1; :}
+        ;
+
+d ::=
+        boolean_val:b1 {: RESULT = b1; :}
+				| comp:b1 {: RESULT = b1; :}
+        | LPAREN a:b1 RPAREN {: RESULT = b1; :}
+        ;
+
+boolean_val ::=
+				TRUE {: RESULT = true; :}
+				| FALSE {: RESULT = false; :}
+				;
+
+comp ::=
+				s:n1 SMALLER s:n2 {: RESULT = n1 < n2; :}
+				| s:n1 GREATER s:n2 {: RESULT = n1 > n2; :}
+				| s:n1 GRTREQ s:n2 {: RESULT = n1 >= n2; :}
+				| s:n1 SMLLREQ s:n2 {: RESULT = n1 <= n2; :}
+				| s:n1 EQEQ s:n2 {: RESULT = n1 == n2; :}
+				| s:n1 NEQ s:n2 {: RESULT = n1 != n2; :}
+				// | w:s1 EQEQ w:s2 {: RESULT = s1.equals(s2); :}
+				// | w:s1 NEQ w:s2 {: RESULT = !s1.equals(s2); :}
+				;
+/* Operaciones logicas */
+
 c_title ::=
 				title in:list cltitle
-					{:
-						System.out.println("Titulo: " + list);
-					:}
+				{: System.out.println("Titulo: " + list); :}
 				;
 
 c_link ::=
@@ -96,7 +271,7 @@ c_h1 ::=
 					:}
 				;
 
-c_p ::=
+c_paragraph ::=
 				paragraph in:list clparagraph
 					{: System.out.println("paragraph: " + list); :}
 				;
@@ -132,20 +307,25 @@ c_img ::=
 				;
 
 c_div ::=
-				div cldiv;
+				div body_opt cldiv;
 
 /* contet for p and h1 */
 in ::=
-			in:str IN:s
+			in:list str:s
 				{:
-					str.add(s.toString());
-					RESULT = str;
+					list.add(s.toString());
+					RESULT = list;
 				:}
 			| /* lambda */
 				{:
-					List<String> str = new ArrayList<>();
-					RESULT = str;
+					List<String> list = new ArrayList<>();
+					RESULT = list;
 				:}
+			;
+
+str ::=
+			IN:s {: RESULT = s; :}
+			| ID_V:s {: RESULT = s; :}
 			;
 
 /* Etiqueta de apertura <C_GCIC> */
@@ -153,7 +333,7 @@ gcic ::=
 				SMALLER GCIC params GREATER
 				| error GCIC params GREATER
 				| SMALLER error params GREATER
-				| SMALLER GCIC params error
+				// | SMALLER GCIC params error
 				;
 
 /* <C_HEAD> */
@@ -176,7 +356,7 @@ title ::=
 link ::=
 				SMALLER LINK params GREATER
 				| error LINK params GREATER
-				| SMALLER error params GREATER
+				// | SMALLER error params GREATER
 				// | SMALLER LINK params error
 				;
 
@@ -185,14 +365,14 @@ body ::=
 				SMALLER BODY params GREATER
 				| error BODY params GREATER
 				| SMALLER error params GREATER
-				| SMALLER BODY params error
+				// | SMALLER BODY params error
 				;
 
 /* <C_SPAM> */
 spam ::=
 				SMALLER SPAM params GREATER
 				| error SPAM params GREATER
-				| SMALLER error params GREATER
+				// | SMALLER error params GREATER
 				// | SMALLER SPAM params error
 				;
 
@@ -200,7 +380,7 @@ spam ::=
 input ::=
 				SMALLER INPUT params GREATER
 				| error INPUT params GREATER
-				| SMALLER error params GREATER
+				// | SMALLER error params GREATER
 				// | SMALLER INPUT params error
 				;
 
@@ -208,7 +388,7 @@ input ::=
 txtarea ::=
 				SMALLER TXTAREA params GREATER
 				| error TXTAREA params GREATER
-				| SMALLER error params GREATER
+				// | SMALLER error params GREATER
 				// | SMALLER TXTAREA params error
 				;
 
@@ -216,7 +396,7 @@ txtarea ::=
 select ::=
 				SMALLER SELECT params GREATER
 				| error SELECT params GREATER
-				| SMALLER error params GREATER
+				// | SMALLER error params GREATER
 				// | SMALLER SELECT params error
 				;
 
@@ -232,7 +412,7 @@ option ::=
 div ::=
 				SMALLER DIV params GREATER
 				| error DIV params GREATER
-				| SMALLER error params GREATER
+				// | SMALLER error params GREATER
 				// | SMALLER DIV params error
 				;
 
@@ -240,7 +420,7 @@ div ::=
 img ::=
 				SMALLER IMG params GREATER
 				| error IMG params GREATER
-				| SMALLER error params GREATER
+				// | SMALLER error params GREATER
 				// | SMALLER IMG params error
 				;
 
@@ -248,7 +428,7 @@ img ::=
 br ::=
 				SMALLER BR GREATER
 				| error BR GREATER
-				| SMALLER error GREATER
+				// | SMALLER error GREATER
 				| SMALLER BR error
 				;
 
@@ -256,7 +436,7 @@ br ::=
 button ::=
 				SMALLER BUTTON params GREATER
 				| error BUTTON params GREATER
-				| SMALLER error params GREATER
+				// | SMALLER error params GREATER
 				// | SMALLER BUTTON params error
 				;
 
@@ -272,8 +452,14 @@ h1 ::=
 paragraph ::=
 				SMALLER PARAGRAPH params GREATER
 				| error PARAGRAPH params GREATER
-				| SMALLER error params GREATER
+				// | SMALLER error params GREATER
 				// | SMALLER PARAGRAPH params error
+				;
+
+/* <C_SCRIPTING> */
+script ::=
+				SMALLER SCRIPT GREATER
+				| error SCRIPT GREATER
 				;
 
 /* parametros de las etiquetas */
@@ -583,4 +769,13 @@ clparagraph ::=
 				| SMALLER error PARAGRAPH GREATER
 				| SMALLER DIVIDE error GREATER
 				| SMALLER DIVIDE PARAGRAPH error
+				;
+
+/* <C_SCRIPTING> */
+clscript ::=
+				SMALLER DIVIDE SCRIPT GREATER
+				| error DIVIDE SCRIPT GREATER
+				| SMALLER error SCRIPT GREATER
+				| SMALLER DIVIDE error GREATER
+				| SMALLER DIVIDE SCRIPT error
 				;
