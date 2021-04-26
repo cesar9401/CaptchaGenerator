@@ -1,5 +1,7 @@
 package com.cesar31.captchaweb.parser;
 
+import com.cesar31.captchaweb.model.*;
+import com.cesar31.captchaweb.control.*;
 import java_cup.runtime.Symbol;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,10 +10,13 @@ class CaptchaParser;
 
 parser code {:
 
+	private Operation op;
+
 	private Symbol cur_token;
 
 	public CaptchaParser(CaptchaLex lex) {
 		super(lex);
+		this.op = new Operation();
 	}
 
 	public void syntax_error(Symbol cur_token) {
@@ -34,15 +39,15 @@ parser code {:
 
 :}
 
-terminal GCIC, HEAD, TITLE, LINK, BODY, SPAM, INPUT, TXTAREA, SELECT, OPTION, DIV, IMG, BR, BUTTON, H1, PARAGRAPH, SCRIPT, HREF, BCKGRND, COLOR, FONTS;
-terminal FONTF, ALIGN, ALING_VALUE, TYPE, ID, NAME, COLS, ROW, CLASS, SRC, WIDTH, HEIGHT, ALT, CLICK, INTEGER, DECIMAL, BOOL, TRUE, FALSE;
-terminal CHR, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_N, ALERT, EXIT, GLOBAL, HEX, COLOUR, INTQ, PIXEL, PERCENTG, ID_, INT, DEC;
-terminal GREATER, SMALLER, LBRACE, RBRACE, LBRACKET, RBRACKET, COLON, SEMI, EQEQ, NEQ, GRTREQ, SMLLREQ, OR, AND, NOT, PLUS, MINUS, TIMES, DIVIDE;
-terminal URL, LPAREN, RPAREN, EQUAL, PERCNTG, ROWS, FONTF_VALUE, QUOTE, ERROR;
-terminal TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE, COMMA;
-terminal ON_LOAD, ONCLICK, IN, ID_V;
-terminal String STRING;
-terminal CHAR;
+terminal Token GCIC, HEAD, TITLE, LINK, BODY, SPAM, INPUT, TXTAREA, SELECT, OPTION, DIV, IMG, BR, BUTTON, H1, PARAGRAPH, SCRIPT, HREF, BCKGRND, COLOR, FONTS;
+terminal Token FONTF, ALIGN, ALING_VALUE, TYPE, ID, NAME, COLS, ROW, CLASS, SRC, WIDTH, HEIGHT, ALT, CLICK, INTEGER, DECIMAL, BOOL, TRUE, FALSE;
+terminal Token CHR, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_N, ALERT, EXIT, GLOBAL, HEX, COLOUR, INTQ, PIXEL, PERCENTG, ID_, INT, DEC;
+terminal Token GREATER, SMALLER, LBRACE, RBRACE, LBRACKET, RBRACKET, COLON, SEMI, EQEQ, NEQ, GRTREQ, SMLLREQ, OR, AND, NOT, PLUS, MINUS, TIMES, DIVIDE;
+terminal Token URL, LPAREN, RPAREN, EQUAL, PERCNTG, ROWS, FONTF_VALUE, QUOTE, ERROR;
+terminal Token TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE, COMMA;
+terminal Token ON_LOAD, ONCLICK, IN, ID_V;
+terminal Token STRING;
+terminal Token CHAR;
 
 non terminal id, name, opt, gcic;
 non terminal params, head, title, link, bckgrnd_clr, font_size, font_family;
@@ -51,15 +56,16 @@ non terminal alt, body, spam, input, txtarea, select, option, div, img, br, butt
 non terminal param, onclick;
 non terminal clgcic, clhead, cltitle, cllink, clbody, clspam, clinput, cltxtarea, clselect, cloption, cldiv, climg, clbutton, clh1, clparagraph, clscript;
 non terminal c_gcic, c_title, c_link, c_spam, c_h1, c_button, c_paragraph, c_img, c_input, c_txtarea, c_option, make_option, c_select, c_div;
-non terminal c_head, head_opt, h_opt, c_body, body_opt, b_opt, str, c_script;
+non terminal c_head, head_opt, h_opt, c_body, body_opt, b_opt, c_script;
 non terminal make_script, int_stat, make_int, str_stat, make_str, dec_stat, make_dec, bool_stat, make_bool;
 non terminal char_stat, make_char;
 
-non terminal Double s, t, u, v;
-non terminal List<String> in;
-non terminal String color, w, x;
-non terminal Boolean mode, boolean_val;
-non terminal Boolean a, b, c, d, comp;
+non terminal Variable s, t, u, v;
+non terminal Variable a, b, c, d, comp, boolean_val;
+non terminal List<Token> in;
+non terminal String color, w;
+non terminal Boolean mode;
+non terminal Token str, string;
 
 /* gramatica principal */
 c_gcic ::=
@@ -124,8 +130,8 @@ make_int ::=
 				;
 
 int_stat ::=
-				mode ID_V:p EQUAL s:n1
-					{: System.out.println("integer: " + p + " -> " + n1.intValue()); :}
+				mode ID_V:p EQUAL a:n1
+					{: System.out.println("integer: " + p.getValue() + " -> " + n1); :}
 				| mode ID_V
 				;
 
@@ -135,8 +141,8 @@ make_dec ::=
 				;
 
 dec_stat ::=
-				mode ID_V:p EQUAL s:d1
-					{: System.out.println("decimal: " + p + " -> " + Math.round(d1 * 10000d)/10000d); :}
+				mode ID_V:p EQUAL a:d1
+					{: System.out.println("decimal: " + p.getValue() + " -> " + d1); :}
 				| mode ID_V
 				;
 
@@ -147,7 +153,7 @@ make_bool ::=
 
 bool_stat ::=
 				mode ID_V:p EQUAL a:s
-					{: System.out.println("boolean: " + p + " -> " + s); :}
+					{: System.out.println("boolean: " + p.getValue() + " -> " + s); :}
 				| mode ID_V
 				;
 
@@ -158,7 +164,7 @@ make_char ::=
 
 char_stat ::=
 				mode ID_V:p EQUAL CHAR:ch
-					{: System.out.println("char: " + p + " -> " + ch); :}
+					{: System.out.println("char: " + p.getValue() + " -> " + ch); :}
 				| mode ID_V
 				;
 
@@ -168,8 +174,8 @@ make_str ::=
 				;
 
 str_stat ::=
-				mode ID_V:p EQUAL w:s1
-					{: System.out.println("string: " + p + " -> " + s1); :}
+				mode ID_V:p EQUAL a:s1
+					{: System.out.println("string: " + p.getValue() + " -> " + s1); :}
 				| mode ID_V
 				;
 
@@ -180,89 +186,72 @@ mode ::=
 				{: RESULT = false; :}
 				;
 
-/* Operaciones aritmeticas */
-s ::=
-				s:n1 PLUS t:n2 {: RESULT = n1 + n2; :}
-				| s:n1 MINUS t:n2 {: RESULT = n1 - n2; :}
-				| t:n1 {: RESULT = n1; :}
-				;
-
-t ::=
-				t:n1 TIMES u:n2 {: RESULT = n1 * n2; :}
-				| t:n1 DIVIDE u:n2 {: RESULT = n1 / n2; :}
-				| u:n1 {: RESULT = n1; :}
-				;
-
-u ::=
-				MINUS u:n1 {: RESULT = -n1; :}
-				| v:n1 {: RESULT = n1; :}
-				;
-
-v ::=
-				INTEGER:n1 {: RESULT = Double.valueOf(n1.toString()); :}
-				| DECIMAL:n1 {: RESULT = Double.valueOf(n1.toString()); :}
-				| CHAR:n1 {: RESULT = (double)((int) n1.toString().charAt(0)); :}
-				| LPAREN s:n2 RPAREN {: RESULT = n2; :}
-				;
-/* Operaciones aritmeticas */
-
-/* Concatenar string */
-w ::=
-				w:s1 PLUS x:s2
-					{:
-						RESULT = s1.concat(s2);
-					:}
-				| x:s1 {: RESULT = s1; :}
-				;
-
-x ::=
-				STRING:s1 {: RESULT = s1.toString(); :}
-				| ID_:s1 {: RESULT = s1.toString(); :}
-				| INTEGER:s1 {: RESULT = s1.toString(); :}
-				| DECIMAL:s1 {: RESULT = s1.toString(); :}
-				| CHAR:s1 {: RESULT = s1.toString(); :}
-				// | s: s1 {: RESULT = s1.toString(); :}
-				;
-/* Concatenar string */
-
-/* Operaciones logicas */
+/* Operaciones logicas y aritmeticas */
 a ::=
-        a:b1 OR b:b2 {: RESULT = b1 || b2; :}
+        a:b1 OR b:b2 {: RESULT = op.or(b1, b2); :}
         | b:b1 {: RESULT = b1; :}
         ;
 
 b ::=
-        b:b1 AND c:b2 {: RESULT = b1 && b2; :}
+        b:b1 AND c:b2 {: RESULT = op.and(b1, b2); :}
         | c:b1 {: RESULT = b1; :}
         ;
 
 c ::=
-        NOT d:b1 {: RESULT = !b1; :}
+        NOT d:b1 {: RESULT = op.not(b1); :}
         | d:b1 {: RESULT = b1; :}
         ;
 
 d ::=
-        boolean_val:b1 {: RESULT = b1; :}
-				| comp:b1 {: RESULT = b1; :}
-        | LPAREN a:b1 RPAREN {: RESULT = b1; :}
-        ;
+				s:n1 SMALLER s:n2 {: RESULT = op.compare(n1, n2, Compare.SMALLER); :}
+				| s:n1 GREATER s:n2 {: RESULT = op.compare(n1, n2, Compare.GREATER); :}
+				| s:n1 GRTREQ s:n2 {: RESULT = op.compare(n1, n2, Compare.GREATER_OR_EQUAL); :}
+				| s:n1 SMLLREQ s:n2 {: RESULT = op.compare(n1, n2, Compare.LESS_OR_EQUAL); :}
+				| s:n1 EQEQ s:n2 {: RESULT = op.compare(n1, n2, Compare.EQUAL); :}
+				| s:n1 NEQ s:n2 {: RESULT = op.compare(n1, n2, Compare.NOT_EQUAL); :}
+				| s:n1 {: RESULT = n1; :}
+				;
 
+s ::=
+				s:n1 PLUS t:n2 {: RESULT = op.sum(n1, n2); :}
+				| s:n1 MINUS t:n2 {: RESULT = op.subtraction(n1, n2); :}
+				| t:n1 {: RESULT = n1; :}
+				;
+
+t ::=
+				t:n1 TIMES u:n2 {: RESULT = op.multiplication(n1, n2); :}
+				| t:n1 DIVIDE u:n2 {: RESULT = op.division(n1, n2); :}
+				| u:n1 {: RESULT = n1; :}
+				;
+
+u ::=
+				MINUS v:n1 {: RESULT = op.uminus(n1); :}
+				| v:n1 {: RESULT = n1; :}
+				;
+
+v ::=
+				INTEGER:n1 {: RESULT = new Variable(Var.INTEGER, n1.getValue()); :}
+				| DECIMAL:n1 {: RESULT = new Variable(Var.DECIMAL, n1.getValue()); :}
+				| string:s1 {: RESULT = new Variable(Var.STRING, s1.getValue()); :}
+				| CHAR:ch1 {: RESULT = new Variable(Var.CHAR, ch1.getValue()); :}
+				| boolean_val:b1 {: RESULT = b1; :}
+				| LPAREN a:n1 RPAREN {: RESULT = n1; :}
+				;
+/* Operaciones logicas y aritmeticas */
+
+/* string */
+string ::=
+				STRING:s1 {: RESULT = s1; :}
+				| ID_:s1 {: RESULT = s1; :}
+				;
+/* string */
+
+/* boolean */
 boolean_val ::=
-				TRUE {: RESULT = true; :}
-				| FALSE {: RESULT = false; :}
+				TRUE:b1 {: RESULT = new Variable(Var.BOOLEAN, b1.getValue()); :}
+				| FALSE:b1 {: RESULT = new Variable(Var.BOOLEAN, b1.getValue()); :}
 				;
-
-comp ::=
-				s:n1 SMALLER s:n2 {: RESULT = n1 < n2; :}
-				| s:n1 GREATER s:n2 {: RESULT = n1 > n2; :}
-				| s:n1 GRTREQ s:n2 {: RESULT = n1 >= n2; :}
-				| s:n1 SMLLREQ s:n2 {: RESULT = n1 <= n2; :}
-				| s:n1 EQEQ s:n2 {: RESULT = n1 == n2; :}
-				| s:n1 NEQ s:n2 {: RESULT = n1 != n2; :}
-				// | w:s1 EQEQ w:s2 {: RESULT = s1.equals(s2); :}
-				// | w:s1 NEQ w:s2 {: RESULT = !s1.equals(s2); :}
-				;
-/* Operaciones logicas */
+/* boolean */
 
 c_title ::=
 				title in:list cltitle
@@ -329,12 +318,12 @@ c_div ::=
 in ::=
 			in:list str:s
 				{:
-					list.add(s.toString());
+					list.add(s);
 					RESULT = list;
 				:}
 			| /* lambda */
 				{:
-					List<String> list = new ArrayList<>();
+					List<Token> list = new ArrayList<>();
 					RESULT = list;
 				:}
 			;

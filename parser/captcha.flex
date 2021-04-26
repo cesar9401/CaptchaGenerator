@@ -1,5 +1,6 @@
 package com.cesar31.captchaweb.parser;
 
+import com.cesar31.captchaweb.model.*;
 import static com.cesar31.captchaweb.parser.CaptchaParserSym.*;
 import java_cup.runtime.*;
 
@@ -17,11 +18,13 @@ import java_cup.runtime.*;
 
 %{
 		private Symbol symbol(int type) {
-			return new Symbol(type, yyline + 1, yycolumn + 1);
+			return new Symbol(type, yyline + 1, yycolumn + 1, new Token(type, yyline + 1, yycolumn + 1));
+			// return new Symbol(type, yyline + 1, yycolumn + 1);
 		}
 
 		private Symbol symbol(int type, Object object) {
-			return new Symbol(type, yyline + 1, yycolumn + 1, object);
+			return new Symbol(type, yyline + 1, yycolumn + 1, new Token(type, (String) object, yyline + 1, yycolumn + 1));
+			// return new Symbol(type, yyline + 1, yycolumn + 1, object);
 		}
 
 		private String getString(String str) {

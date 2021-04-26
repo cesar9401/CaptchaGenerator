@@ -11,18 +11,18 @@ public class Test {
     public static void main(String[] args) {
         String input = "";
         Scanner s = new Scanner(System.in);
-
-        while (true) {
-            System.out.println("Ingrese un palabra: ");
-            input = s.next();
-
-            if (!input.equals("./exit")) {
-                //getGram(input);
-                getInit(input);
-            } else {
-                break;
-            }
-        }
+        
+//        while (true) {
+//            System.out.println("Ingrese un palabra: ");
+//            input = s.next();
+//
+//            if (!input.equals("./exit")) {
+//                //getGram(input);
+//                getInit(input);
+//            } else {
+//                break;
+//            }
+//        }
     }
 
     public static void getInit(String input) {
