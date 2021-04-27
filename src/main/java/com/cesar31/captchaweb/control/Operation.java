@@ -87,6 +87,52 @@ public class Operation {
             v = new Variable(INTEGER, value.toString());
         }
 
+        // integer + boolean
+        if (a.getType() == INTEGER && b.getType() == BOOLEAN) {
+            Integer value = getInteger(a) + getIntValue(b);
+            v = new Variable(INTEGER, value.toString());
+        }
+
+        // boolean + integer
+        if (a.getType() == BOOLEAN && b.getType() == INTEGER) {
+            Integer value = getIntValue(a) + getInteger(b);
+            v = new Variable(INTEGER, value.toString());
+        }
+
+        // decimal + boolean
+        if (a.getType() == DECIMAL && b.getType() == BOOLEAN) {
+            Double value = formatDouble(getDouble(a) + getIntValue(b));
+            v = new Variable(DECIMAL, value.toString());
+        }
+
+        // boolean + decimal
+        if (a.getType() == BOOLEAN && b.getType() == DECIMAL) {
+            Double value = formatDouble(getIntValue(a) + getDouble(b));
+            v = new Variable(DECIMAL, value.toString());
+        }
+
+        // char + boolean
+        if (a.getType() == CHAR && b.getType() == BOOLEAN) {
+            Integer value = getASCII(a) + getIntValue(b);
+            v = new Variable(INTEGER, value.toString());
+        }
+
+        // boolean + char
+        if (a.getType() == BOOLEAN && b.getType() == CHAR) {
+            Integer value = getIntValue(a) + getASCII(b);
+            v = new Variable(INTEGER, value.toString());
+        }
+
+        // boolean + boolean
+        if (a.getType() == BOOLEAN && b.getType() == BOOLEAN) {
+            Boolean value = getBoolean(a) || getBoolean(b);
+            v = new Variable(BOOLEAN, value.toString());
+        }
+
+        if (v == null) {
+            System.out.println("No es posible realizar: " + a.getType() + " + " + b.getType());
+        }
+
         return v;
     }
 
@@ -148,6 +194,34 @@ public class Operation {
             v = new Variable(INTEGER, value.toString());
         }
 
+        // integer - boolean
+        if (a.getType() == INTEGER && b.getType() == BOOLEAN) {
+            Integer value = getInteger(a) - getIntValue(b);
+            v = new Variable(INTEGER, value.toString());
+        }
+
+        // boolean - integer
+        if (a.getType() == BOOLEAN && b.getType() == INTEGER) {
+            Integer value = getIntValue(a) - getInteger(b);
+            v = new Variable(INTEGER, value.toString());
+        }
+
+        // decimal - boolean
+        if (a.getType() == DECIMAL && b.getType() == BOOLEAN) {
+            Double value = formatDouble(getDouble(a) - getIntValue(b));
+            v = new Variable(DECIMAL, value.toString());
+        }
+
+        // boolean - decimal
+        if (a.getType() == BOOLEAN && b.getType() == DECIMAL) {
+            Double value = formatDouble(getIntValue(a) - getDouble(b));
+            v = new Variable(DECIMAL, value.toString());
+        }
+
+        if (v == null) {
+            System.out.println("No es posible realizar: " + a.getType() + " - " + b.getType());
+        }
+
         return v;
     }
 
@@ -207,6 +281,52 @@ public class Operation {
         if (a.getType() == CHAR && b.getType() == CHAR) {
             Integer value = getASCII(a) * getASCII(b);
             v = new Variable(INTEGER, value.toString());
+        }
+
+        // integer * boolean
+        if (a.getType() == INTEGER && b.getType() == BOOLEAN) {
+            Integer value = getInteger(a) * getIntValue(b);
+            v = new Variable(INTEGER, value.toString());
+        }
+
+        // boolean * integer
+        if (a.getType() == BOOLEAN && b.getType() == INTEGER) {
+            Integer value = getIntValue(a) * getInteger(b);
+            v = new Variable(INTEGER, value.toString());
+        }
+
+        // decimal * boolean
+        if (a.getType() == DECIMAL && b.getType() == BOOLEAN) {
+            Double value = formatDouble(getDouble(a) * getIntValue(b));
+            v = new Variable(DECIMAL, value.toString());
+        }
+
+        // boolean * decimal
+        if (a.getType() == BOOLEAN && b.getType() == DECIMAL) {
+            Double value = formatDouble(getIntValue(a) * getDouble(b));
+            v = new Variable(DECIMAL, value.toString());
+        }
+
+        // char * boolean
+        if (a.getType() == CHAR && b.getType() == BOOLEAN) {
+            Integer value = getASCII(a) * getIntValue(b);
+            v = new Variable(INTEGER, value.toString());
+        }
+
+        // boolean * char
+        if (a.getType() == BOOLEAN && b.getType() == CHAR) {
+            Integer value = getIntValue(a) * getASCII(b);
+            v = new Variable(INTEGER, value.toString());
+        }
+
+        // boolean * boolean
+        if (a.getType() == BOOLEAN && b.getType() == BOOLEAN) {
+            Boolean value = getBoolean(a) && getBoolean(b);
+            v = new Variable(BOOLEAN, value.toString());
+        }
+
+        if (v == null) {
+            System.out.println("No es posible realizar: " + a.getType() + " * " + b.getType());
         }
 
         return v;
@@ -302,6 +422,70 @@ public class Operation {
             }
         }
 
+        // integer / boolean
+        if (a.getType() == INTEGER && b.getType() == BOOLEAN) {
+            if (getIntValue(b) != 0) {
+                Integer value = getInteger(a) / getIntValue(b);
+                v = new Variable(INTEGER, value.toString());
+            } else {
+                System.out.println("Division entre cero");
+            }
+        }
+
+        // boolean / integer
+        if (a.getType() == BOOLEAN && b.getType() == INTEGER) {
+            if (getInteger(b) != 0) {
+                Double value = formatDouble(getIntValue(a).doubleValue() / getDouble(b));
+                v = new Variable(DECIMAL, value.toString());
+            } else {
+                System.out.println("Division entre cero");
+            }
+        }
+
+        // decimal / boolean
+        if (a.getType() == DECIMAL && b.getType() == BOOLEAN) {
+            if (getIntValue(b) != 0) {
+                Double value = formatDouble(getDouble(a) / getIntValue(b).doubleValue());
+                v = new Variable(DECIMAL, value.toString());
+            } else {
+                System.out.println("Division entre cero");
+            }
+        }
+
+        // boolean / decimal
+        if (a.getType() == BOOLEAN && b.getType() == DECIMAL) {
+            if (getDouble(b) != 0) {
+                Double value = formatDouble(getIntValue(a).doubleValue() / getDouble(b));
+                v = new Variable(DECIMAL, value.toString());
+            } else {
+                System.out.println("Division entre cero");
+            }
+        }
+
+        // char / boolean
+        if (a.getType() == CHAR && b.getType() == BOOLEAN) {
+            if (getIntValue(b) != 0) {
+                Integer value = getASCII(a) / getIntValue(b);
+                v = new Variable(INTEGER, value.toString());
+            } else {
+                System.out.println("Division entre cero");
+            }
+        }
+
+        // boolean / char
+        if (a.getType() == BOOLEAN && b.getType() == CHAR) {
+            if (getASCII(b) != 0) {
+                Double value = getIntValue(a).doubleValue() / getASCII(b).doubleValue();
+                v = new Variable(DECIMAL, value.toString());
+            } else {
+                System.out.println("Division entre cero");
+            }
+        }
+
+        if (v == null) {
+            System.out.println("No es posible realizar: " + a.getType() + " / " + b.getType());
+        }
+
         return v;
     }
 
@@ -323,6 +507,10 @@ public class Operation {
             v = new Variable(DECIMAL, value.toString());
         }
 
+        if (v == null) {
+            System.out.println("No es posible realizar: -" + a.getType());
+        }
+
         return v;
     }
 
@@ -339,6 +527,10 @@ public class Operation {
         if (a.getType() == BOOLEAN && b.getType() == BOOLEAN) {
             Boolean value = getBoolean(a) || getBoolean(b);
             v = new Variable(BOOLEAN, value.toString());
+        }
+
+        if (v == null) {
+            System.out.println("No es posible realizar: " + a.getType() + " || " + b.getType());
         }
 
         return v;
@@ -363,6 +555,10 @@ public class Operation {
             System.out.println("No posible realizar: " + a.getType() + " AND " + b.getType());
         }
 
+        if (v == null) {
+            System.out.println("No es posible realizar: " + a.getType() + " && " + b.getType());
+        }
+
         return v;
     }
 
@@ -380,6 +576,10 @@ public class Operation {
             v = new Variable(BOOLEAN, value.toString());
         }
 
+        if (v == null) {
+            System.out.println("No es posible realizar: !" + a.getType());
+        }
+
         return v;
     }
 
@@ -392,7 +592,6 @@ public class Operation {
                 case SMALLER:
                     value = getDouble(a) < getDouble(b);
                     v = new Variable(BOOLEAN, value.toString());
-
                     break;
 
                 case GREATER:
@@ -455,11 +654,30 @@ public class Operation {
             }
         }
 
+        if (a.getType() == BOOLEAN && b.getType() == BOOLEAN) {
+            Boolean value;
+            switch (comp) {
+                case EQUAL:
+                    value = a.getValue().equals(b.getValue());
+                    v = new Variable(BOOLEAN, value.toString());
+                    break;
+
+                case NOT_EQUAL:
+                    value = !a.getValue().equals(b.getValue());
+                    v = new Variable(BOOLEAN, value.toString());
+                    break;
+            }
+        }
+
         if (v == null) {
-            System.out.println("No es posible efectuar: " + a.getValue() + " " + comp + " " + b.getValue());
+            System.out.println("No es posible efectuar: " + a.getType() + " " + getCompareSymbol(comp) + " " + b.getType());
         }
 
         return v;
+    }
+
+    private Integer getIntValue(Variable v) {
+        return (getBoolean(v)) ? 1 : 0;
     }
 
     private Integer getInteger(Variable v) {
@@ -480,5 +698,23 @@ public class Operation {
 
     private Boolean getBoolean(Variable v) {
         return Boolean.valueOf(v.getValue());
+    }
+
+    private String getCompareSymbol(Compare comp) {
+        switch (comp) {
+            case GREATER:
+                return ">";
+            case SMALLER:
+                return "<";
+            case GREATER_OR_EQUAL:
+                return ">=";
+            case LESS_OR_EQUAL:
+                return "<=";
+            case EQUAL:
+                return "==";
+            case NOT_EQUAL:
+                return "!=";
+        }
+        return "";
     }
 }

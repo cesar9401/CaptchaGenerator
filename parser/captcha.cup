@@ -57,15 +57,14 @@ non terminal param, onclick;
 non terminal clgcic, clhead, cltitle, cllink, clbody, clspam, clinput, cltxtarea, clselect, cloption, cldiv, climg, clbutton, clh1, clparagraph, clscript;
 non terminal c_gcic, c_title, c_link, c_spam, c_h1, c_button, c_paragraph, c_img, c_input, c_txtarea, c_option, make_option, c_select, c_div;
 non terminal c_head, head_opt, h_opt, c_body, body_opt, b_opt, c_script;
-non terminal make_script, int_stat, make_int, str_stat, make_str, dec_stat, make_dec, bool_stat, make_bool;
-non terminal char_stat, make_char;
+non terminal make_script, make_var, stat, statement;
 
 non terminal Variable s, t, u, v;
-non terminal Variable a, b, c, d, comp, boolean_val;
+non terminal Variable a, b, c, d, boolean_val;
 non terminal List<Token> in;
-non terminal String color, w;
+non terminal String color;
 non terminal Boolean mode;
-non terminal Token str, string;
+non terminal Token str, string, type_var;
 
 /* gramatica principal */
 c_gcic ::=
@@ -117,65 +116,30 @@ make_script ::=
 				;
 
 scripting ::=
-				INT make_int SEMI
-				| STR make_str SEMI
-				| DEC make_dec SEMI
-				| BOOL make_bool SEMI
-				| CHR make_char SEMI
+				statement
 				;
 
-make_int ::=
-				make_int COMMA int_stat
-				| int_stat
+statement ::=
+				type_var:t make_var SEMI
+					{: System.out.println("Tipo: " + t.getValue()); :}
 				;
 
-int_stat ::=
-				mode ID_V:p EQUAL a:n1
-					{: System.out.println("integer: " + p.getValue() + " -> " + n1); :}
-				| mode ID_V
+type_var ::=
+				INT:t {: RESULT = t; :}
+				| STR:t {: RESULT = t; :}
+				| DEC:t {: RESULT = t; :}
+				| BOOL:t {: RESULT = t; :}
+				| CHR:t {: RESULT = t; :}
 				;
 
-make_dec ::=
-				make_dec COMMA dec_stat
-				| dec_stat
+make_var ::=
+				make_var COMMA stat
+				| stat
 				;
 
-dec_stat ::=
-				mode ID_V:p EQUAL a:d1
-					{: System.out.println("decimal: " + p.getValue() + " -> " + d1); :}
-				| mode ID_V
-				;
-
-make_bool ::=
-				make_bool COMMA bool_stat
-				| bool_stat
-				;
-
-bool_stat ::=
-				mode ID_V:p EQUAL a:s
-					{: System.out.println("boolean: " + p.getValue() + " -> " + s); :}
-				| mode ID_V
-				;
-
-make_char ::=
-				make_char COMMA char_stat
-				| char_stat
-				;
-
-char_stat ::=
-				mode ID_V:p EQUAL CHAR:ch
-					{: System.out.println("char: " + p.getValue() + " -> " + ch); :}
-				| mode ID_V
-				;
-
-make_str ::=
-				make_str COMMA str_stat
-				| str_stat
-				;
-
-str_stat ::=
-				mode ID_V:p EQUAL a:s1
-					{: System.out.println("string: " + p.getValue() + " -> " + s1); :}
+stat ::=
+				mode ID_V:id EQUAL a:v1
+					{: System.out.println(id.getValue() + " -> " + v1.toString()); :}
 				| mode ID_V
 				;
 
@@ -193,12 +157,7 @@ a ::=
         ;
 
 b ::=
-        b:b1 AND c:b2 {: RESULT = op.and(b1, b2); :}
-        | c:b1 {: RESULT = b1; :}
-        ;
-
-c ::=
-        NOT d:b1 {: RESULT = op.not(b1); :}
+        b:b1 AND d:b2 {: RESULT = op.and(b1, b2); :}
         | d:b1 {: RESULT = b1; :}
         ;
 
@@ -225,9 +184,14 @@ t ::=
 				;
 
 u ::=
-				MINUS v:n1 {: RESULT = op.uminus(n1); :}
-				| v:n1 {: RESULT = n1; :}
+				MINUS c:n1 {: RESULT = op.uminus(n1); :}
+				| c:n1 {: RESULT = n1; :}
 				;
+
+c ::=
+        NOT v:b1 {: RESULT = op.not(b1); :}
+        | v:b1 {: RESULT = b1; :}
+        ;
 
 v ::=
 				INTEGER:n1 {: RESULT = new Variable(Var.INTEGER, n1.getValue()); :}

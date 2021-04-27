@@ -15,7 +15,6 @@ public class ParserTest {
         
         String path = "html.gcic";
         
-        
         System.out.println(path.getClass().getSimpleName());
         
         Character ch2 = '/';
