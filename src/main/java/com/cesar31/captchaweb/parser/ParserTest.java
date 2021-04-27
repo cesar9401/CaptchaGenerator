@@ -15,15 +15,6 @@ public class ParserTest {
         
         String path = "html.gcic";
         
-        System.out.println(path.getClass().getSimpleName());
-        
-        Character ch2 = '/';
-        System.out.println(ch2.getClass().getSimpleName());
-        
-        char ch1 = '?';
-        int entero = (int) ch1;
-        System.out.println("entero = " + entero);
-        
         boolean val1 = true && false || !false && true && !(false && true || false);
         boolean val2 = !(3 > 2 || 75 > 3) && !false;
         System.out.println("val2 = " + val2);
@@ -39,7 +30,7 @@ public class ParserTest {
         DBHandler db = new DBHandler();
         String input = db.readData(path);
         
-        System.out.println(input);
+        //System.out.println(input);
         System.out.println("\n");
 
         // getTokens(input);

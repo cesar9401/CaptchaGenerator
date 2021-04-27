@@ -42,9 +42,9 @@ WhiteSpace = {LineTerminator} | [ \t\f]
 
 /* Coments */
 InputCharacter = [^\r\n]
-CommentContent = ([^-]|\-+[^->]|[\->])*
+CommentContent = ([^-]|\-+[^"->"]|\-[>]|\-*[\w<,:;\'\"])*
 EndOfLineComment = "!!" {InputCharacter}* {LineTerminator}?
-BlockComment = "<!--" {CommentContent} "-"+ "->"
+BlockComment = "<!--" {CommentContent} -* "-->"
 
 Comment = {EndOfLineComment} | {BlockComment}
 
@@ -86,7 +86,7 @@ OnClick = {Q} \w+ "(" ")" {Q}
 Url = {Q} "http" "s"? ":" "/"{2,2} [\w\-\.]+ "." \w{2,5} "/"? \S* {Q}
 
 /* Entrada para etiquetas */
-In = [\w\"\'\?\.\\\^\{\}¿¡#$%&:]+
+In = [\w\"\'\?\.\\\^¿¡#$%&]+
 
 /* no case-sensitive */
 a = [aA]
@@ -243,6 +243,33 @@ Script = {c} "_" {s}{c}{r}{i}{p}{t}{i}{n}{g}
 	{ return symbol(CLICK, yytext()); }
 
 	/* reserved words for script */
+	"IF"
+	{ return symbol(IF, yytext()); }
+
+	"THEN"
+	{ return symbol(THEN, yytext()); }
+
+	"ELSE"
+	{ return symbol(ELSE, yytext()); }
+
+	"REPEAT"
+	{ return symbol(REPEAT, yytext()); }
+
+	"HUNTIL"
+	{ return symbol(UNTIL, yytext()); }
+
+	"WHILE"
+	{ return symbol(WHILE, yytext()); }
+
+	"THENWHILE"
+	{ return symbol(THEN_WHILE, yytext()); }
+
+	"INIT"
+	{ return symbol(INIT, yytext()); }
+
+	"END"
+	{ return symbol(END, yytext()); }
+
 	"integer"
 	{ return symbol(INT, yytext()); }
 

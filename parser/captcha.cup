@@ -48,6 +48,7 @@ terminal Token TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE, COMMA;
 terminal Token ON_LOAD, ONCLICK, IN, ID_V;
 terminal Token STRING;
 terminal Token CHAR;
+terminal Token IF, THEN, ELSE, REPEAT, UNTIL, WHILE, THEN_WHILE, INIT, END;
 
 non terminal id, name, opt, gcic;
 non terminal params, head, title, link, bckgrnd_clr, font_size, font_family;
@@ -58,13 +59,16 @@ non terminal clgcic, clhead, cltitle, cllink, clbody, clspam, clinput, cltxtarea
 non terminal c_gcic, c_title, c_link, c_spam, c_h1, c_button, c_paragraph, c_img, c_input, c_txtarea, c_option, make_option, c_select, c_div;
 non terminal c_head, head_opt, h_opt, c_body, body_opt, b_opt, c_script;
 non terminal make_script, make_var, stat, statement;
+non terminal control_if, else_if;
 
 non terminal Variable s, t, u, v;
 non terminal Variable a, b, c, d, boolean_val;
 non terminal List<Token> in;
 non terminal String color;
 non terminal Boolean mode;
-non terminal Token str, string, type_var;
+non terminal Token str, string, type_var, ini;
+
+precedence left ELSE;
 
 /* gramatica principal */
 c_gcic ::=
@@ -117,6 +121,7 @@ make_script ::=
 
 scripting ::=
 				statement
+				| control_if
 				;
 
 statement ::=
@@ -149,6 +154,27 @@ mode ::=
 				|
 				{: RESULT = false; :}
 				;
+
+/* init */
+ini ::=
+				INIT LBRACE COLON COLON RBRACE END
+				;
+/* init */
+
+/* IF */
+control_if ::=
+				IF:i LPAREN a:b1 RPAREN THEN ini else_if
+					{: System.out.println("if -> " + b1 + ": " + i); :}
+				;
+
+else_if ::=
+				ELSE:e IF LPAREN a:b1 RPAREN THEN ini else_if
+					{: System.out.println("else if -> " + b1 + ": " + e); :}
+				| ELSE:e ini
+					{: System.out.println("else: " + e); :}
+				|
+				;
+/* IF */
 
 /* Operaciones logicas y aritmeticas */
 a ::=
