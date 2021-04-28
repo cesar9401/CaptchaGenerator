@@ -4,19 +4,24 @@ import com.cesar31.captchaweb.model.*;
 import com.cesar31.captchaweb.control.*;
 import java_cup.runtime.Symbol;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 class CaptchaParser;
 
 parser code {:
 
+	private List<Err> errors;
 	private Operation op;
+	private BuildTag tag;
 
 	private Symbol cur_token;
 
 	public CaptchaParser(CaptchaLex lex) {
 		super(lex);
 		this.op = new Operation();
+		this.tag = new BuildTag(this);
+		this.errors = new ArrayList<>();
 	}
 
 	public void syntax_error(Symbol cur_token) {
@@ -33,6 +38,10 @@ parser code {:
 		System.out.println("");
 	}
 
+	public List<Err> getErrors() {
+		return this.errors;
+	}
+
 	protected int error_sync_size() {
 		return 1;
 	}
@@ -40,35 +49,29 @@ parser code {:
 :}
 
 terminal Token GCIC, HEAD, TITLE, LINK, BODY, SPAM, INPUT, TXTAREA, SELECT, OPTION, DIV, IMG, BR, BUTTON, H1, PARAGRAPH, SCRIPT, HREF, BCKGRND, COLOR, FONTS;
-terminal Token FONTF, ALIGN, ALING_VALUE, TYPE, ID, NAME, COLS, ROW, CLASS, SRC, WIDTH, HEIGHT, ALT, CLICK, INTEGER, DECIMAL, BOOL, TRUE, FALSE;
-terminal Token CHR, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_N, ALERT, EXIT, GLOBAL, HEX, COLOUR, INTQ, PIXEL, PERCENTG, ID_, INT, DEC;
+terminal Token FONTF, ALIGN, TYPE, ID, NAME, COLS, ROW, CLASS, SRC, WIDTH, HEIGHT, ALT, CLICK, INTEGER, DECIMAL, BOOL, TRUE, FALSE;
+terminal Token CHR, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_N, ALERT, EXIT, GLOBAL, HEX, COLOUR, INTQ, PIXEL, PERCNTG, ID_, INT, DEC;
 terminal Token GREATER, SMALLER, LBRACE, RBRACE, LBRACKET, RBRACKET, COLON, SEMI, EQEQ, NEQ, GRTREQ, SMLLREQ, OR, AND, NOT, PLUS, MINUS, TIMES, DIVIDE;
-terminal Token URL, LPAREN, RPAREN, EQUAL, PERCNTG, ROWS, FONTF_VALUE, QUOTE, ERROR;
-terminal Token TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE, COMMA;
-terminal Token ON_LOAD, ONCLICK, IN, ID_V;
-terminal Token STRING;
-terminal Token CHAR;
-terminal Token IF, THEN, ELSE, REPEAT, UNTIL, WHILE, THEN_WHILE, INIT, END;
+terminal Token URL, LPAREN, RPAREN, EQUAL, ROWS, FONTF_VALUE, QUOTE, ERROR;
+terminal Token TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE, COMMA, ON_LOAD, ONCLICK, IN, ID_V;
+terminal Token STRING, CHAR, IF, THEN, ELSE, REPEAT, UNTIL, WHILE, THEN_WHILE, INIT, END;
 
-non terminal id, name, opt, gcic;
-non terminal params, head, title, link, bckgrnd_clr, font_size, font_family;
-non terminal text_align, type, cls_rws, cols_rows, clss, url, href_src, width_height, w_h, pxl_per;
-non terminal alt, body, spam, input, txtarea, select, option, div, img, br, button, h1, paragraph, script, scripting;
-non terminal param, onclick;
+non terminal head, title, option, br, script, scripting;
 non terminal clgcic, clhead, cltitle, cllink, clbody, clspam, clinput, cltxtarea, clselect, cloption, cldiv, climg, clbutton, clh1, clparagraph, clscript;
 non terminal c_gcic, c_title, c_link, c_spam, c_h1, c_button, c_paragraph, c_img, c_input, c_txtarea, c_option, make_option, c_select, c_div;
 non terminal c_head, head_opt, h_opt, c_body, body_opt, b_opt, c_script;
 non terminal make_script, make_var, stat, statement;
-non terminal control_if, else_if;
+non terminal control_if, else_if, control_while, control_repeat, instruction, instructions, control, make_ins, type_instruction, assignment;
 
-non terminal Variable s, t, u, v;
-non terminal Variable a, b, c, d, boolean_val;
+non terminal Variable s, t, u, v, control_stat, a, b, c, d, boolean_val;
 non terminal List<Token> in;
-non terminal String color;
+non terminal Param color, url, cls_rws, w_h;
 non terminal Boolean mode;
-non terminal Token str, string, type_var, ini;
+non terminal Token str, string, type_var, ini, pxl_per;
+non terminal Parameter id, name, href_src, bckgrnd_clr, font_size, font_family, text_align, type, cols_rows, clss, width_height, alt, onclick, opt, param;
+non terminal List<Parameter> params;
+non terminal HashMap<Param, Parameter> paragraph, button, h1, div, img, body, spam, input, txtarea, select, link, gcic;
 
-precedence left ELSE;
 
 /* gramatica principal */
 c_gcic ::=
@@ -121,12 +124,18 @@ make_script ::=
 
 scripting ::=
 				statement
-				| control_if
+				| assignment
+				| control
 				;
 
 statement ::=
 				type_var:t make_var SEMI
 					{: System.out.println("Tipo: " + t.getValue()); :}
+				;
+
+assignment ::=
+				ID_V:id EQUAL a:v1 SEMI
+					{: System.out.println("Asignacion: " + id.getValue() + " = " + v1); :}
 				;
 
 type_var ::=
@@ -155,26 +164,75 @@ mode ::=
 				{: RESULT = false; :}
 				;
 
+/* instruction */
+make_ins ::=
+				make_ins instructions
+				| instructions
+				;
+
+instructions ::=
+				control
+				| instruction
+				;
+
+instruction ::=
+				statement
+				| assignment
+				;
+/* instruction */
+
 /* init */
 ini ::=
-				INIT LBRACE COLON COLON RBRACE END
+				INIT LBRACE COLON make_ins COLON RBRACE END
+				;
+
+type_instruction ::=
+				instruction
+				| ini
 				;
 /* init */
 
+/* IF - WHILE- REPEAT */
+control ::=
+				control_if
+				| control_while
+				| control_repeat
+				;
+
 /* IF */
 control_if ::=
-				IF:i LPAREN a:b1 RPAREN THEN ini else_if
+				IF:i LPAREN a:b1 RPAREN THEN type_instruction else_if
 					{: System.out.println("if -> " + b1 + ": " + i); :}
 				;
 
 else_if ::=
-				ELSE:e IF LPAREN a:b1 RPAREN THEN ini else_if
+				ELSE:e IF LPAREN a:b1 RPAREN THEN type_instruction else_if
 					{: System.out.println("else if -> " + b1 + ": " + e); :}
-				| ELSE:e ini
+				| ELSE:e type_instruction
 					{: System.out.println("else: " + e); :}
 				|
 				;
 /* IF */
+
+/* WHILE */
+control_while ::=
+				WHILE LPAREN a:b1 RPAREN THEN_WHILE type_instruction
+					{: System.out.println("while -> " + b1); :}
+				;
+/* WHILE */
+
+/* REPEAT */
+control_repeat ::=
+				REPEAT LPAREN control_stat:b1 RPAREN UNTIL LPAREN a:b2 RPAREN type_instruction
+					{: System.out.println("repeat -> " + b1 + " until ->" + b2); :}
+				;
+
+control_stat ::=
+				INT ID_V EQUAL a:b1 {: RESULT = b1; :}
+				| ID_V EQUAL a:b1 {: RESULT = b1; :}
+				;
+/* REPEAT */
+/* IF - WHILE- REPEAT */
 
 /* Operaciones logicas y aritmeticas */
 a ::=
@@ -233,6 +291,15 @@ v ::=
 string ::=
 				STRING:s1 {: RESULT = s1; :}
 				| ID_:s1 {: RESULT = s1; :}
+				| INTQ:s1 {: RESULT = s1; :}
+				| FONTF_VALUE:s1 {: RESULT = s1; :}
+				| ALIGN_VALUE:s1 {: RESULT = s1; :}
+				| COLOUR:s1 {: RESULT = s1; :}
+				| TYPE_VALUE:s1 {: RESULT = s1; :}
+				| CLASS_VALUE:s1 {: RESULT = s1; :}
+				| PIXEL:s1 {: RESULT = s1; :}
+				| PERCNTG:s1 {: RESULT = s1; :}
+				| ONCLICK:s1 {: RESULT = s1; :}
 				;
 /* string */
 
@@ -325,7 +392,8 @@ str ::=
 
 /* Etiqueta de apertura <C_GCIC> */
 gcic ::=
-				SMALLER GCIC params GREATER
+				SMALLER:t GCIC params:list GREATER
+					{: RESULT = tag.getParameters(t, Tag.GCIC, list); :}
 				| error GCIC params GREATER
 				| SMALLER error params GREATER
 				// | SMALLER GCIC params error
@@ -341,7 +409,7 @@ head ::=
 
 /* <C_TITLE> */
 title ::=
-				SMALLER TITLE GREATER
+				SMALLER:t TITLE GREATER
 				| error TITLE GREATER
 				// | SMALLER error GREATER
 				| SMALLER TITLE error
@@ -349,7 +417,8 @@ title ::=
 
 /* <C_LINK> */
 link ::=
-				SMALLER LINK params GREATER
+				SMALLER:t LINK params:list GREATER
+					{: RESULT = tag.getParameters(t, Tag.LINK, list); :}
 				| error LINK params GREATER
 				// | SMALLER error params GREATER
 				// | SMALLER LINK params error
@@ -357,7 +426,8 @@ link ::=
 
 /* <C_BODY> */
 body ::=
-				SMALLER BODY params GREATER
+				SMALLER:t BODY params:list GREATER
+					{: RESULT = tag.getParameters(t, Tag.BODY, list); :}
 				| error BODY params GREATER
 				| SMALLER error params GREATER
 				// | SMALLER BODY params error
@@ -365,7 +435,8 @@ body ::=
 
 /* <C_SPAM> */
 spam ::=
-				SMALLER SPAM params GREATER
+				SMALLER:t SPAM params:list GREATER
+					{: RESULT = tag.getParameters(t, Tag.SPAN, list); :}
 				| error SPAM params GREATER
 				// | SMALLER error params GREATER
 				// | SMALLER SPAM params error
@@ -373,7 +444,8 @@ spam ::=
 
 /* <C_INPUT> */
 input ::=
-				SMALLER INPUT params GREATER
+				SMALLER:t INPUT params:list GREATER
+					{: RESULT = tag.getParameters(t, Tag.INPUT, list); :}
 				| error INPUT params GREATER
 				// | SMALLER error params GREATER
 				// | SMALLER INPUT params error
@@ -381,7 +453,8 @@ input ::=
 
 /* <C_TEXTAREA> */
 txtarea ::=
-				SMALLER TXTAREA params GREATER
+				SMALLER:t TXTAREA params:list GREATER
+					{: RESULT = tag.getParameters(t, Tag.TEXTAREA, list); :}
 				| error TXTAREA params GREATER
 				// | SMALLER error params GREATER
 				// | SMALLER TXTAREA params error
@@ -389,7 +462,8 @@ txtarea ::=
 
 /* <C_SELECT> */
 select ::=
-				SMALLER SELECT params GREATER
+				SMALLER:t SELECT params:list GREATER
+					{: RESULT = tag.getParameters(t, Tag.SELECT, list); :}
 				| error SELECT params GREATER
 				// | SMALLER error params GREATER
 				// | SMALLER SELECT params error
@@ -405,7 +479,8 @@ option ::=
 
 /* <C_DIV> */
 div ::=
-				SMALLER DIV params GREATER
+				SMALLER:t DIV params:list GREATER
+					{: RESULT = tag.getParameters(t, Tag.DIV, list); :}
 				| error DIV params GREATER
 				// | SMALLER error params GREATER
 				// | SMALLER DIV params error
@@ -413,7 +488,8 @@ div ::=
 
 /* <C_IMG> */
 img ::=
-				SMALLER IMG params GREATER
+				SMALLER:t IMG params:list GREATER
+					{: RESULT = tag.getParameters(t, Tag.IMG, list); :}
 				| error IMG params GREATER
 				// | SMALLER error params GREATER
 				// | SMALLER IMG params error
@@ -429,7 +505,8 @@ br ::=
 
 /* <C_BUTTON> */
 button ::=
-				SMALLER BUTTON params GREATER
+				SMALLER:t BUTTON params:list GREATER
+					{: RESULT = tag.getParameters(t, Tag.BUTTON, list); :}
 				| error BUTTON params GREATER
 				// | SMALLER error params GREATER
 				// | SMALLER BUTTON params error
@@ -437,7 +514,8 @@ button ::=
 
 /* <C_H1> */
 h1 ::=
-				SMALLER H1 params GREATER
+				SMALLER:t H1 params:list GREATER
+					{: RESULT = tag.getParameters(t, Tag.H1, list); :}
 				| error H1 params GREATER
 				| SMALLER error params GREATER
 				// | SMALLER H1 params error
@@ -445,7 +523,8 @@ h1 ::=
 
 /* <C_P> */
 paragraph ::=
-				SMALLER PARAGRAPH params GREATER
+				SMALLER:t PARAGRAPH params:list GREATER
+					{: RESULT = tag.getParameters(t, Tag.P, list); :}
 				| error PARAGRAPH params GREATER
 				// | SMALLER error params GREATER
 				// | SMALLER PARAGRAPH params error
@@ -459,36 +538,42 @@ script ::=
 
 /* parametros de las etiquetas */
 params ::=
-				params param
+				params:list param:p
+					{:
+						list.add(p);
+						RESULT = list;
+					:}
 				|
+						{: RESULT = new ArrayList<Parameter>(); :}
 				;
 
 param ::=
-				LBRACKET opt RBRACKET
+				LBRACKET opt:p RBRACKET
+					{: RESULT = p; :}
 				| error opt RBRACKET
 				| LBRACKET opt error
 				;
 
 opt ::=
-				id
-				| name
-				| href_src
-				| bckgrnd_clr
-				| font_size
-				| font_family
-				| text_align
-				| type
-				| cols_rows
-				| clss
-				| width_height
-				| alt
-				| onclick
+				id:p {: RESULT = p; :}
+				| name:p  {: RESULT = p; :}
+				| href_src:p  {: RESULT = p; :}
+				| bckgrnd_clr:p  {: RESULT = p; :}
+				| font_size:p  {: RESULT = p; :}
+				| font_family:p  {: RESULT = p; :}
+				| text_align:p  {: RESULT = p; :}
+				| type:p  {: RESULT = p; :}
+				| cols_rows:p  {: RESULT = p; :}
+				| clss:p  {: RESULT = p; :}
+				| width_height:p  {: RESULT = p; :}
+				| alt:p  {: RESULT = p; :}
+				| onclick:p  {: RESULT = p; :}
 				| error
 				;
 
 id ::=
 				ID EQUAL ID_:s
-				{: System.out.println("id: " + s); :}
+					{: RESULT = new Parameter(Param.ID, s.getValue()); :}
 				| error EQUAL ID_
 				| ID error ID_
 				| ID EQUAL error
@@ -496,7 +581,7 @@ id ::=
 
 name ::=
 				NAME EQUAL STRING:s
-				{: System.out.println("name = " + s); :}
+					{: RESULT = new Parameter(Param.NAME, s.getValue()); :}
 				| error EQUAL STRING
 				| NAME error STRING
 				| NAME EQUAL error
@@ -505,7 +590,7 @@ name ::=
 /* href/src */
 href_src ::=
 				url:p EQUAL URL:s
-					{: System.out.println(p + ": " + s); :}
+					{: RESULT = new Parameter(p, s.getValue()); :}
 				| error EQUAL URL
 				| url error URL
 				| url EQUAL error
@@ -514,15 +599,15 @@ href_src ::=
 /* href/src */
 url ::=
 				HREF
-					{: RESULT = "href"; :}
+					{: RESULT = Param.HREF; :}
 				| SRC
-					{: RESULT = "src"; :}
+					{: RESULT = Param.SRC; :}
 				;
 
 /* background / color */
 bckgrnd_clr ::=
-				color EQUAL COLOUR:s
-					{: System.out.println("Color: " + s); :}
+				color:p EQUAL COLOUR:s
+					{: RESULT = new Parameter(p, s.getValue()); :}
 				| error EQUAL COLOUR
 				| color error COLOUR
 				| color EQUAL error
@@ -531,14 +616,14 @@ bckgrnd_clr ::=
 /* background / color */
 color ::=
 				BCKGRND
-					{: RESULT = "background"; :}
+					{: RESULT = Param.BACKGROUND; :}
 				| COLOR
-					{: RESULT = "color"; :}
+					{: RESULT = Param.COLOR; :}
 				;
 
 font_size ::=
 				FONTS EQUAL PIXEL:s
-					{: System.out.println("font-size: " + s); :}
+					{: RESULT = new Parameter(Param.FONT_SIZE, s.getValue()); :}
 				// | error EQUAL PIXEL
 				| FONTS error PIXEL
 				| FONTS EQUAL error
@@ -546,7 +631,7 @@ font_size ::=
 
 font_family ::=
 				FONTF EQUAL FONTF_VALUE:s
-					{: System.out.println("font-family: " + s); :}
+					{: RESULT = new Parameter(Param.FONT_FAMILY, s.getValue()); :}
 				| error EQUAL FONTF_VALUE
 				| FONTF error FONTF_VALUE
 				| FONTF EQUAL error
@@ -554,7 +639,7 @@ font_family ::=
 
 text_align ::=
 				ALIGN EQUAL ALIGN_VALUE:s
-					{: System.out.println("align: " + s); :}
+					{: RESULT = new Parameter(Param.TEXT_ALIGN, s.getValue()); :}
 				| error EQUAL ALIGN_VALUE
 				| ALIGN error ALIGN_VALUE
 				| ALIGN EQUAL error
@@ -563,7 +648,7 @@ text_align ::=
 /* type for inputs */
 type ::=
 				TYPE EQUAL TYPE_VALUE:s
-					{: System.out.println("type: " + s); :}
+					{: RESULT = new Parameter(Param.TYPE, s.getValue()); :}
 				| error EQUAL TYPE_VALUE
 				| TYPE error TYPE_VALUE
 				| TYPE EQUAL error
@@ -571,7 +656,7 @@ type ::=
 
 cols_rows ::=
 				cls_rws:p EQUAL INTQ:s
-					{: System.out.println(p + ": " + s); :}
+					{: RESULT = new Parameter(p, s.getValue()); :}
 				| error EQUAL INTQ
 				| cls_rws error INTQ
 				| cls_rws EQUAL error
@@ -579,14 +664,14 @@ cols_rows ::=
 
 cls_rws ::=
 				COLS
-					{: RESULT = "cols"; :}
+					{: RESULT = Param.COLS; :}
 				| ROWS
-					{: RESULT = "rows"; :}
+					{: RESULT = Param.ROWS; :}
 				;
 
 clss ::=
 				CLASS EQUAL CLASS_VALUE:s
-					{: System.out.println("class: " + s); :}
+					{: RESULT = new Parameter(Param.CLASS, s.getValue()); :}
 				| error EQUAL CLASS_VALUE
 				| CLASS error CLASS_VALUE
 				| CLASS EQUAL error
@@ -594,16 +679,16 @@ clss ::=
 
 /* width/height */
 width_height ::=
-				w_h EQUAL pxl_per:s
-					{: System.out.println("width/height: " + s); :}
+				w_h:p EQUAL pxl_per:s
+					{: RESULT = new Parameter(p, s.getValue()); :}
 				| error EQUAL pxl_per
 				| w_h error pxl_per
 				| w_h EQUAL error
 				;
 
 w_h ::=
-				WIDTH
-				| HEIGHT
+				WIDTH:p {: RESULT = Param.WIDTH; :}
+				| HEIGHT:p {: RESULT = Param.HEIGHT; :}
 				;
 
 pxl_per ::=
@@ -616,7 +701,7 @@ pxl_per ::=
 /* alt */
 alt ::=
 				ALT EQUAL STRING:s
-					{: System.out.println("alt: " + s); :}
+					{: RESULT = new Parameter(Param.ALT, s.getValue()); :}
 				// | error EQUAL STRING // alt ::= error ...  and name ::= error ...
 				| ALT error STRING
 				| ALT EQUAL error
@@ -625,7 +710,7 @@ alt ::=
 /* onclick */
 onclick ::=
 				CLICK EQUAL ONCLICK:s
-					{: System.out.println("onclick: " + s); :}
+					{: RESULT = new Parameter(Param.ONCLICK, s.getValue()); :}
 				| error EQUAL ONCLICK
 				| CLICK error ONCLICK
 				| CLICK EQUAL error

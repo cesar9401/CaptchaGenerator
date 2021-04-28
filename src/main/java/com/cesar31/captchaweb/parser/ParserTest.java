@@ -13,24 +13,23 @@ public class ParserTest {
 
     public static void main(String[] args) {
         
-        String path = "html.gcic";
+        String path = "scripting.gcic";
         
         boolean val1 = true && false || !false && true && !(false && true || false);
         boolean val2 = !(3 > 2 || 75 > 3) && !false;
-        System.out.println("val2 = " + val2);
+        // System.out.println("val2 = " + val2);
         
         boolean val = 3 + 1 > 2;
-        System.out.println("val = " + val);
+        // System.out.println("val = " + val);
         boolean bool1 = 3 + 1 > 2 * 2 -1 && !(4 > 2 + 10) && !false;
-        System.out.println("bool1 = " + bool1);
-        
+        // System.out.println("bool1 = " + bool1);
         
         System.out.println("\n");
         
         DBHandler db = new DBHandler();
         String input = db.readData(path);
         
-        //System.out.println(input);
+        System.out.println(input);
         System.out.println("\n");
 
         // getTokens(input);

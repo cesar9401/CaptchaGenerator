@@ -1752,8 +1752,6 @@ public class CaptchaLex implements java_cup.runtime.Scanner {
     } catch (ArrayIndexOutOfBoundsException e) {
       message = ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
     }
-
-    throw new Error(message);
   }
 
 
