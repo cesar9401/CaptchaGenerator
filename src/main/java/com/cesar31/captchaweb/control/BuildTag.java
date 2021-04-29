@@ -1,6 +1,8 @@
 package com.cesar31.captchaweb.control;
 
+import com.cesar31.captchaweb.model.Captcha;
 import com.cesar31.captchaweb.model.Component;
+import com.cesar31.captchaweb.model.ComponentParent;
 import com.cesar31.captchaweb.model.Err;
 import com.cesar31.captchaweb.model.Param;
 import static com.cesar31.captchaweb.model.Tag.*;
@@ -38,6 +40,13 @@ public class BuildTag {
         this.parser = parser;
     }
 
+    public Captcha makeCaptcha(ComponentParent head, ComponentParent body) {
+        Captcha c = new Captcha();
+        c.setHead(head);
+        c.setBody(body);
+        return c;
+    }
+
     /**
      * Crear etiqueta
      *
@@ -61,6 +70,95 @@ public class BuildTag {
     }
 
     /**
+     * Crear etiqueta padre
+     *
+     * @param tag
+     * @param map
+     * @param children
+     * @return
+     */
+    public ComponentParent makeTagParent(Tag tag, HashMap<Param, Parameter> map, List<Component> children) {
+        ComponentParent c = new ComponentParent();
+        c.setTag(tag);
+
+        if (map != null) {
+            c.setParams(map);
+        }
+
+        if (children != null) {
+            if (tag == HEAD) {
+                // Revisar etiquetas head
+                HashMap<Tag, Component> comps = checkHead(children);
+                if (comps != null) {
+                    c.getChildren().add(comps.get(TITLE));
+                    c.getChildren().add(comps.get(LINK));
+                }
+            } else {
+                c.setChildren(children);
+            }
+        }
+
+        return c;
+    }
+
+    private HashMap<Tag, Component> checkHead(List<Component> children) {
+        List<Err> errs = new ArrayList<>();
+        HashMap<Tag, Component> head = new HashMap<>();
+
+        for (Component c : children) {
+            if (c.getTag() == TITLE) {
+                if (!head.containsKey(TITLE)) {
+                    head.put(TITLE, c);
+                }
+            }
+
+            if (c.getTag() == LINK) {
+                if (!head.containsKey(LINK)) {
+                    head.put(LINK, c);
+                }
+            }
+        }
+
+        if (!head.containsKey(TITLE)) {
+            // Error, agregar titulo
+            Err e = new Err(0, 0, "SEMANTICO");
+            e.setDescription("Se debe agregar la etiqueta C_TITLE en C_HEAD");
+            errs.add(e);
+        } else {
+            children.remove(head.get(TITLE));
+        }
+
+        if (!head.containsKey(LINK)) {
+            // Error, agregar link
+            Err e = new Err(0, 0, "SEMANTICO");
+            e.setDescription("Se debe agregar la etiqueta C_LINK en C_HEAD");
+            errs.add(e);
+        } else {
+            children.remove(head.get(LINK));
+        }
+
+        if (!children.isEmpty()) {
+            for (Component c : children) {
+                Err e = new Err(0, 0, "SEMANTICO");
+                String description = "La etiqueta C_" + c.getTag() + " ya ha sido agregada, por favor verifique";
+                e.setDescription(description);
+                errs.add(e);
+            }
+        }
+
+        if (!errs.isEmpty()) {
+            this.parser.getErrors().addAll(errs);
+            return null;
+        }
+
+        if (head.size() == 2) {
+            return head;
+        }
+
+        return null;
+    }
+
+    /**
      * Parametros para las etiquetas
      *
      * @param token
@@ -69,10 +167,10 @@ public class BuildTag {
      * @return
      */
     public HashMap<Param, Parameter> getParameters(Token token, Tag tag, List<Parameter> list) {
-        this.params.clear();
-        this.tmp.clear();
-        this.tagParam.clear();
-        this.errors.clear();
+        this.params = new HashMap<>();
+        this.tmp = new HashMap<>();
+        this.tagParam = new HashMap<>();
+        this.errors = new ArrayList<>();
 
         this.tagParam = getParam(tag);
 
@@ -113,9 +211,9 @@ public class BuildTag {
             });
         }
 
-        this.params.forEach((Param p, Parameter t) -> {
-            System.out.println(tag + " -> " + t);
-        });
+//        this.params.forEach((Param p, Parameter t) -> {
+//            System.out.println(tag + " -> " + t);
+//        });
 
         this.parser.getErrors().addAll(errors);
 

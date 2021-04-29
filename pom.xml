@@ -6,7 +6,7 @@
     <artifactId>CaptchaGenerator</artifactId>
     <version>1.0</version>
     <packaging>war</packaging>
-    <name>CapchaGenerator</name>
+    <name>CaptchaGenerator</name>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>

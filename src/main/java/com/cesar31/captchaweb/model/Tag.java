@@ -7,6 +7,7 @@ package com.cesar31.captchaweb.model;
  */
 public enum Tag {
     GCIC,
+    HEAD,
     TITLE,
     BODY,
     LINK,
@@ -14,10 +15,12 @@ public enum Tag {
     INPUT,
     TEXTAREA,
     SELECT,
+    OPTION,
     IMG,
     BR,
     BUTTON,
     H1,
     P,
-    DIV
+    DIV,
+    SCRIPT
 }

@@ -9,11 +9,15 @@ import java.util.HashMap;
 public class Component {
 
     private Tag tag;    
-    // h1 y p
+    // h1, p y span
     private String content;
 
+    // Etiquetas con parametros
     private HashMap<Param, Parameter> params;
-
+    
+    // Etiqueta select
+    
+    
     public Component() {
         this.params = new HashMap<>();
     }
