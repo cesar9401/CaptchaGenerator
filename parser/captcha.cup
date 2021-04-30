@@ -11,16 +11,19 @@ class CaptchaParser;
 
 parser code {:
 
-	private List<Err> errors;
 	private Operation op;
 	private BuildTag tag;
+	private ErrorHandler handler;
 
+	private List<Err> errors;
 	private Symbol cur_token;
 
 	public CaptchaParser(CaptchaLex lex) {
 		super(lex);
 		this.op = new Operation();
 		this.tag = new BuildTag(this);
+		this.handler = new ErrorHandler(this);
+
 		this.errors = new ArrayList<>();
 	}
 
@@ -30,12 +33,14 @@ parser code {:
 		List<String> expected = new ArrayList<>();
 		List<Integer> tokens = expected_token_ids();
 
-		System.out.printf("Se encontro: %s -> (%s), linea %d columna %d, se esperaba -> ", cur_token.value, symbl_name_from_id(cur_token.sym), cur_token.left, cur_token.right);
+		// System.out.printf("Se encontro: %s -> (%s), linea %d columna %d, se esperaba -> ", cur_token.value, symbl_name_from_id(cur_token.sym), cur_token.left, cur_token.right);
 		for(Integer i : tokens) {
 			expected.add(symbl_name_from_id(i));
-			System.out.printf("%s, ", symbl_name_from_id(i));
+			// System.out.printf("%s, ", symbl_name_from_id(i));
 		}
-		System.out.println("");
+		// System.out.println("");
+
+		handler.getErrors((Token) cur_token.value, symbl_name_from_id(cur_token.sym), expected);
 	}
 
 	public List<Err> getErrors() {
@@ -46,6 +51,16 @@ parser code {:
 		return 1;
 	}
 
+	private Token setQuote(Token t) {
+		if(symbl_name_from_id(t.getType()).equals("CHAR")) {
+			t.setValue("\'" + t.getValue() + "\'");
+			return t;
+		}
+
+		t.setValue("\"" + t.getValue() +"\"");
+		return t;
+	}
+
 :}
 
 terminal Token GCIC, HEAD, TITLE, LINK, BODY, SPAM, INPUT, TXTAREA, SELECT, OPTION, DIV, IMG, BR, BUTTON, H1, PARAGRAPH, SCRIPT, HREF, BCKGRND, COLOR, FONTS;
@@ -54,13 +69,13 @@ terminal Token CHR, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_
 terminal Token GREATER, SMALLER, LBRACE, RBRACE, LBRACKET, RBRACKET, COLON, SEMI, EQEQ, NEQ, GRTREQ, SMLLREQ, OR, AND, NOT, PLUS, MINUS, TIMES, DIVIDE;
 terminal Token URL, LPAREN, RPAREN, EQUAL, ROWS, FONTF_VALUE, QUOTE, ERROR;
 terminal Token TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE, COMMA, ON_LOAD, ONCLICK, IN, ID_V;
-terminal Token STRING, CHAR, IF, THEN, ELSE, REPEAT, UNTIL, WHILE, THEN_WHILE, INIT, END;
+terminal Token STRING, CHAR, IF, THEN, ELSE, REPEAT, UNTIL, WHILE, THEN_WHILE, INIT, END, PROCESS;
 
 non terminal scripting;
 non terminal clgcic, clhead, cltitle, cllink, clbody, clspam, clinput, cltxtarea, clselect, cloption, cldiv, climg, clbutton, clh1, clparagraph, clscript;
-non terminal c_gcic;
 non terminal make_script, make_var, stat, statement;
 non terminal control_if, else_if, control_while, control_repeat, instruction, instructions, control, make_ins, type_instruction, assignment;
+non terminal process;
 
 non terminal Variable s, t, u, v, control_stat, a, b, c, d, boolean_val;
 non terminal List<Token> in;
@@ -73,12 +88,13 @@ non terminal HashMap<Param, Parameter> paragraph, button, h1, div, img, body, sp
 non terminal Component c_script, c_title, c_link, c_spam, c_h1, c_button, c_paragraph, c_img, c_input, c_txtarea, c_select, b_opt, c_br, c_div, c_option, h_opt;
 non terminal List<Component> body_opt, make_option, head_opt;
 non terminal ComponentParent c_body, c_head;
+non terminal Captcha c_gcic;
 
 /* gramatica principal */
 c_gcic ::=
-				gcic c_head:head c_body:body clgcic
+				gcic:m c_head:head c_body:body clgcic
 				{:
-					RESULT = tag.makeCaptcha(head, body);
+					RESULT = tag.makeCaptcha(Tag.GCIC, m, head, body);
 				:}
 				;
 
@@ -140,8 +156,17 @@ b_opt ::=
 				;
 
 c_script ::=
-				script:m make_script clscript
-					{: RESULT = tag.makeTag(Tag.SCRIPT, m, null); :}
+				script:m process /*make_script*/ clscript
+					{:
+						RESULT = tag.makeTag(Tag.SCRIPT, m, null);
+					:}
+				;
+
+/* proceso */
+process ::=
+				PROCESS:p LPAREN RPAREN LBRACKET make_script RBRACKET
+					{: System.out.println("Proceso: " + p.getValue());  :}
+				|
 				;
 
 make_script ::=
@@ -415,25 +440,97 @@ c_div ::=
 
 /* contet for p and h1 */
 in ::=
-			in:list str:s
-				{:
-					list.add(s);
-					RESULT = list;
-				:}
-			| /* lambda */
-				{:
-					List<Token> list = new ArrayList<>();
-					RESULT = list;
-				:}
-			;
+				in:list str:s
+					{:
+						list.add(s);
+						RESULT = list;
+					:}
+				| /* lambda */
+					{:
+						List<Token> list = new ArrayList<>();
+						RESULT = list;
+					:}
+				;
 
 str ::=
-			IN:s {: RESULT = s; :}
-			| ID_V:s {: RESULT = s; :}
-			| COLON:s {: RESULT = s; :}
-			| INTEGER:s {: RESULT = s; :}
-			| PLUS:s {: RESULT = s; :}
-			;
+				IN:s {: RESULT = s; :}
+				| ID_V:s {: RESULT = s; :}
+				| COLON:s {: RESULT = s; :}
+				| INTEGER:s {: RESULT = s; :}
+				| DECIMAL:s {: RESULT = s; :}
+				| PLUS:s {: RESULT = s; :}
+				| GCIC:s {: RESULT = s; :}
+				| HEAD:s {: RESULT = s; :}
+				| TITLE:s {: RESULT = s; :}
+				| LINK:s {: RESULT = s; :}
+				| BODY:s {: RESULT = s; :}
+				| SPAM:s {: RESULT = s; :}
+				| INPUT:s {: RESULT = s; :}
+				| TXTAREA:s {: RESULT = s; :}
+				| SELECT:s {: RESULT = s; :}
+				| OPTION:s {: RESULT = s; :}
+				| DIV:s {: RESULT = s; :}
+				| IMG:s {: RESULT = s; :}
+				| BR:s {: RESULT = s; :}
+				| BUTTON:s {: RESULT = s; :}
+				| PARAGRAPH:s {: RESULT = s; :}
+				| SCRIPT:s {: RESULT = s; :}
+				| HREF:s {: RESULT = s; :}
+				| BCKGRND:s {: RESULT = s; :}
+				| COLOR:s {: RESULT = s; :}
+				| FONTS:s {: RESULT = s; :}
+				| FONTF:s {: RESULT = s; :}
+				| ALIGN:s {: RESULT = s; :}
+				| TYPE:s {: RESULT = s; :}
+				| ID:s {: RESULT = s; :}
+				| NAME:s {: RESULT = s; :}
+				| COLS:s {: RESULT = s; :}
+				| ROWS:s {: RESULT = s; :}
+				| CLASS:s {: RESULT = s; :}
+				| SRC:s {: RESULT = s; :}
+				| WIDTH:s {: RESULT = s; :}
+				| HEIGHT:s {: RESULT = s; :}
+				| ALT:s {: RESULT = s; :}
+				| CLICK:s {: RESULT = s; :}
+				| IF:s {: RESULT = s; :}
+				| THEN:s {: RESULT = s; :}
+				| ELSE:s {: RESULT = s; :}
+				| REPEAT:s {: RESULT = s; :}
+				| UNTIL:s {: RESULT = s; :}
+				| THEN_WHILE:s {: RESULT = s; :}
+				| INIT:s {: RESULT = s; :}
+				| END:s {: RESULT = s; :}
+				| INT:s {: RESULT = s; :}
+				| DEC:s {: RESULT = s; :}
+				| BOOL:s {: RESULT = s; :}
+				| TRUE:s {: RESULT = s; :}
+				| FALSE:s {: RESULT = s; :}
+				| CHR:s {: RESULT = s; :}
+				| STR:s {: RESULT = s; :}
+				| DESC:s {: RESULT = s; :}
+				| LETPAR:s {: RESULT = s; :}
+				| LETIMPAR:s {: RESULT = s; :}
+				| REVERSE:s {: RESULT = s; :}
+				| RANDOM_C:s {: RESULT = s; :}
+				| RANDOM_N:s {: RESULT = s; :}
+				| ALERT:s {: RESULT = s; :}
+				| EXIT:s {: RESULT = s; :}
+				| GLOBAL:s {: RESULT = s; :}
+				| ON_LOAD:s {: RESULT = s; :}
+				| FONTF_VALUE:s {: RESULT = setQuote(s); :}
+				| ALIGN_VALUE:s {: RESULT = setQuote(s); :}
+				| COLOUR:s {: RESULT = setQuote(s); :}
+				| TYPE_VALUE:s {: RESULT = setQuote(s); :}
+				| CLASS_VALUE:s {: RESULT = setQuote(s); :}
+				| INTQ:s {: RESULT = setQuote(s); :}
+				| PIXEL:s {: RESULT = setQuote(s); :}
+				| PERCNTG:s {: RESULT = setQuote(s); :}
+				| ONCLICK:s {: RESULT = setQuote(s); :}
+				| ID_:s {: RESULT = setQuote(s); :}
+				| URL:s {: RESULT = setQuote(s); :}
+				| STRING:s {: RESULT = setQuote(s); :}
+				| CHAR:s {: RESULT = setQuote(s); :}
+				;
 
 /* Etiqueta de apertura <C_GCIC> */
 gcic ::=

@@ -28,11 +28,15 @@ public class BuildTag {
     private HashMap<Param, Boolean> tagParam;
     private List<Err> errors;
 
+    private HashMap<Param, Parameter> s;
+
     public BuildTag() {
         this.params = new HashMap<>();
         this.tmp = new HashMap<>();
         this.tagParam = new HashMap<>();
         this.errors = new ArrayList<>();
+
+        this.setStandardParam();
     }
 
     public BuildTag(CaptchaParser parser) {
@@ -40,8 +44,14 @@ public class BuildTag {
         this.parser = parser;
     }
 
-    public Captcha makeCaptcha(ComponentParent head, ComponentParent body) {
+    public Captcha makeCaptcha(Tag tag, HashMap<Param, Parameter> params, ComponentParent head, ComponentParent body) {
         Captcha c = new Captcha();
+        c.setTag(tag);
+
+        if (params != null) {
+            c.setParams(params);
+        }
+
         c.setHead(head);
         c.setBody(body);
         return c;
@@ -121,7 +131,7 @@ public class BuildTag {
 
         if (!head.containsKey(TITLE)) {
             // Error, agregar titulo
-            Err e = new Err(0, 0, "SEMANTICO");
+            Err e = new Err(0, 0, "SEMANTICO", "C_TITLE");
             e.setDescription("Se debe agregar la etiqueta C_TITLE en C_HEAD");
             errs.add(e);
         } else {
@@ -130,7 +140,7 @@ public class BuildTag {
 
         if (!head.containsKey(LINK)) {
             // Error, agregar link
-            Err e = new Err(0, 0, "SEMANTICO");
+            Err e = new Err(0, 0, "SEMANTICO", "C_HEAD");
             e.setDescription("Se debe agregar la etiqueta C_LINK en C_HEAD");
             errs.add(e);
         } else {
@@ -139,7 +149,7 @@ public class BuildTag {
 
         if (!children.isEmpty()) {
             for (Component c : children) {
-                Err e = new Err(0, 0, "SEMANTICO");
+                Err e = new Err(0, 0, "SEMANTICO", "C" + c.getTag());
                 String description = "La etiqueta C_" + c.getTag() + " ya ha sido agregada, por favor verifique";
                 e.setDescription(description);
                 errs.add(e);
@@ -182,7 +192,7 @@ public class BuildTag {
                 // Si es repetido y pertenece
                 if (this.tagParam.get(p.getType())) {
                     // Parametro repetido, crear error
-                    Err e = new Err(token.getLine(), token.getColumn(), "SEMANTICO");
+                    Err e = new Err(token.getLine(), token.getColumn(), "SEMANTICO", p.getType().toString().toLowerCase());
                     String description = "El parametro " + p.getType().toString().toLowerCase() + "ya ha sido agregado.";
                     e.setDescription(description);
                     this.errors.add(e);
@@ -197,6 +207,9 @@ public class BuildTag {
                     addParam(tmp.remove(p));
                 } else {
                     // Agregar parametro por defecto
+                    if (p != ID) {
+                        addParam(s.get(p));
+                    }
                 }
             }
         });
@@ -204,16 +217,12 @@ public class BuildTag {
         if (!tmp.isEmpty()) {
             // Crear error por parametros que no van
             tmp.forEach((Param p, Parameter u) -> {
-                Err e = new Err(token.getLine(), token.getColumn(), "SEMANTICO");
-                String description = "El parametro: " + p.toString().toLowerCase() + "no se debe incluir en la etiqueta: C_" + tag;
+                Err e = new Err(token.getLine(), token.getColumn(), "SEMANTICO", p.toString().toLowerCase());
+                String description = "El parametro: " + p.toString().toLowerCase() + ", no se debe incluir en la etiqueta: C_" + tag;
                 e.setDescription(description);
                 this.errors.add(e);
             });
         }
-
-//        this.params.forEach((Param p, Parameter t) -> {
-//            System.out.println(tag + " -> " + t);
-//        });
 
         this.parser.getErrors().addAll(errors);
 
@@ -235,10 +244,21 @@ public class BuildTag {
         return content;
     }
 
+    /**
+     * Agregar parametros
+     *
+     * @param p
+     */
     private void addParam(Parameter p) {
         this.params.put(p.getType(), p);
     }
 
+    /**
+     * Parametros segun etiqueta
+     *
+     * @param t
+     * @return
+     */
     private HashMap<Param, Boolean> getParam(Tag t) {
         HashMap<Param, Boolean> map = new HashMap<>();
         for (Param p : Param.values()) {
@@ -270,6 +290,7 @@ public class BuildTag {
                 break;
             case BUTTON:
                 usuallyParams(map);
+                map.replace(BACKGROUND, true);
                 map.replace(ONCLICK, true);
                 break;
             case DIV:
@@ -292,11 +313,40 @@ public class BuildTag {
         return map;
     }
 
+    /**
+     * Parametros usuales
+     *
+     * @param map
+     */
     private void usuallyParams(HashMap<Param, Boolean> map) {
         map.replace(FONT_SIZE, true);
         map.replace(FONT_FAMILY, true);
         map.replace(TEXT_ALIGN, true);
         map.replace(ID, true);
         map.replace(COLOR, true);
+    }
+
+    /**
+     * Parametros por defecto
+     */
+    private void setStandardParam() {
+        this.s = new HashMap<>();
+        s.put(ALT, new Parameter(ALT, "Mi_imagen"));
+        s.put(BACKGROUND, new Parameter(BACKGROUND, "#76D7C4"));
+        s.put(CLASS, new Parameter(CLASS, "row"));
+        s.put(COLOR, new Parameter(COLOR, "#DC7633"));
+        s.put(COLS, new Parameter(COLS, "10"));
+        s.put(FONT_FAMILY, new Parameter(FONT_FAMILY, "sans-serif"));
+        s.put(FONT_SIZE, new Parameter(FONT_SIZE, "16px"));
+        s.put(HEIGHT, new Parameter(HEIGHT, "300px"));
+        s.put(HREF, new Parameter(HREF, "https://www.google.com/"));
+        s.put(ID, new Parameter(ID, ""));
+        s.put(NAME, new Parameter(NAME, "Mi Captcha GCIC"));
+        s.put(ONCLICK, new Parameter(ONCLICK, "ON_LOAD"));
+        s.put(ROWS, new Parameter(ROWS, "20"));
+        s.put(SRC, new Parameter(SRC, "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/bojack-horseman-final-1571059533.jpg?crop=0.927xw:0.925xh;0.0538xw,0.0754xh&resize=2048:*"));
+        s.put(TEXT_ALIGN, new Parameter(TEXT_ALIGN, "center"));
+        s.put(TYPE, new Parameter(TYPE, "text"));
+        s.put(WIDTH, new Parameter(WIDTH, "300px"));
     }
 }

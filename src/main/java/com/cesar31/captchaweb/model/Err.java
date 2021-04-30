@@ -9,6 +9,7 @@ public class Err {
     
     private int line;
     private int column;
+    private String lexema;
     private String type;
     private String description;
 
@@ -26,11 +27,11 @@ public class Err {
         this.type = type;
     }
     
-    public Err(int line, int column, String type, String description) {
+    public Err(int line, int column, String type, String lexema) {
         this.line = line;
         this.column = column;
         this.type = type;
-        this.description = description;
+        this.lexema = lexema;
     }
 
     public int getLine() {
@@ -47,6 +48,14 @@ public class Err {
 
     public void setColumn(int column) {
         this.column = column;
+    }
+
+    public String getLexema() {
+        return lexema;
+    }
+
+    public void setLexema(String lexema) {
+        this.lexema = lexema;
     }
 
     public String getType() {
@@ -67,6 +76,6 @@ public class Err {
 
     @Override
     public String toString() {
-        return "Error{" + "line=" + line + ", column=" + column + ", type=" + type + ", description=" + description + '}';
+        return "Err{" + "line=" + line + ", column=" + column + ", lexema=" + lexema + ", type=" + type + ", description=" + description + '}';
     }
 }

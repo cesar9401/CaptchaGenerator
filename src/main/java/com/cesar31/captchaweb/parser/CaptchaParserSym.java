@@ -30,6 +30,7 @@ public class CaptchaParserSym {
   public static final int INTEGER = 36;
   public static final int LBRACE = 63;
   public static final int LPAREN = 81;
+  public static final int PROCESS = 107;
   public static final int NOT = 75;
   public static final int FALSE = 40;
   public static final int PERCNTG = 57;
@@ -222,7 +223,8 @@ public class CaptchaParserSym {
   "WHILE",
   "THEN_WHILE",
   "INIT",
-  "END"
+  "END",
+  "PROCESS"
   };
 }
 

@@ -88,6 +88,8 @@ Url = {Q} "http" "s"? ":" "/"{2,2} [\w\-\.]+ "." \w{2,5} "/"? \S* {Q}
 /* Entrada para etiquetas */
 In = [\w\"\'\?\.\\\^¿¡#$%&]+
 
+Process = "PROCESS_" \w+
+
 /* no case-sensitive */
 a = [aA]
 b = [bB]
@@ -439,6 +441,9 @@ Script = {c} "_" {s}{c}{r}{i}{p}{t}{i}{n}{g}
 
 	{OnClick}
 	{ return symbol(ONCLICK, getString(yytext())); }
+
+	{Process}
+	{ return symbol(PROCESS, yytext()); }
 
 	{IdV}
 	{ return symbol(ID_V, yytext()); }

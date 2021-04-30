@@ -5,12 +5,13 @@ package com.cesar31.captchaweb.model;
  *
  * @author cesar31
  */
-public class Captcha {
+public class Captcha extends Component{
 
     private ComponentParent head;
     private ComponentParent body;
 
     public Captcha() {
+        super();
     }
 
     public ComponentParent getHead() {
