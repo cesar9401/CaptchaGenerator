@@ -3,7 +3,10 @@ package com.cesar31.captchaweb.control;
 import com.cesar31.captchaweb.model.Compare;
 import static com.cesar31.captchaweb.model.Var.*;
 import static com.cesar31.captchaweb.model.Compare.*;
+import com.cesar31.captchaweb.model.Err;
+import com.cesar31.captchaweb.model.Token;
 import com.cesar31.captchaweb.model.Variable;
+import com.cesar31.captchaweb.parser.CaptchaParser;
 
 /**
  *
@@ -11,16 +14,44 @@ import com.cesar31.captchaweb.model.Variable;
  */
 public class Operation {
 
+    private CaptchaParser parser;
+
+    public Operation() {
+    }
+
+    public Operation(CaptchaParser parser) {
+        this.parser = parser;
+    }
+
     /**
      * Operacion suma
      *
      * @param a
      * @param b
+     * @param op
      * @return
      */
-    public Variable sum(Variable a, Variable b) {
+    public Variable sum(Variable a, Variable b, Token op) {
         Variable v = null;
 
+        if (a == null || b == null) {
+            return null;
+        }
+
+//        if (a.getValue() == null || b.getValue() == null) {
+//            Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
+//            String description = "";
+//            if (a.getValue() == null && b.getValue() == null) {
+//                description = "No es posible realizar la operacion: null + null";
+//            } else if (a.getValue() == null) {
+//                description = "No es posible realizar la operacion: null + " + b.getValue();
+//            } else if (b.getValue() == null) {
+//                description = "No es posible realizar la operacion: " + a.getValue() + " + null";
+//            }
+//            err.setDescription(description);
+//            this.parser.getErrors().add(err);
+//            return null;
+//        }
         // integer + integer
         if (a.getType() == INTEGER && b.getType() == INTEGER) {
             Integer value = getInteger(a) + getInteger(b);
@@ -130,7 +161,10 @@ public class Operation {
         }
 
         if (v == null) {
-            System.out.println("No es posible realizar: " + a.getType() + " + " + b.getType());
+            Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
+            String description = "No es posible realizar suma entre variables de tipo " + a.getType() + " y " + b.getType() + ", (" + a.getValue() + " + " + b.getValue() + ")";
+            err.setDescription(description);
+            this.parser.getErrors().add(err);
         }
 
         return v;
@@ -141,10 +175,15 @@ public class Operation {
      *
      * @param a
      * @param b
+     * @param op
      * @return
      */
-    public Variable subtraction(Variable a, Variable b) {
+    public Variable subtraction(Variable a, Variable b, Token op) {
         Variable v = null;
+
+        if (a == null || b == null) {
+            return null;
+        }
 
         // integer - integer
         if (a.getType() == INTEGER && b.getType() == INTEGER) {
@@ -219,7 +258,10 @@ public class Operation {
         }
 
         if (v == null) {
-            System.out.println("No es posible realizar: " + a.getType() + " - " + b.getType());
+            Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
+            String description = "No es posible realizar resta entre variables de tipo " + a.getType() + " y " + b.getType() + ", (" + a.getValue() + " - " + b.getValue() + ")";
+            err.setDescription(description);
+            this.parser.getErrors().add(err);
         }
 
         return v;
@@ -230,10 +272,15 @@ public class Operation {
      *
      * @param a
      * @param b
+     * @param op
      * @return
      */
-    public Variable multiplication(Variable a, Variable b) {
+    public Variable multiplication(Variable a, Variable b, Token op) {
         Variable v = null;
+
+        if (a == null || b == null) {
+            return null;
+        }
 
         // integer * integer
         if (a.getType() == INTEGER && b.getType() == INTEGER) {
@@ -326,7 +373,10 @@ public class Operation {
         }
 
         if (v == null) {
-            System.out.println("No es posible realizar: " + a.getType() + " * " + b.getType());
+            Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
+            String description = "No es posible realizar multiplicacion entre variables de tipo " + a.getType() + " y " + b.getType() + ", (" + a.getValue() + " * " + b.getValue() + ")";
+            err.setDescription(description);
+            this.parser.getErrors().add(err);
         }
 
         return v;
@@ -337,10 +387,15 @@ public class Operation {
      *
      * @param a
      * @param b
+     * @param op
      * @return
      */
-    public Variable division(Variable a, Variable b) {
+    public Variable division(Variable a, Variable b, Token op) {
         Variable v = null;
+
+        if (a == null || b == null) {
+            return null;
+        }
 
         // integer / integer
         if (a.getType() == INTEGER && b.getType() == INTEGER) {
@@ -483,7 +538,10 @@ public class Operation {
         }
 
         if (v == null) {
-            System.out.println("No es posible realizar: " + a.getType() + " / " + b.getType());
+            Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
+            String description = "No es posible realizar division entre variables de tipo " + a.getType() + " y " + b.getType() + ", (" + a.getValue() + " / " + b.getValue() + ")";
+            err.setDescription(description);
+            this.parser.getErrors().add(err);
         }
 
         return v;
@@ -492,10 +550,15 @@ public class Operation {
     /**
      *
      * @param a
+     * @param op
      * @return
      */
-    public Variable uminus(Variable a) {
+    public Variable uminus(Variable a, Token op) {
         Variable v = null;
+
+        if (a == null) {
+            return null;
+        }
 
         if (a.getType() == INTEGER) {
             Integer value = -getInteger(a);
@@ -508,7 +571,10 @@ public class Operation {
         }
 
         if (v == null) {
-            System.out.println("No es posible realizar: -" + a.getType());
+            Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
+            String description = "No es posible realizar la negacion numerica de " + a.getType() + ", ( -" + a.getValue() + ")";
+            err.setDescription(description);
+            this.parser.getErrors().add(err);
         }
 
         return v;
@@ -519,10 +585,15 @@ public class Operation {
      *
      * @param a
      * @param b
+     * @param op
      * @return
      */
-    public Variable or(Variable a, Variable b) {
+    public Variable or(Variable a, Variable b, Token op) {
         Variable v = null;
+
+        if (a == null || b == null) {
+            return null;
+        }
 
         if (a.getType() == BOOLEAN && b.getType() == BOOLEAN) {
             Boolean value = getBoolean(a) || getBoolean(b);
@@ -530,7 +601,10 @@ public class Operation {
         }
 
         if (v == null) {
-            System.out.println("No es posible realizar: " + a.getType() + " || " + b.getType());
+            Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
+            String description = "No es posible realizar la operacion OR entre variables de tipo " + a.getType() + " y " + b.getType() + ", (" + a.getValue() + " || " + b.getValue() + ")";
+            err.setDescription(description);
+            this.parser.getErrors().add(err);
         }
 
         return v;
@@ -541,10 +615,15 @@ public class Operation {
      *
      * @param a
      * @param b
+     * @param op
      * @return
      */
-    public Variable and(Variable a, Variable b) {
+    public Variable and(Variable a, Variable b, Token op) {
         Variable v = null;
+
+        if (a == null || b == null) {
+            return null;
+        }
 
         if (a.getType() == BOOLEAN && b.getType() == BOOLEAN) {
             Boolean value = getBoolean(a) && getBoolean(b);
@@ -552,11 +631,10 @@ public class Operation {
         }
 
         if (v == null) {
-            System.out.println("No posible realizar: " + a.getType() + " AND " + b.getType());
-        }
-
-        if (v == null) {
-            System.out.println("No es posible realizar: " + a.getType() + " && " + b.getType());
+            Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
+            String description = "No es posible realizar la operacion AND entre variables de tipo " + a.getType() + " y " + b.getType() + ", (" + a.getValue() + " && " + b.getValue() + ")";
+            err.setDescription(description);
+            this.parser.getErrors().add(err);
         }
 
         return v;
@@ -566,10 +644,15 @@ public class Operation {
      * Negacion booleano
      *
      * @param a
+     * @param op
      * @return
      */
-    public Variable not(Variable a) {
+    public Variable not(Variable a, Token op) {
         Variable v = null;
+
+        if (a == null) {
+            return null;
+        }
 
         if (a.getType() == BOOLEAN) {
             Boolean value = !getBoolean(a);
@@ -577,14 +660,22 @@ public class Operation {
         }
 
         if (v == null) {
-            System.out.println("No es posible realizar: !" + a.getType());
+            Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
+            String description = "No es posible realizar la negacion booleana de " + a.getType() + ", ( !" + a.getValue() + ")";
+            err.setDescription(description);
+            this.parser.getErrors().add(err);
         }
 
         return v;
     }
 
-    public Variable compare(Variable a, Variable b, Compare comp) {
+    public Variable compare(Variable a, Variable b, Compare comp, Token op) {
         Variable v = null;
+        
+        if (a == null || b == null) {
+            return null;
+        }
+
         // Compare numbers
         if ((a.getType() == INTEGER || a.getType() == DECIMAL) && (b.getType() == INTEGER || b.getType() == DECIMAL)) {
             Boolean value;
@@ -670,7 +761,10 @@ public class Operation {
         }
 
         if (v == null) {
-            System.out.println("No es posible efectuar: " + a.getType() + " " + getCompareSymbol(comp) + " " + b.getType());
+            Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
+            String description = "No es posible realizar la operacion " + op.getValue() + " entre variables de tipo " + a.getType() + " y " + b.getType() + ", (" + a.getValue() + " " + op.getValue() + " " + b.getValue() + ")";
+            err.setDescription(description);
+            this.parser.getErrors().add(err);
         }
 
         return v;

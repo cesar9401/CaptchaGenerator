@@ -11,18 +11,24 @@ class CaptchaParser;
 
 parser code {:
 
-	private Operation op;
+	private Operation operation;
 	private BuildTag tag;
 	private ErrorHandler handler;
+
+	private Enviroment e;
+	private EnviromentHandler eh;
 
 	private List<Err> errors;
 	private Symbol cur_token;
 
+	private Token type;
+
 	public CaptchaParser(CaptchaLex lex) {
 		super(lex);
-		this.op = new Operation();
+		this.operation = new Operation(this);
 		this.tag = new BuildTag(this);
 		this.handler = new ErrorHandler(this);
+		this.eh = new EnviromentHandler(this);
 
 		this.errors = new ArrayList<>();
 	}
@@ -92,7 +98,9 @@ non terminal Captcha c_gcic;
 
 /* gramatica principal */
 c_gcic ::=
-				gcic:m c_head:head c_body:body clgcic
+				gcic:m
+				c_head:head
+				c_body:body clgcic
 				{:
 					RESULT = tag.makeCaptcha(Tag.GCIC, m, head, body);
 				:}
@@ -164,7 +172,8 @@ c_script ::=
 
 /* proceso */
 process ::=
-				PROCESS:p LPAREN RPAREN LBRACKET make_script RBRACKET
+				PROCESS:p {: e = new Enviroment(p.getValue(), p.getLine(), p.getColumn(), e); :}
+				LPAREN RPAREN LBRACKET make_script RBRACKET
 					{: System.out.println("Proceso: " + p.getValue());  :}
 				|
 				;
@@ -181,8 +190,9 @@ scripting ::=
 				;
 
 statement ::=
-				type_var:t make_var SEMI
-					{: System.out.println("Tipo: " + t.getValue()); :}
+				type_var:t
+				{: type = t; :}
+				make_var SEMI
 				;
 
 assignment ::=
@@ -204,9 +214,16 @@ make_var ::=
 				;
 
 stat ::=
-				mode ID_V:id EQUAL a:v1
-					{: System.out.println(id.getValue() + " -> " + v1.toString()); :}
-				| mode ID_V
+				mode:b1 ID_V:id EQUAL a:v1
+					{:
+						/* Asignar variables y agregar a tabla de simbolos */
+						eh.addSymbolTable(type, id, v1, b1, e, true);
+					:}
+				| mode:b1 ID_V:id
+					{:
+						/* Declarar variables y agregar a tabla de simbolos */
+						eh.addSymbolTable(type, id, null, b1, e, false);
+					:}
 				;
 
 mode ::=
@@ -251,15 +268,26 @@ control ::=
 
 /* IF */
 control_if ::=
-				IF:i LPAREN a:b1 RPAREN THEN type_instruction else_if
-					{: System.out.println("if -> " + b1 + ": " + i); :}
+				IF:i
+					{: e = new Enviroment("IF", i.getLine(), i.getColumn(), e); :}
+				LPAREN a:b1 RPAREN THEN
+				type_instruction
+					{: e = e.getDad(); :}
+				else_if
 				;
 
 else_if ::=
-				ELSE:e IF LPAREN a:b1 RPAREN THEN type_instruction else_if
-					{: System.out.println("else if -> " + b1 + ": " + e); :}
-				| ELSE:e type_instruction
-					{: System.out.println("else: " + e); :}
+				ELSE:el
+					{: e = new Enviroment("ELSE_IF", el.getLine(), el.getColumn(), e); :}
+				IF LPAREN a:b1 RPAREN THEN
+				type_instruction
+					{: e = e.getDad(); :}
+				else_if
+
+				| ELSE:el
+					{: e = new Enviroment("ELSE", el.getLine(), el.getColumn(), e); :}
+				type_instruction
+					{: e = e.getDad(); :}
 				|
 				;
 /* IF */
@@ -267,14 +295,12 @@ else_if ::=
 /* WHILE */
 control_while ::=
 				WHILE LPAREN a:b1 RPAREN THEN_WHILE type_instruction
-					{: System.out.println("while -> " + b1); :}
 				;
 /* WHILE */
 
 /* REPEAT */
 control_repeat ::=
 				REPEAT LPAREN control_stat:b1 RPAREN UNTIL LPAREN a:b2 RPAREN type_instruction
-					{: System.out.println("repeat -> " + b1 + " until ->" + b2); :}
 				;
 
 control_stat ::=
@@ -286,44 +312,44 @@ control_stat ::=
 
 /* Operaciones logicas y aritmeticas */
 a ::=
-        a:b1 OR b:b2 {: RESULT = op.or(b1, b2); :}
+        a:b1 OR:op b:b2 {: RESULT = operation.or(b1, b2, op); :}
         | b:b1 {: RESULT = b1; :}
         ;
 
 b ::=
-        b:b1 AND d:b2 {: RESULT = op.and(b1, b2); :}
+        b:b1 AND:op d:b2 {: RESULT = operation.and(b1, b2, op); :}
         | d:b1 {: RESULT = b1; :}
         ;
 
 d ::=
-				s:n1 SMALLER s:n2 {: RESULT = op.compare(n1, n2, Compare.SMALLER); :}
-				| s:n1 GREATER s:n2 {: RESULT = op.compare(n1, n2, Compare.GREATER); :}
-				| s:n1 GRTREQ s:n2 {: RESULT = op.compare(n1, n2, Compare.GREATER_OR_EQUAL); :}
-				| s:n1 SMLLREQ s:n2 {: RESULT = op.compare(n1, n2, Compare.LESS_OR_EQUAL); :}
-				| s:n1 EQEQ s:n2 {: RESULT = op.compare(n1, n2, Compare.EQUAL); :}
-				| s:n1 NEQ s:n2 {: RESULT = op.compare(n1, n2, Compare.NOT_EQUAL); :}
+				s:n1 SMALLER:op s:n2 {: RESULT = operation.compare(n1, n2, Compare.SMALLER, op); :}
+				| s:n1 GREATER:op s:n2 {: RESULT = operation.compare(n1, n2, Compare.GREATER, op); :}
+				| s:n1 GRTREQ:op s:n2 {: RESULT = operation.compare(n1, n2, Compare.GREATER_OR_EQUAL, op); :}
+				| s:n1 SMLLREQ:op s:n2 {: RESULT = operation.compare(n1, n2, Compare.LESS_OR_EQUAL, op); :}
+				| s:n1 EQEQ:op s:n2 {: RESULT = operation.compare(n1, n2, Compare.EQUAL, op); :}
+				| s:n1 NEQ:op s:n2 {: RESULT = operation.compare(n1, n2, Compare.NOT_EQUAL, op); :}
 				| s:n1 {: RESULT = n1; :}
 				;
 
 s ::=
-				s:n1 PLUS t:n2 {: RESULT = op.sum(n1, n2); :}
-				| s:n1 MINUS t:n2 {: RESULT = op.subtraction(n1, n2); :}
+				s:n1 PLUS:op t:n2 {: RESULT = operation.sum(n1, n2, op); :}
+				| s:n1 MINUS:op t:n2 {: RESULT = operation.subtraction(n1, n2, op); :}
 				| t:n1 {: RESULT = n1; :}
 				;
 
 t ::=
-				t:n1 TIMES u:n2 {: RESULT = op.multiplication(n1, n2); :}
-				| t:n1 DIVIDE u:n2 {: RESULT = op.division(n1, n2); :}
+				t:n1 TIMES:op u:n2 {: RESULT = operation.multiplication(n1, n2, op); :}
+				| t:n1 DIVIDE:op u:n2 {: RESULT = operation.division(n1, n2, op); :}
 				| u:n1 {: RESULT = n1; :}
 				;
 
 u ::=
-				MINUS c:n1 {: RESULT = op.uminus(n1); :}
+				MINUS:op c:n1 {: RESULT = operation.uminus(n1, op); :}
 				| c:n1 {: RESULT = n1; :}
 				;
 
 c ::=
-        NOT v:b1 {: RESULT = op.not(b1); :}
+        NOT:op v:b1 {: RESULT = operation.not(b1, op); :}
         | v:b1 {: RESULT = b1; :}
         ;
 
@@ -332,6 +358,7 @@ v ::=
 				| DECIMAL:n1 {: RESULT = new Variable(Var.DECIMAL, n1.getValue()); :}
 				| string:s1 {: RESULT = new Variable(Var.STRING, s1.getValue()); :}
 				| CHAR:ch1 {: RESULT = new Variable(Var.CHAR, ch1.getValue()); :}
+				| ID_V:s {: RESULT = eh.getFromSymbolTable(s, e, true); :}
 				| boolean_val:b1 {: RESULT = b1; :}
 				| LPAREN a:n1 RPAREN {: RESULT = n1; :}
 				;
