@@ -8,114 +8,111 @@ package com.cesar31.captchaweb.parser;
 /** CUP generated class containing symbol constants. */
 public class CaptchaParserSym {
   /* terminals */
-  public static final int LETIMPAR = 46;
-  public static final int TIMES = 78;
-  public static final int BOOL = 38;
-  public static final int ALIGN_VALUE = 89;
+  public static final int LETIMPAR = 45;
+  public static final int TIMES = 76;
+  public static final int BOOL = 37;
+  public static final int ALIGN_VALUE = 86;
   public static final int H1 = 16;
   public static final int TYPE = 25;
-  public static final int HEX = 53;
-  public static final int ROWS = 84;
-  public static final int SEMI = 68;
-  public static final int UNTIL = 102;
-  public static final int ASC = 43;
+  public static final int ROWS = 82;
+  public static final int SEMI = 66;
+  public static final int UNTIL = 99;
+  public static final int ASC = 42;
   public static final int NAME = 27;
-  public static final int ROW = 29;
-  public static final int INIT = 105;
-  public static final int ID_ = 58;
-  public static final int COMMA = 91;
-  public static final int ALT = 34;
-  public static final int RBRACE = 64;
-  public static final int RPAREN = 82;
-  public static final int INTEGER = 36;
-  public static final int LBRACE = 63;
-  public static final int LPAREN = 81;
-  public static final int PROCESS = 107;
-  public static final int NOT = 75;
-  public static final int FALSE = 40;
-  public static final int PERCNTG = 57;
-  public static final int ERROR = 87;
-  public static final int DEC = 60;
-  public static final int THEN = 99;
-  public static final int STR = 42;
+  public static final int INIT = 102;
+  public static final int ID_ = 56;
+  public static final int COMMA = 88;
+  public static final int ALT = 33;
+  public static final int RBRACE = 62;
+  public static final int RPAREN = 80;
+  public static final int INTEGER = 35;
+  public static final int LBRACE = 61;
+  public static final int LPAREN = 79;
+  public static final int PROCESS = 104;
+  public static final int NOT = 73;
+  public static final int FALSE = 39;
+  public static final int PERCNTG = 55;
+  public static final int ERROR = 84;
+  public static final int DEC = 58;
+  public static final int THEN = 96;
+  public static final int STR = 41;
   public static final int FONTS = 22;
-  public static final int WIDTH = 32;
-  public static final int REVERSE = 47;
-  public static final int INTQ = 55;
-  public static final int CLASS = 30;
+  public static final int WIDTH = 31;
+  public static final int REVERSE = 46;
+  public static final int INTQ = 53;
+  public static final int CLASS = 29;
   public static final int SELECT = 10;
   public static final int FONTF = 23;
-  public static final int TRUE = 39;
-  public static final int PIXEL = 56;
-  public static final int PLUS = 76;
-  public static final int QUOTE = 86;
-  public static final int DIVIDE = 79;
-  public static final int WHILE = 103;
-  public static final int EQUAL = 83;
+  public static final int TRUE = 38;
+  public static final int PIXEL = 54;
+  public static final int PLUS = 74;
+  public static final int DIVIDE = 77;
+  public static final int WHILE = 100;
+  public static final int EQUAL = 81;
   public static final int COLS = 28;
-  public static final int CHAR = 97;
-  public static final int FONTF_VALUE = 85;
+  public static final int CHAR = 94;
+  public static final int FONTF_VALUE = 83;
   public static final int ALIGN = 24;
-  public static final int DECIMAL = 37;
-  public static final int LETPAR = 45;
+  public static final int DECIMAL = 36;
+  public static final int LETPAR = 44;
   public static final int INPUT = 8;
   public static final int TXTAREA = 9;
   public static final int GCIC = 2;
-  public static final int GREATER = 61;
+  public static final int GREATER = 59;
   public static final int DIV = 12;
-  public static final int ELSE = 100;
-  public static final int INT = 59;
-  public static final int URL = 80;
-  public static final int EQEQ = 69;
+  public static final int ELSE = 97;
+  public static final int INT = 57;
+  public static final int URL = 78;
+  public static final int EQEQ = 67;
   public static final int LINK = 5;
   public static final int EOF = 0;
-  public static final int SMLLREQ = 72;
+  public static final int SMLLREQ = 70;
   public static final int BUTTON = 15;
   public static final int PARAGRAPH = 17;
-  public static final int REPEAT = 101;
-  public static final int GRTREQ = 71;
+  public static final int REPEAT = 98;
+  public static final int GRTREQ = 69;
   public static final int SPAM = 7;
-  public static final int MINUS = 77;
+  public static final int MINUS = 75;
   public static final int SCRIPT = 18;
-  public static final int SRC = 31;
-  public static final int IN = 94;
+  public static final int SRC = 30;
+  public static final int IN = 91;
   public static final int BODY = 6;
   public static final int HREF = 19;
   public static final int TITLE = 4;
-  public static final int THEN_WHILE = 104;
-  public static final int OR = 73;
+  public static final int THEN_WHILE = 101;
+  public static final int OR = 71;
   public static final int error = 1;
-  public static final int EXIT = 51;
-  public static final int CLASS_VALUE = 90;
-  public static final int CHR = 41;
-  public static final int IF = 98;
+  public static final int EXIT = 50;
+  public static final int CLASS_VALUE = 87;
+  public static final int CHR = 40;
+  public static final int IF = 95;
   public static final int BCKGRND = 20;
-  public static final int DESC = 44;
+  public static final int DESC = 43;
   public static final int ID = 26;
-  public static final int CLICK = 35;
+  public static final int CLICK = 34;
   public static final int COLOR = 21;
-  public static final int ON_LOAD = 92;
+  public static final int ON_LOAD = 89;
   public static final int HEAD = 3;
-  public static final int END = 106;
-  public static final int ALERT = 50;
-  public static final int COLON = 67;
+  public static final int END = 103;
+  public static final int ALERT = 49;
+  public static final int COLON = 65;
   public static final int IMG = 13;
-  public static final int RANDOM_N = 49;
-  public static final int HEIGHT = 33;
+  public static final int RANDOM_N = 48;
+  public static final int HEIGHT = 32;
   public static final int BR = 14;
-  public static final int RBRACKET = 66;
-  public static final int GLOBAL = 52;
+  public static final int RBRACKET = 64;
+  public static final int GLOBAL = 51;
   public static final int OPTION = 11;
-  public static final int TYPE_VALUE = 88;
-  public static final int ID_V = 95;
-  public static final int STRING = 96;
-  public static final int ONCLICK = 93;
-  public static final int COLOUR = 54;
-  public static final int RANDOM_C = 48;
-  public static final int SMALLER = 62;
-  public static final int NEQ = 70;
-  public static final int AND = 74;
-  public static final int LBRACKET = 65;
+  public static final int TYPE_VALUE = 85;
+  public static final int ID_V = 92;
+  public static final int STRING = 93;
+  public static final int ONCLICK = 90;
+  public static final int COLOUR = 52;
+  public static final int RANDOM_C = 47;
+  public static final int SMALLER = 60;
+  public static final int NEQ = 68;
+  public static final int AND = 72;
+  public static final int LBRACKET = 63;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -146,7 +143,6 @@ public class CaptchaParserSym {
   "ID",
   "NAME",
   "COLS",
-  "ROW",
   "CLASS",
   "SRC",
   "WIDTH",
@@ -170,7 +166,6 @@ public class CaptchaParserSym {
   "ALERT",
   "EXIT",
   "GLOBAL",
-  "HEX",
   "COLOUR",
   "INTQ",
   "PIXEL",
@@ -203,7 +198,6 @@ public class CaptchaParserSym {
   "EQUAL",
   "ROWS",
   "FONTF_VALUE",
-  "QUOTE",
   "ERROR",
   "TYPE_VALUE",
   "ALIGN_VALUE",

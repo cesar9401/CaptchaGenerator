@@ -12,6 +12,7 @@ class CaptchaParser;
 parser code {:
 
 	private Operation operation;
+	private Function function;
 	private BuildTag tag;
 	private ErrorHandler handler;
 
@@ -26,6 +27,7 @@ parser code {:
 	public CaptchaParser(CaptchaLex lex) {
 		super(lex);
 		this.operation = new Operation(this);
+		this.function = new Function(this);
 		this.tag = new BuildTag(this);
 		this.handler = new ErrorHandler(this);
 		this.eh = new EnviromentHandler(this);
@@ -70,10 +72,10 @@ parser code {:
 :}
 
 terminal Token GCIC, HEAD, TITLE, LINK, BODY, SPAM, INPUT, TXTAREA, SELECT, OPTION, DIV, IMG, BR, BUTTON, H1, PARAGRAPH, SCRIPT, HREF, BCKGRND, COLOR, FONTS;
-terminal Token FONTF, ALIGN, TYPE, ID, NAME, COLS, ROW, CLASS, SRC, WIDTH, HEIGHT, ALT, CLICK, INTEGER, DECIMAL, BOOL, TRUE, FALSE;
-terminal Token CHR, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_N, ALERT, EXIT, GLOBAL, HEX, COLOUR, INTQ, PIXEL, PERCNTG, ID_, INT, DEC;
+terminal Token FONTF, ALIGN, TYPE, ID, NAME, COLS, CLASS, SRC, WIDTH, HEIGHT, ALT, CLICK, INTEGER, DECIMAL, BOOL, TRUE, FALSE;
+terminal Token CHR, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_N, ALERT, EXIT, GLOBAL, COLOUR, INTQ, PIXEL, PERCNTG, ID_, INT, DEC;
 terminal Token GREATER, SMALLER, LBRACE, RBRACE, LBRACKET, RBRACKET, COLON, SEMI, EQEQ, NEQ, GRTREQ, SMLLREQ, OR, AND, NOT, PLUS, MINUS, TIMES, DIVIDE;
-terminal Token URL, LPAREN, RPAREN, EQUAL, ROWS, FONTF_VALUE, QUOTE, ERROR;
+terminal Token URL, LPAREN, RPAREN, EQUAL, ROWS, FONTF_VALUE, ERROR;
 terminal Token TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE, COMMA, ON_LOAD, ONCLICK, IN, ID_V;
 terminal Token STRING, CHAR, IF, THEN, ELSE, REPEAT, UNTIL, WHILE, THEN_WHILE, INIT, END, PROCESS;
 
@@ -83,7 +85,7 @@ non terminal make_script, make_var, stat, statement;
 non terminal control_if, else_if, control_while, control_repeat, instruction, instructions, control, make_ins, type_instruction, assignment;
 non terminal process;
 
-non terminal Variable s, t, u, v, control_stat, a, b, c, d, boolean_val;
+non terminal Variable s, t, u, v, control_stat, a, b, c, d, boolean_val, function;
 non terminal List<Token> in;
 non terminal Param color, url, cls_rws, w_h;
 non terminal Boolean mode;
@@ -197,7 +199,9 @@ statement ::=
 
 assignment ::=
 				ID_V:id EQUAL a:v1 SEMI
-					{: System.out.println("Asignacion: " + id.getValue() + " = " + v1); :}
+					{:
+						eh.makeAssignment(id, v1, e);
+					:}
 				;
 
 type_var ::=
@@ -270,7 +274,8 @@ control ::=
 control_if ::=
 				IF:i
 					{: e = new Enviroment("IF", i.getLine(), i.getColumn(), e); :}
-				LPAREN a:b1 RPAREN THEN
+				LPAREN:l a:b1 RPAREN:r THEN
+					{: eh.checkBooleanVariable("IF", l, b1, r); :}
 				type_instruction
 					{: e = e.getDad(); :}
 				else_if
@@ -278,8 +283,9 @@ control_if ::=
 
 else_if ::=
 				ELSE:el
-					{: e = new Enviroment("ELSE_IF", el.getLine(), el.getColumn(), e); :}
-				IF LPAREN a:b1 RPAREN THEN
+					{: e = new Enviroment("ELSE-IF", el.getLine(), el.getColumn(), e); :}
+				IF LPAREN:l a:b1 RPAREN:r THEN
+					{: eh.checkBooleanVariable("ELSE-IF", l, b1, r); :}
 				type_instruction
 					{: e = e.getDad(); :}
 				else_if
@@ -294,18 +300,44 @@ else_if ::=
 
 /* WHILE */
 control_while ::=
-				WHILE LPAREN a:b1 RPAREN THEN_WHILE type_instruction
+				WHILE:w
+					{: e = new Enviroment("WHILE", w.getLine(), w.getColumn(), e); :}
+				LPAREN:l a:b1 RPAREN:r THEN_WHILE
+					{: eh.checkBooleanVariable("WHILE", l, b1, r); :}
+				type_instruction
+					{: e = e.getDad(); :}
 				;
 /* WHILE */
 
 /* REPEAT */
 control_repeat ::=
-				REPEAT LPAREN control_stat:b1 RPAREN UNTIL LPAREN a:b2 RPAREN type_instruction
+				REPEAT:r
+					{: e = new Enviroment("REPEAT", r.getLine(), r.getColumn(), e); :}
+				LPAREN control_stat:b1 RPAREN
+				UNTIL LPAREN a:b2 RPAREN
+					{:
+						/* Revisar que b2 sea de tipo entero */
+						if(b2 != null) {
+							if(b2.getType() != Var.INTEGER) {
+								System.out.println("Error");
+							}
+						}
+					:}
+				type_instruction
+					{: e = e.getDad(); :}
 				;
 
 control_stat ::=
-				INT ID_V EQUAL a:b1 {: RESULT = b1; :}
-				| ID_V EQUAL a:b1 {: RESULT = b1; :}
+				INT:t ID_V:id EQUAL a:v1
+					{:
+						eh.checkForVariable(t, id, v1, e);
+						RESULT = v1;
+					:}
+				| ID_V:id EQUAL a:v1
+					{:
+						eh.checkForVariable(null, id, v1, e);
+						RESULT = v1;
+					:}
 				;
 /* REPEAT */
 /* IF - WHILE- REPEAT */
@@ -349,9 +381,20 @@ u ::=
 				;
 
 c ::=
-        NOT:op v:b1 {: RESULT = operation.not(b1, op); :}
-        | v:b1 {: RESULT = b1; :}
+        NOT:op function:b1 {: RESULT = operation.not(b1, op); :}
+        | function:b1 {: RESULT = b1; :}
         ;
+
+function ::=
+				ASC LPAREN a:s1 RPAREN  {: RESULT = function.ASC(s1); :}
+				| DESC LPAREN a:s1 RPAREN {: RESULT = function.DESC(s1); :}
+				| LETPAR LPAREN a:s1 RPAREN {: RESULT = function.LETPAR_NUM(s1); :}
+				| LETIMPAR LPAREN a:s1 RPAREN {: RESULT = function.LETIMPAR_NUM(s1); :}
+				| REVERSE LPAREN a:s1 RPAREN {: RESULT = function.REVERSE(s1); :}
+				| RANDOM_C LPAREN RPAREN {: RESULT = function.CARACTER_ALEATORIO(); :}
+				| RANDOM_N LPAREN RPAREN {: RESULT = function.NUM_ALEATORIO(); :}
+				| v:b1 {: RESULT = b1; :}
+				;
 
 v ::=
 				INTEGER:n1 {: RESULT = new Variable(Var.INTEGER, n1.getValue()); :}
@@ -377,6 +420,7 @@ string ::=
 				| PIXEL:s1 {: RESULT = s1; :}
 				| PERCNTG:s1 {: RESULT = s1; :}
 				| ONCLICK:s1 {: RESULT = s1; :}
+				| URL:s1 {: RESULT = s1; :}
 				;
 /* string */
 
@@ -557,6 +601,27 @@ str ::=
 				| URL:s {: RESULT = setQuote(s); :}
 				| STRING:s {: RESULT = setQuote(s); :}
 				| CHAR:s {: RESULT = setQuote(s); :}
+				// | SMALLER:s {: RESULT = s; :}
+				| GREATER:s {: RESULT = s; :}
+				| LBRACE:s {: RESULT = s; :}
+				| RBRACE:s {: RESULT = s; :}
+				| LBRACKET:s {: RESULT = s; :}
+				| RBRACKET:s {: RESULT = s; :}
+				| SEMI:s {: RESULT = s; :}
+				| EQUAL:s {: RESULT = s; :}
+				| EQEQ:s {: RESULT = s; :}
+				| NEQ:s {: RESULT = s; :}
+				| GRTREQ:s {: RESULT = s; :}
+				| SMLLREQ:s {: RESULT = s; :}
+				| OR:s {: RESULT = s; :}
+				| AND:s {: RESULT = s; :}
+				| NOT:s {: RESULT = s; :}
+				| MINUS:s {: RESULT = s; :}
+				| TIMES:s {: RESULT = s; :}
+				| DIVIDE:s {: RESULT = s; :}
+				| LPAREN:s {: RESULT = s; :}
+				| RPAREN:s {: RESULT = s; :}
+				| COMMA:s {: RESULT = s; :}
 				;
 
 /* Etiqueta de apertura <C_GCIC> */

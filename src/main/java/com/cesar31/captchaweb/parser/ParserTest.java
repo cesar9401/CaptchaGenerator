@@ -48,6 +48,7 @@ public class ParserTest {
         } else {
             System.out.println("Shit!");
         }
+
     }
 
     public static void checkCaptcha(Captcha c) {

@@ -49,6 +49,17 @@ public class Enviroment {
         }
         return null;
     }
+    
+    // Obtener entorno segun variable
+    public Enviroment getE(String id) {
+        for(Enviroment e = this; e != null; e = e.getDad()) {
+            Variable v = e.getVariables().get(id);
+            if(v != null) {
+                return e;
+            }
+        }
+        return null;
+    }
 
     public String getName() {
         return name;
