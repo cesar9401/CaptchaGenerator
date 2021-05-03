@@ -4187,14 +4187,28 @@ class CUP$CaptchaParser$actions {
 		int b1left = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-5)).left;
 		int b1right = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-5)).right;
 		Variable b1 = (Variable)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-5)).value;
+		int lparenleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)).left;
+		int lparenright = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)).right;
+		Token lparen = (Token)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)).value;
 		int b2left = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-1)).left;
 		int b2right = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-1)).right;
 		Variable b2 = (Variable)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-1)).value;
+		int rparenleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).left;
+		int rparenright = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).right;
+		Token rparen = (Token)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.peek()).value;
 
 						/* Revisar que b2 sea de tipo entero */
 						if(b2 != null) {
 							if(b2.getType() != Var.INTEGER) {
-								System.out.println("Error");
+								Err err = new Err(lparen.getLine(), lparen.getColumn() + 1, "SEMANTICO", b2.getValue());
+								err.setDescription("Se esperaba variable de tipo integer, se encontro variable de tipo " + b2.getType().toString().toLowerCase() + ", no se puede evaluar REPEAT.");
+								getErrors().add(err);
+							} else {
+								if(b2.getValue() != null) {
+
+								} else {
+									/* Error, se maneja en metodo getFromSymbolTable */
+								}
 							}
 						}
 					
@@ -4214,9 +4228,15 @@ class CUP$CaptchaParser$actions {
 		int b1left = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-7)).left;
 		int b1right = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-7)).right;
 		Variable b1 = (Variable)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-7)).value;
+		int lparenleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-4)).left;
+		int lparenright = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-4)).right;
+		Token lparen = (Token)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-4)).value;
 		int b2left = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-3)).left;
 		int b2right = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-3)).right;
 		Variable b2 = (Variable)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-3)).value;
+		int rparenleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)).left;
+		int rparenright = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)).right;
+		Token rparen = (Token)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)).value;
 		 e = e.getDad(); 
               CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("control_repeat",24, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-10)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }

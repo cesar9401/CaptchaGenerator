@@ -314,12 +314,20 @@ control_repeat ::=
 				REPEAT:r
 					{: e = new Enviroment("REPEAT", r.getLine(), r.getColumn(), e); :}
 				LPAREN control_stat:b1 RPAREN
-				UNTIL LPAREN a:b2 RPAREN
+				UNTIL LPAREN:lparen a:b2 RPAREN:rparen
 					{:
 						/* Revisar que b2 sea de tipo entero */
 						if(b2 != null) {
 							if(b2.getType() != Var.INTEGER) {
-								System.out.println("Error");
+								Err err = new Err(lparen.getLine(), lparen.getColumn() + 1, "SEMANTICO", b2.getValue());
+								err.setDescription("Se esperaba variable de tipo integer, se encontro variable de tipo " + b2.getType().toString().toLowerCase() + ", no se puede evaluar REPEAT.");
+								getErrors().add(err);
+							} else {
+								if(b2.getValue() != null) {
+
+								} else {
+									/* Error, se maneja en metodo getFromSymbolTable */
+								}
 							}
 						}
 					:}
