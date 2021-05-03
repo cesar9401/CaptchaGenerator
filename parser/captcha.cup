@@ -11,7 +11,7 @@ class CaptchaParser;
 
 parser code {:
 
-	private Operation operation;
+	private MakeOperation oper;
 	private Function function;
 	private BuildTag tag;
 	private ErrorHandler handler;
@@ -26,7 +26,7 @@ parser code {:
 
 	public CaptchaParser(CaptchaLex lex) {
 		super(lex);
-		this.operation = new Operation(this);
+		this.oper = new MakeOperation(this);
 		this.function = new Function(this);
 		this.tag = new BuildTag(this);
 		this.handler = new ErrorHandler(this);
@@ -85,7 +85,7 @@ non terminal make_script, make_var, stat, statement;
 non terminal control_if, else_if, control_while, control_repeat, instruction, instructions, control, make_ins, type_instruction, assignment;
 non terminal process;
 
-non terminal Variable s, t, u, v, control_stat, a, b, c, d, boolean_val, function;
+non terminal Operation s, t, u, v, control_stat, a, b, c, d, boolean_val, function;
 non terminal List<Token> in;
 non terminal Param color, url, cls_rws, w_h;
 non terminal Boolean mode;
@@ -174,9 +174,8 @@ c_script ::=
 
 /* proceso */
 process ::=
-				PROCESS:p {: e = new Enviroment(p.getValue(), p.getLine(), p.getColumn(), e); :}
+				PROCESS:p {: /* e = new Enviroment(p.getValue(), p.getLine(), p.getColumn(), e); */ :}
 				LPAREN RPAREN LBRACKET make_script RBRACKET
-					{: System.out.println("Proceso: " + p.getValue());  :}
 				|
 				;
 
@@ -200,7 +199,7 @@ statement ::=
 assignment ::=
 				ID_V:id EQUAL a:v1 SEMI
 					{:
-						eh.makeAssignment(id, v1, e);
+						/* eh.makeAssignment(id, v1, e); */
 					:}
 				;
 
@@ -221,12 +220,12 @@ stat ::=
 				mode:b1 ID_V:id EQUAL a:v1
 					{:
 						/* Asignar variables y agregar a tabla de simbolos */
-						eh.addSymbolTable(type, id, v1, b1, e, true);
+						/* eh.addSymbolTable(type, id, v1, b1, e, true); */
 					:}
 				| mode:b1 ID_V:id
 					{:
 						/* Declarar variables y agregar a tabla de simbolos */
-						eh.addSymbolTable(type, id, null, b1, e, false);
+						/* eh.addSymbolTable(type, id, null, b1, e, false); */
 					:}
 				;
 
@@ -273,27 +272,27 @@ control ::=
 /* IF */
 control_if ::=
 				IF:i
-					{: e = new Enviroment("IF", i.getLine(), i.getColumn(), e); :}
+					// {: e = new Enviroment("IF", i.getLine(), i.getColumn(), e); :}
 				LPAREN:l a:b1 RPAREN:r THEN
-					{: eh.checkBooleanVariable("IF", l, b1, r); :}
+					// {: eh.checkBooleanVariable("IF", l, b1, r); :}
 				type_instruction
-					{: e = e.getDad(); :}
+					// {: e = e.getDad(); :}
 				else_if
 				;
 
 else_if ::=
 				ELSE:el
-					{: e = new Enviroment("ELSE-IF", el.getLine(), el.getColumn(), e); :}
+					// {: e = new Enviroment("ELSE-IF", el.getLine(), el.getColumn(), e); :}
 				IF LPAREN:l a:b1 RPAREN:r THEN
-					{: eh.checkBooleanVariable("ELSE-IF", l, b1, r); :}
+					// {: eh.checkBooleanVariable("ELSE-IF", l, b1, r); :}
 				type_instruction
-					{: e = e.getDad(); :}
+					// {: e = e.getDad(); :}
 				else_if
 
 				| ELSE:el
-					{: e = new Enviroment("ELSE", el.getLine(), el.getColumn(), e); :}
+					// {: e = new Enviroment("ELSE", el.getLine(), el.getColumn(), e); :}
 				type_instruction
-					{: e = e.getDad(); :}
+					// {: e = e.getDad(); :}
 				|
 				;
 /* IF */
@@ -301,49 +300,49 @@ else_if ::=
 /* WHILE */
 control_while ::=
 				WHILE:w
-					{: e = new Enviroment("WHILE", w.getLine(), w.getColumn(), e); :}
+					// {: e = new Enviroment("WHILE", w.getLine(), w.getColumn(), e); :}
 				LPAREN:l a:b1 RPAREN:r THEN_WHILE
-					{: eh.checkBooleanVariable("WHILE", l, b1, r); :}
+					// {: eh.checkBooleanVariable("WHILE", l, b1, r); :}
 				type_instruction
-					{: e = e.getDad(); :}
+					// {: e = e.getDad(); :}
 				;
 /* WHILE */
 
 /* REPEAT */
 control_repeat ::=
 				REPEAT:r
-					{: e = new Enviroment("REPEAT", r.getLine(), r.getColumn(), e); :}
+					// {: e = new Enviroment("REPEAT", r.getLine(), r.getColumn(), e); :}
 				LPAREN control_stat:b1 RPAREN
 				UNTIL LPAREN:lparen a:b2 RPAREN:rparen
-					{:
-						/* Revisar que b2 sea de tipo entero */
-						if(b2 != null) {
-							if(b2.getType() != Var.INTEGER) {
-								Err err = new Err(lparen.getLine(), lparen.getColumn() + 1, "SEMANTICO", b2.getValue());
-								err.setDescription("Se esperaba variable de tipo integer, se encontro variable de tipo " + b2.getType().toString().toLowerCase() + ", no se puede evaluar REPEAT.");
-								getErrors().add(err);
-							} else {
-								if(b2.getValue() != null) {
+					// {:
+					// 	/* Revisar que b2 sea de tipo entero */
+					// 	if(b2 != null) {
+					// 		if(b2.getType() != Var.INTEGER) {
+					// 			Err err = new Err(lparen.getLine(), lparen.getColumn() + 1, "SEMANTICO", b2.getValue());
+					// 			err.setDescription("Se esperaba variable de tipo integer, se encontro variable de tipo " + b2.getType().toString().toLowerCase() + ", no se puede evaluar REPEAT.");
+					// 			getErrors().add(err);
+					// 		} else {
+					// 			if(b2.getValue() != null) {
 
-								} else {
-									/* Error, se maneja en metodo getFromSymbolTable */
-								}
-							}
-						}
-					:}
+					// 			} else {
+					// 				/* Error, se maneja en metodo getFromSymbolTable */
+					// 			}
+					// 		}
+					// 	}
+					// :}
 				type_instruction
-					{: e = e.getDad(); :}
+					// {: e = e.getDad(); :}
 				;
 
 control_stat ::=
 				INT:t ID_V:id EQUAL a:v1
 					{:
-						eh.checkForVariable(t, id, v1, e);
+						// eh.checkForVariable(t, id, v1, e);
 						RESULT = v1;
 					:}
 				| ID_V:id EQUAL a:v1
 					{:
-						eh.checkForVariable(null, id, v1, e);
+						// eh.checkForVariable(null, id, v1, e);
 						RESULT = v1;
 					:}
 				;
@@ -352,64 +351,64 @@ control_stat ::=
 
 /* Operaciones logicas y aritmeticas */
 a ::=
-        a:b1 OR:op b:b2 {: RESULT = operation.or(b1, b2, op); :}
+        a:b1 OR:op b:b2 {: RESULT = new Operation(OperationType.OR, b1, b2, op); :}
         | b:b1 {: RESULT = b1; :}
         ;
 
 b ::=
-        b:b1 AND:op d:b2 {: RESULT = operation.and(b1, b2, op); :}
+        b:b1 AND:op d:b2 {: RESULT = new Operation(OperationType.AND, b1, b2, op); :}
         | d:b1 {: RESULT = b1; :}
         ;
 
 d ::=
-				s:n1 SMALLER:op s:n2 {: RESULT = operation.compare(n1, n2, Compare.SMALLER, op); :}
-				| s:n1 GREATER:op s:n2 {: RESULT = operation.compare(n1, n2, Compare.GREATER, op); :}
-				| s:n1 GRTREQ:op s:n2 {: RESULT = operation.compare(n1, n2, Compare.GREATER_OR_EQUAL, op); :}
-				| s:n1 SMLLREQ:op s:n2 {: RESULT = operation.compare(n1, n2, Compare.LESS_OR_EQUAL, op); :}
-				| s:n1 EQEQ:op s:n2 {: RESULT = operation.compare(n1, n2, Compare.EQUAL, op); :}
-				| s:n1 NEQ:op s:n2 {: RESULT = operation.compare(n1, n2, Compare.NOT_EQUAL, op); :}
+				s:n1 SMALLER:op s:n2 {: RESULT = new Operation(OperationType.SMALLER, n1, n2, op); :}
+				| s:n1 GREATER:op s:n2 {: RESULT = new Operation(OperationType.GREATER, n1, n2, op); :}
+				| s:n1 GRTREQ:op s:n2 {: RESULT = new Operation(OperationType.GREATER_OR_EQUAL, n1, n2, op); :}
+				| s:n1 SMLLREQ:op s:n2 {: RESULT = new Operation(OperationType.LESS_OR_EQUAL, n1, n2, op); :}
+				| s:n1 EQEQ:op s:n2 {: RESULT = new Operation(OperationType.EQUAL, n1, n2, op); :}
+				| s:n1 NEQ:op s:n2 {: RESULT = new Operation(OperationType.NOT_EQUAL, n1, n2, op); :}
 				| s:n1 {: RESULT = n1; :}
 				;
 
 s ::=
-				s:n1 PLUS:op t:n2 {: RESULT = operation.sum(n1, n2, op); :}
-				| s:n1 MINUS:op t:n2 {: RESULT = operation.subtraction(n1, n2, op); :}
+				s:n1 PLUS:op t:n2 {: RESULT =  new Operation(OperationType.SUM, n1, n2, op); :}
+				| s:n1 MINUS:op t:n2 {: RESULT =  new Operation(OperationType.SUBTRACTION, n1, n2, op); :}
 				| t:n1 {: RESULT = n1; :}
 				;
 
 t ::=
-				t:n1 TIMES:op u:n2 {: RESULT = operation.multiplication(n1, n2, op); :}
-				| t:n1 DIVIDE:op u:n2 {: RESULT = operation.division(n1, n2, op); :}
+				t:n1 TIMES:op u:n2 {: RESULT = new Operation(OperationType.MULTIPLICATION, n1, n2, op); :}
+				| t:n1 DIVIDE:op u:n2 {: RESULT = new Operation(OperationType.DIVISION, n1, n2, op); :}
 				| u:n1 {: RESULT = n1; :}
 				;
 
 u ::=
-				MINUS:op c:n1 {: RESULT = operation.uminus(n1, op); :}
+				MINUS:op c:n1 {: RESULT = new Operation(OperationType.UMINUS, n1, op); :}
 				| c:n1 {: RESULT = n1; :}
 				;
 
 c ::=
-        NOT:op function:b1 {: RESULT = operation.not(b1, op); :}
+        NOT:op function:b1 {: RESULT = new Operation(OperationType.NOT, b1, op); :}
         | function:b1 {: RESULT = b1; :}
         ;
 
 function ::=
-				ASC LPAREN a:s1 RPAREN  {: RESULT = function.ASC(s1); :}
-				| DESC LPAREN a:s1 RPAREN {: RESULT = function.DESC(s1); :}
-				| LETPAR LPAREN a:s1 RPAREN {: RESULT = function.LETPAR_NUM(s1); :}
-				| LETIMPAR LPAREN a:s1 RPAREN {: RESULT = function.LETIMPAR_NUM(s1); :}
-				| REVERSE LPAREN a:s1 RPAREN {: RESULT = function.REVERSE(s1); :}
-				| RANDOM_C LPAREN RPAREN {: RESULT = function.CARACTER_ALEATORIO(); :}
-				| RANDOM_N LPAREN RPAREN {: RESULT = function.NUM_ALEATORIO(); :}
-				| v:b1 {: RESULT = b1; :}
+				v:b1 {: RESULT = b1; :}
+				// | ASC LPAREN a:s1 RPAREN  {: RESULT = function.ASC(s1); :}
+				// | DESC LPAREN a:s1 RPAREN {: RESULT = function.DESC(s1); :}
+				// | LETPAR LPAREN a:s1 RPAREN {: RESULT = function.LETPAR_NUM(s1); :}
+				// | LETIMPAR LPAREN a:s1 RPAREN {: RESULT = function.LETIMPAR_NUM(s1); :}
+				// | REVERSE LPAREN a:s1 RPAREN {: RESULT = function.REVERSE(s1); :}
+				// | RANDOM_C LPAREN RPAREN {: RESULT = function.CARACTER_ALEATORIO(); :}
+				// | RANDOM_N LPAREN RPAREN {: RESULT = function.NUM_ALEATORIO(); :}
 				;
 
 v ::=
-				INTEGER:n1 {: RESULT = new Variable(Var.INTEGER, n1.getValue()); :}
-				| DECIMAL:n1 {: RESULT = new Variable(Var.DECIMAL, n1.getValue()); :}
-				| string:s1 {: RESULT = new Variable(Var.STRING, s1.getValue()); :}
-				| CHAR:ch1 {: RESULT = new Variable(Var.CHAR, ch1.getValue()); :}
-				| ID_V:s {: RESULT = eh.getFromSymbolTable(s, e, true); :}
+				INTEGER:n1 {: RESULT = new Operation(OperationType.integer, new Variable(Var.INTEGER, n1.getValue())); :}
+				| DECIMAL:n1 {: RESULT = new Operation(OperationType.decimal, new Variable(Var.DECIMAL, n1.getValue())); :}
+				| string:s1 {: RESULT = new Operation(OperationType.string, new Variable(Var.STRING, s1.getValue())); :}
+				| CHAR:ch1 {: RESULT = new Operation(OperationType.character, new Variable(Var.CHAR, ch1.getValue())); :}
+				| ID_V:s {: RESULT = new Operation(OperationType.id, new Variable(s.getValue())); :}
 				| boolean_val:b1 {: RESULT = b1; :}
 				| LPAREN a:n1 RPAREN {: RESULT = n1; :}
 				;
@@ -434,8 +433,8 @@ string ::=
 
 /* boolean */
 boolean_val ::=
-				TRUE:b1 {: RESULT = new Variable(Var.BOOLEAN, b1.getValue()); :}
-				| FALSE:b1 {: RESULT = new Variable(Var.BOOLEAN, b1.getValue()); :}
+				TRUE:b1 {: RESULT = new Operation(OperationType.bool, new Variable(Var.BOOLEAN, b1.getValue())); :}
+				| FALSE:b1 {: RESULT = new Operation(OperationType.bool, new Variable(Var.BOOLEAN, b1.getValue())); :}
 				;
 /* boolean */
 

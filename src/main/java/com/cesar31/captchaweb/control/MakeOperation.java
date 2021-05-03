@@ -1,8 +1,8 @@
 package com.cesar31.captchaweb.control;
 
-import com.cesar31.captchaweb.model.Compare;
+import com.cesar31.captchaweb.model.OperationType;
 import static com.cesar31.captchaweb.model.Var.*;
-import static com.cesar31.captchaweb.model.Compare.*;
+import static com.cesar31.captchaweb.model.OperationType.*;
 import com.cesar31.captchaweb.model.Err;
 import com.cesar31.captchaweb.model.Token;
 import com.cesar31.captchaweb.model.Variable;
@@ -12,14 +12,14 @@ import com.cesar31.captchaweb.parser.CaptchaParser;
  *
  * @author cesar31
  */
-public class Operation {
+public class MakeOperation {
 
     private CaptchaParser parser;
 
-    public Operation() {
+    public MakeOperation() {
     }
 
-    public Operation(CaptchaParser parser) {
+    public MakeOperation(CaptchaParser parser) {
         this.parser = parser;
     }
 
@@ -669,14 +669,14 @@ public class Operation {
         return v;
     }
 
-    public Variable compare(Variable a, Variable b, Compare comp, Token op) {
+    public Variable compare(Variable a, Variable b, OperationType comp, Token op) {
         Variable v = null;
         
         if (a == null || b == null) {
             return null;
         }
 
-        // Compare numbers
+        // OperationType numbers
         if ((a.getType() == INTEGER || a.getType() == DECIMAL) && (b.getType() == INTEGER || b.getType() == DECIMAL)) {
             Boolean value;
             switch (comp) {
@@ -712,7 +712,7 @@ public class Operation {
             }
         }
 
-        // Compare string
+        // OperationType string
         if (a.getType() == STRING && b.getType() == STRING) {
             Boolean value;
             switch (comp) {
@@ -729,7 +729,7 @@ public class Operation {
 
         }
 
-        // Compare char
+        // OperationType char
         if (a.getType() == CHAR && b.getType() == CHAR) {
             Boolean value;
             switch (comp) {
@@ -794,7 +794,7 @@ public class Operation {
         return Boolean.valueOf(v.getValue());
     }
 
-    private String getCompareSymbol(Compare comp) {
+    private String getCompareSymbol(OperationType comp) {
         switch (comp) {
             case GREATER:
                 return ">";

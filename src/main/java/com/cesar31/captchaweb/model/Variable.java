@@ -10,8 +10,6 @@ public class Variable {
     private String id;
     private boolean global;
     private String value;
-    
-    private Token token;
 
     public Variable(Var type, String id, String value) {
         this.type = type;
@@ -25,10 +23,14 @@ public class Variable {
         this.global = global;
         this.value = value;
     }
-    
+
     public Variable(Var type, String value) {
         this.type = type;
         this.value = value;
+    }
+
+    public Variable(String id) {
+        this.id = id;
     }
 
     public Var getType() {
