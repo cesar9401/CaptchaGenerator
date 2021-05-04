@@ -5,32 +5,29 @@ import com.cesar31.captchaweb.control.*;
 import java_cup.runtime.Symbol;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 class CaptchaParser;
 
 parser code {:
 
-	private MakeOperation oper;
-	private Function function;
 	private BuildTag tag;
 	private ErrorHandler handler;
 
 	private Enviroment e;
-	private EnviromentHandler eh;
 
 	private List<Err> errors;
 	private Symbol cur_token;
 
 	private Token type;
 
+	private LinkedList<Instruction> AST;
+
 	public CaptchaParser(CaptchaLex lex) {
 		super(lex);
-		this.oper = new MakeOperation(this);
-		this.function = new Function(this);
 		this.tag = new BuildTag(this);
 		this.handler = new ErrorHandler(this);
-		this.eh = new EnviromentHandler(this);
 
 		this.errors = new ArrayList<>();
 	}
@@ -69,6 +66,10 @@ parser code {:
 		return t;
 	}
 
+	public LinkedList<Instruction> getAST() {
+		return AST;
+	}
+
 :}
 
 terminal Token GCIC, HEAD, TITLE, LINK, BODY, SPAM, INPUT, TXTAREA, SELECT, OPTION, DIV, IMG, BR, BUTTON, H1, PARAGRAPH, SCRIPT, HREF, BCKGRND, COLOR, FONTS;
@@ -79,11 +80,8 @@ terminal Token URL, LPAREN, RPAREN, EQUAL, ROWS, FONTF_VALUE, ERROR;
 terminal Token TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE, COMMA, ON_LOAD, ONCLICK, IN, ID_V;
 terminal Token STRING, CHAR, IF, THEN, ELSE, REPEAT, UNTIL, WHILE, THEN_WHILE, INIT, END, PROCESS;
 
-non terminal scripting;
 non terminal clgcic, clhead, cltitle, cllink, clbody, clspam, clinput, cltxtarea, clselect, cloption, cldiv, climg, clbutton, clh1, clparagraph, clscript;
-non terminal make_script, make_var, stat, statement;
 non terminal control_if, else_if, control_while, control_repeat, instruction, instructions, control, make_ins, type_instruction, assignment;
-non terminal process;
 
 non terminal Operation s, t, u, v, control_stat, a, b, c, d, boolean_val, function;
 non terminal List<Token> in;
@@ -97,6 +95,9 @@ non terminal Component c_script, c_title, c_link, c_spam, c_h1, c_button, c_para
 non terminal List<Component> body_opt, make_option, head_opt;
 non terminal ComponentParent c_body, c_head;
 non terminal Captcha c_gcic;
+
+non terminal Assignment stat;
+non terminal LinkedList<Instruction> make_var, statement, scripting, make_script, process;
 
 /* gramatica principal */
 c_gcic ::=
@@ -166,34 +167,45 @@ b_opt ::=
 				;
 
 c_script ::=
-				script:m process /*make_script*/ clscript
+				script:m process:list /*make_script*/ clscript
 					{:
 						RESULT = tag.makeTag(Tag.SCRIPT, m, null);
+						AST = list;
 					:}
 				;
 
 /* proceso */
 process ::=
 				PROCESS:p {: /* e = new Enviroment(p.getValue(), p.getLine(), p.getColumn(), e); */ :}
-				LPAREN RPAREN LBRACKET make_script RBRACKET
+				LPAREN RPAREN LBRACKET make_script:list RBRACKET
+					{: RESULT = list; :}
 				|
 				;
 
 make_script ::=
-				make_script scripting
+				make_script:list scripting:a
+					{:
+						RESULT = list;
+						RESULT.addAll(a);
+					:}
 				|
+					{:
+						RESULT = new LinkedList<>();
+					:}
 				;
 
 scripting ::=
-				statement
+				statement:list
+					{: RESULT = list; :}
 				| assignment
 				| control
 				;
 
 statement ::=
 				type_var:t
-				{: type = t; :}
-				make_var SEMI
+					{: type = t; :}
+				make_var:list SEMI
+					{: RESULT = list; :}
 				;
 
 assignment ::=
@@ -212,8 +224,16 @@ type_var ::=
 				;
 
 make_var ::=
-				make_var COMMA stat
-				| stat
+				make_var:list COMMA stat:a
+					{:
+						RESULT = list;
+						RESULT.add(a);
+					:}
+				| stat:a
+					{:
+						RESULT = new LinkedList<>();
+						RESULT.add(a);
+					:}
 				;
 
 stat ::=
@@ -221,6 +241,8 @@ stat ::=
 					{:
 						/* Asignar variables y agregar a tabla de simbolos */
 						/* eh.addSymbolTable(type, id, v1, b1, e, true); */
+						/* Nueva asignacion */
+						RESULT = new Assignment(type, id, v1, b1, true);
 					:}
 				| mode:b1 ID_V:id
 					{:
@@ -394,13 +416,13 @@ c ::=
 
 function ::=
 				v:b1 {: RESULT = b1; :}
-				// | ASC LPAREN a:s1 RPAREN  {: RESULT = function.ASC(s1); :}
-				// | DESC LPAREN a:s1 RPAREN {: RESULT = function.DESC(s1); :}
-				// | LETPAR LPAREN a:s1 RPAREN {: RESULT = function.LETPAR_NUM(s1); :}
-				// | LETIMPAR LPAREN a:s1 RPAREN {: RESULT = function.LETIMPAR_NUM(s1); :}
-				// | REVERSE LPAREN a:s1 RPAREN {: RESULT = function.REVERSE(s1); :}
-				// | RANDOM_C LPAREN RPAREN {: RESULT = function.CARACTER_ALEATORIO(); :}
-				// | RANDOM_N LPAREN RPAREN {: RESULT = function.NUM_ALEATORIO(); :}
+				| ASC LPAREN:lparen a:s1 RPAREN  {: RESULT = new Operation(OperationType.ASC, s1, lparen); :}
+				| DESC LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.DESC, s1, lparen); :}
+				| LETPAR LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.LETPAR, s1, lparen); :}
+				| LETIMPAR LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.LETIMPAR, s1, lparen); :}
+				| REVERSE LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.REVERSE, s1, lparen); :}
+				| RANDOM_C LPAREN:lparen RPAREN {: RESULT = new Operation(OperationType.RANDOM_C, null, lparen); :}
+				| RANDOM_N LPAREN:lparen RPAREN {: RESULT = new Operation(OperationType.RANDOM_N, null, lparen); :}
 				;
 
 v ::=
@@ -408,7 +430,7 @@ v ::=
 				| DECIMAL:n1 {: RESULT = new Operation(OperationType.decimal, new Variable(Var.DECIMAL, n1.getValue())); :}
 				| string:s1 {: RESULT = new Operation(OperationType.string, new Variable(Var.STRING, s1.getValue())); :}
 				| CHAR:ch1 {: RESULT = new Operation(OperationType.character, new Variable(Var.CHAR, ch1.getValue())); :}
-				| ID_V:s {: RESULT = new Operation(OperationType.id, new Variable(s.getValue())); :}
+				| ID_V:s {: RESULT = new Operation(OperationType.id, s); :}
 				| boolean_val:b1 {: RESULT = b1; :}
 				| LPAREN a:n1 RPAREN {: RESULT = n1; :}
 				;

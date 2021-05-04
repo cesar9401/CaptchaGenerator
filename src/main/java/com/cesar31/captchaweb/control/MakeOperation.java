@@ -6,7 +6,7 @@ import static com.cesar31.captchaweb.model.OperationType.*;
 import com.cesar31.captchaweb.model.Err;
 import com.cesar31.captchaweb.model.Token;
 import com.cesar31.captchaweb.model.Variable;
-import com.cesar31.captchaweb.parser.CaptchaParser;
+import java.util.List;
 
 /**
  *
@@ -14,13 +14,14 @@ import com.cesar31.captchaweb.parser.CaptchaParser;
  */
 public class MakeOperation {
 
-    private CaptchaParser parser;
+    //private CaptchaParser parser;
+    private List<Err> errors;
 
     public MakeOperation() {
     }
-
-    public MakeOperation(CaptchaParser parser) {
-        this.parser = parser;
+    
+    public MakeOperation(List<Err> errors) {
+        this.errors = errors;
     }
 
     /**
@@ -164,7 +165,7 @@ public class MakeOperation {
             Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
             String description = "No es posible realizar suma entre variables de tipo " + a.getType() + " y " + b.getType() + ", (" + a.getValue() + " + " + b.getValue() + ")";
             err.setDescription(description);
-            this.parser.getErrors().add(err);
+            this.errors.add(err);
         }
 
         return v;
@@ -261,7 +262,7 @@ public class MakeOperation {
             Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
             String description = "No es posible realizar resta entre variables de tipo " + a.getType() + " y " + b.getType() + ", (" + a.getValue() + " - " + b.getValue() + ")";
             err.setDescription(description);
-            this.parser.getErrors().add(err);
+            this.errors.add(err);
         }
 
         return v;
@@ -376,7 +377,7 @@ public class MakeOperation {
             Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
             String description = "No es posible realizar multiplicacion entre variables de tipo " + a.getType() + " y " + b.getType() + ", (" + a.getValue() + " * " + b.getValue() + ")";
             err.setDescription(description);
-            this.parser.getErrors().add(err);
+            this.errors.add(err);
         }
 
         return v;
@@ -541,7 +542,7 @@ public class MakeOperation {
             Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
             String description = "No es posible realizar division entre variables de tipo " + a.getType() + " y " + b.getType() + ", (" + a.getValue() + " / " + b.getValue() + ")";
             err.setDescription(description);
-            this.parser.getErrors().add(err);
+            this.errors.add(err);
         }
 
         return v;
@@ -574,7 +575,7 @@ public class MakeOperation {
             Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
             String description = "No es posible realizar la negacion numerica de " + a.getType() + ", ( -" + a.getValue() + ")";
             err.setDescription(description);
-            this.parser.getErrors().add(err);
+            this.errors.add(err);
         }
 
         return v;
@@ -604,7 +605,7 @@ public class MakeOperation {
             Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
             String description = "No es posible realizar la operacion OR entre variables de tipo " + a.getType() + " y " + b.getType() + ", (" + a.getValue() + " || " + b.getValue() + ")";
             err.setDescription(description);
-            this.parser.getErrors().add(err);
+            this.errors.add(err);
         }
 
         return v;
@@ -634,7 +635,7 @@ public class MakeOperation {
             Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
             String description = "No es posible realizar la operacion AND entre variables de tipo " + a.getType() + " y " + b.getType() + ", (" + a.getValue() + " && " + b.getValue() + ")";
             err.setDescription(description);
-            this.parser.getErrors().add(err);
+            this.errors.add(err);
         }
 
         return v;
@@ -663,7 +664,7 @@ public class MakeOperation {
             Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
             String description = "No es posible realizar la negacion booleana de " + a.getType() + ", ( !" + a.getValue() + ")";
             err.setDescription(description);
-            this.parser.getErrors().add(err);
+            this.errors.add(err);
         }
 
         return v;
@@ -671,7 +672,7 @@ public class MakeOperation {
 
     public Variable compare(Variable a, Variable b, OperationType comp, Token op) {
         Variable v = null;
-        
+
         if (a == null || b == null) {
             return null;
         }
@@ -764,7 +765,7 @@ public class MakeOperation {
             Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
             String description = "No es posible realizar la operacion " + op.getValue() + " entre variables de tipo " + a.getType() + " y " + b.getType() + ", (" + a.getValue() + " " + op.getValue() + " " + b.getValue() + ")";
             err.setDescription(description);
-            this.parser.getErrors().add(err);
+            this.errors.add(err);
         }
 
         return v;
@@ -794,21 +795,7 @@ public class MakeOperation {
         return Boolean.valueOf(v.getValue());
     }
 
-    private String getCompareSymbol(OperationType comp) {
-        switch (comp) {
-            case GREATER:
-                return ">";
-            case SMALLER:
-                return "<";
-            case GREATER_OR_EQUAL:
-                return ">=";
-            case LESS_OR_EQUAL:
-                return "<=";
-            case EQUAL:
-                return "==";
-            case NOT_EQUAL:
-                return "!=";
-        }
-        return "";
+    public List<Err> getErrors() {
+        return errors;
     }
 }

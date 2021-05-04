@@ -1,6 +1,6 @@
 package com.cesar31.captchaweb.model;
 
-import com.cesar31.captchaweb.control.MakeOperation;
+import com.cesar31.captchaweb.control.AstOperation;
 
 /**
  *
@@ -15,33 +15,43 @@ public class Operation implements Instruction {
     private Operation left;
     private Operation right;
 
-    private MakeOperation make;
+    private Token token;
 
     private Operation() {
-        this.make = new MakeOperation();
     }
 
     public Operation(OperationType type, Operation left, Operation right, Token op) {
-        this();
         this.type = type;
         this.left = left;
         this.right = right;
+        this.op = op;
     }
 
+    /**
+     * Constructor para operaciones unarias y funciones predefinidas
+     *
+     * @param type
+     * @param right
+     * @param op
+     */
     public Operation(OperationType type, Operation right, Token op) {
-        this();
         this.type = type;
         this.right = right;
+        this.op = op;
     }
 
     public Operation(OperationType type, Variable v) {
-        this();
         this.type = type;
         this.v = v;
     }
 
+    public Operation(OperationType type, Token token) {
+        this.type = type;
+        this.token = token;
+    }
+
     @Override
-    public Variable run(SymbolTable table) {
+    public Variable run(SymbolTable table, AstOperation operation) {
         switch (type) {
             case integer:
             case decimal:
@@ -50,32 +60,60 @@ public class Operation implements Instruction {
             case bool:
                 return this.v;
             case id:
-                return table.getVariable(this.v.getId());
+                Variable variable = table.getVariable(this.token.getValue());
+                if (variable == null) {
+                    /* La variable no existe */
+                    Err err = new Err(token.getLine(), token.getColumn(), "SEMANTICO", token.getValue());
+                    String description = "No se puede encontrar la variable " + token.getValue() + ", esta no se ha definido.";
+                    err.setDescription(description);
+                    operation.getErrors().add(err);
+                } else if (variable.getValue() == null) {
+                    /* La variable no tiene un valor definido */
+                    Err err = new Err(token.getLine(), token.getColumn(), "SEMANTICO", token.getValue());
+                    String description = "La variable " + token.getValue() + ", no tiene un valor definido, no es posible realizar la asignacion.";
+                    err.setDescription(description);
+                    operation.getErrors().add(err);
+                }
+
+                return variable;
             case SUM:
-                return make.sum(left.v, right.v, op);
+                return operation.getMake().sum(left.run(table, operation), right.run(table, operation), op);
             case SUBTRACTION:
-                return make.subtraction(left.v, right.v, op);
+                return operation.getMake().subtraction(left.run(table, operation), right.run(table, operation), op);
             case MULTIPLICATION:
-                return make.multiplication(left.v, right.v, op);
+                return operation.getMake().multiplication(left.run(table, operation), right.run(table, operation), op);
             case DIVISION:
-                return make.division(left.v, right.v, op);
+                return operation.getMake().division(left.run(table, operation), right.run(table, operation), op);
             case UMINUS:
-                return make.uminus(right.v, op);
+                return operation.getMake().uminus(right.run(table, operation), op);
             case AND:
-                return make.and(left.v, right.v, op);
+                return operation.getMake().and(left.run(table, operation), right.run(table, operation), op);
             case OR:
-                return make.or(left.v, right.v, op);
+                return operation.getMake().or(left.run(table, operation), right.run(table, operation), op);
             case NOT:
-                return make.not(right.v, op);
+                return operation.getMake().not(right.run(table, operation), op);
             case EQUAL:
             case GREATER:
             case GREATER_OR_EQUAL:
             case LESS_OR_EQUAL:
             case NOT_EQUAL:
             case SMALLER:
-                return make.compare(v, v, type, op);
+                return operation.getMake().compare(left.run(table, operation), right.run(table, operation), type, op);
+            case ASC:
+                return operation.getFunction().ASC(right.run(table, operation), op);
+            case DESC:
+                return operation.getFunction().DESC(right.run(table, operation), op);
+            case LETIMPAR:
+                return operation.getFunction().LETIMPAR_NUM(right.run(table, operation), op);
+            case LETPAR:
+                return operation.getFunction().LETPAR_NUM(right.run(table, operation), op);
+            case REVERSE:
+                return operation.getFunction().REVERSE(right.run(table, operation), op);
+            case RANDOM_C:
+                return operation.getFunction().CARACTER_ALEATORIO();
+            case RANDOM_N:
+                return operation.getFunction().NUM_ALEATORIO();
         }
         return null;
     }
-
 }

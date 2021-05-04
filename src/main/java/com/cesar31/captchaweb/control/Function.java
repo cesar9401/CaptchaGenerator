@@ -1,8 +1,10 @@
 package com.cesar31.captchaweb.control;
 
+import com.cesar31.captchaweb.model.Err;
+import com.cesar31.captchaweb.model.Token;
 import static com.cesar31.captchaweb.model.Var.*;
 import com.cesar31.captchaweb.model.Variable;
-import com.cesar31.captchaweb.parser.CaptchaParser;
+import java.util.List;
 
 /**
  *
@@ -10,52 +12,26 @@ import com.cesar31.captchaweb.parser.CaptchaParser;
  */
 public class Function {
 
-    private CaptchaParser parser;
+    private List<Err> errors;
 
     public Function() {
     }
 
-    public Function(CaptchaParser parser) {
-        this.parser = parser;
-    }
-
-    public static void main(String[] args) {
-        Function f = new Function();
-        System.out.println(f.ASC(new Variable(STRING, "concatenar 1 + valor")));
-        System.out.println(f.DESC(new Variable(STRING, "concatenar 1 + valor")));
-        System.out.println(f.REVERSE(new Variable(STRING, "palabra" + 12 * 2)));
-        System.out.println(f.LETPAR_NUM(new Variable(STRING, "cadena")));
-        System.out.println(f.LETIMPAR_NUM(new Variable(STRING, "1 + 3 arroz mas 1")));
-
-        System.out.println(f.CARACTER_ALEATORIO());
-        System.out.println(f.CARACTER_ALEATORIO());
-        System.out.println(f.CARACTER_ALEATORIO());
-        System.out.println(f.CARACTER_ALEATORIO());
-        System.out.println(f.CARACTER_ALEATORIO());
-        System.out.println(f.CARACTER_ALEATORIO());
-        System.out.println(f.CARACTER_ALEATORIO());
-
-        System.out.println(f.NUM_ALEATORIO());
-        System.out.println(f.NUM_ALEATORIO());
-        System.out.println(f.NUM_ALEATORIO());
-        System.out.println(f.NUM_ALEATORIO());
-        System.out.println(f.NUM_ALEATORIO());
-        System.out.println(f.NUM_ALEATORIO());
-        System.out.println(f.NUM_ALEATORIO());
-        System.out.println(f.NUM_ALEATORIO());
-
+    public Function(List<Err> errors) {
+        this.errors = errors;
     }
 
     /**
      * Ordenar palabra en orden ascendente
      *
      * @param a
+     * @param l
      * @return
      */
-    public Variable ASC(Variable a) {
+    public Variable ASC(Variable a, Token l) {
 
         if (a == null) {
-            return null;
+            return addErrorVariableNull(l, "ASC");
         }
 
         if (a.getType() == STRING) {
@@ -79,17 +55,15 @@ public class Function {
             Variable b = new Variable(STRING, value);
             return b;
 
-        } else {
-            /* Error */
-            System.out.println("Variable no es de tipo string");
         }
 
-        return null;
+        /* Error, variable no es de tipo string */
+        return addErrorNoString(a, l, "ASC");
     }
 
-    public Variable DESC(Variable a) {
+    public Variable DESC(Variable a, Token l) {
         if (a == null) {
-            return null;
+            return addErrorVariableNull(l, "DESC");
         }
 
         if (a.getType() == STRING) {
@@ -110,17 +84,15 @@ public class Function {
             }
 
             return new Variable(STRING, value);
-        } else {
-            /* Error */
-            System.out.println("Variable no es de tipo string");
         }
 
-        return null;
+        /* Error, variable no es de tipo string */
+        return addErrorNoString(a, l, "DESC");
     }
 
-    public Variable LETPAR_NUM(Variable a) {
+    public Variable LETPAR_NUM(Variable a, Token l) {
         if (a == null) {
-            return null;
+            return addErrorVariableNull(l, "LETPAR_NUM");
         }
 
         if (a.getType() == STRING) {
@@ -132,17 +104,15 @@ public class Function {
             }
 
             return new Variable(STRING, value);
-        } else {
-            /* Error */
-            System.out.println("Variable no es de tipo string");
         }
 
-        return null;
+        /* Error, variable no es de tipo string */
+        return addErrorNoString(a, l, "LETPAR_NUM");
     }
 
-    public Variable LETIMPAR_NUM(Variable a) {
+    public Variable LETIMPAR_NUM(Variable a, Token l) {
         if (a == null) {
-            return null;
+            return addErrorVariableNull(l, "LETIMPAR_NUM");
         }
 
         if (a.getType() == STRING) {
@@ -154,17 +124,15 @@ public class Function {
             }
 
             return new Variable(STRING, value);
-        } else {
-            /* Error */
-            System.out.println("Variable no es de tipo string");
         }
 
-        return null;
+        /* Error, variable no es de tipo string */
+        return addErrorNoString(a, l, "LETIMPAR_NUM");
     }
 
-    public Variable REVERSE(Variable a) {
+    public Variable REVERSE(Variable a, Token l) {
         if (a == null) {
-            return null;
+            return addErrorVariableNull(l, "REVERSE");
         }
 
         if (a.getType() == STRING) {
@@ -174,12 +142,10 @@ public class Function {
             }
 
             return new Variable(STRING, value);
-        } else {
-            /* Error */
-            System.out.println("Variable no es de tipo string");
         }
 
-        return null;
+        /* Error, variable no es de tipo string */
+        return addErrorNoString(a, l, "REVERSE");
     }
 
     public Variable CARACTER_ALEATORIO() {
@@ -195,4 +161,17 @@ public class Function {
         return new Variable(INTEGER, String.valueOf(random));
     }
 
+    private Variable addErrorVariableNull(Token l, String function) {
+        Err err = new Err(l.getLine(), l.getColumn() + 1, "SEMANTICO", "null");
+        err.setDescription("Se encontro argumento null en la funcion: " + function + ", no se puede evaluar.");
+        this.errors.add(err);
+        return null;
+    }
+
+    private Variable addErrorNoString(Variable a, Token l, String function) {
+        Err e = new Err(l.getLine(), l.getColumn() + 1, "SEMANTICO", a.getValue());
+        e.setDescription("Se encontro como argumento de la funcion " + function + " una variable de tipo " + a.getType().toString().toLowerCase() + ", se esperaba argumento de tipo string.");
+        this.errors.add(e);
+        return null;
+    }
 }

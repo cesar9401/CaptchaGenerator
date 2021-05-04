@@ -26,5 +26,13 @@ public enum OperationType {
     LESS_OR_EQUAL,
     GREATER_OR_EQUAL,
     EQUAL,
-    NOT_EQUAL
+    NOT_EQUAL,
+    /* Funciones predefinidas */
+    ASC,
+    DESC,
+    LETPAR,
+    LETIMPAR,
+    REVERSE,
+    RANDOM_C,
+    RANDOM_N
 }

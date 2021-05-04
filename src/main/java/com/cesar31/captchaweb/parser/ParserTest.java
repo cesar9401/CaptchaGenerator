@@ -1,12 +1,16 @@
 package com.cesar31.captchaweb.parser;
 
+import com.cesar31.captchaweb.control.AstOperation;
 import com.cesar31.captchaweb.control.DBHandler;
 import com.cesar31.captchaweb.model.Captcha;
 import com.cesar31.captchaweb.model.ComponentParent;
 import com.cesar31.captchaweb.model.Err;
+import com.cesar31.captchaweb.model.Instruction;
+import com.cesar31.captchaweb.model.SymbolTable;
 import com.cesar31.captchaweb.model.Tag;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.LinkedList;
 import java.util.List;
 import java_cup.runtime.Symbol;
 
@@ -18,8 +22,9 @@ public class ParserTest {
 
     public static void main(String[] args) {
         List<Err> errors;
+        LinkedList<Instruction> AST = null;
 
-        String path = "scripting.gcic";
+        String path = "test.gcic";
         DBHandler db = new DBHandler();
         String input = db.readData(path);
 
@@ -32,28 +37,56 @@ public class ParserTest {
         Captcha c = null;
         try {
             c = (Captcha) parser.parse().value;
+            AST = parser.getAST();
             errors = parser.getErrors();
         } catch (Exception ex) {
             errors = parser.getErrors();
             ex.printStackTrace(System.out);
         }
 
-        
         if (!errors.isEmpty()) {
             errors.forEach(e -> {
                 System.out.println(e.toString());
             });
         } else if (c != null) {
             checkCaptcha(c);
+            runAST(AST);
         } else {
             System.out.println("Shit!");
         }
 
     }
 
+    public static void runAST(LinkedList<Instruction> AST) {
+        AstOperation operation = new AstOperation();
+
+        
+        if (AST != null) {
+            SymbolTable table = new SymbolTable();
+            AST.forEach(i -> {
+                i.run(table, operation);
+            });
+
+            if (operation.getErrors().isEmpty()) {
+                System.out.println("\nAST ejecutado con exito\n");
+                table.forEach(v -> {
+                    System.out.println(v.toString());
+                });
+            } else {
+                System.out.println("\nErrores en AST");
+                operation.getErrors().forEach(e -> {
+                    System.out.println(e);
+                });
+            }
+
+        } else {
+            System.out.println("AST null");
+        }
+    }
+
     public static void checkCaptcha(Captcha c) {
         System.out.println(c.getTag() + "<" + c.getParams() + ">");
-        
+
         c.getHead().getChildren().forEach(h -> {
             System.out.println(h.getTag() + " <" + h.getParams() + ">" + " \"" + h.getContent() + "\"");
         });
