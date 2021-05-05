@@ -21,13 +21,31 @@
             <scope>provided</scope>
         </dependency>
         
-        <!--JCUP-->
+        <!-- JCUP -->
         <!-- https://mvnrepository.com/artifact/com.github.vbmacher/java-cup-runtime -->
         <dependency>
             <groupId>com.github.vbmacher</groupId>
             <artifactId>java-cup-runtime</artifactId>
             <version>11b-20160615</version>
         </dependency>
+        
+        <!-- JSTL -->
+        <!-- https://mvnrepository.com/artifact/javax.servlet/jstl -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <!-- Jackson Databind (POJO to JSON) -->
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.12.3</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

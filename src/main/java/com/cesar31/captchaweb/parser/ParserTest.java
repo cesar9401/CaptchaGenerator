@@ -2,10 +2,12 @@ package com.cesar31.captchaweb.parser;
 
 import com.cesar31.captchaweb.control.AstOperation;
 import com.cesar31.captchaweb.control.DBHandler;
+import com.cesar31.captchaweb.model.Assignment;
 import com.cesar31.captchaweb.model.Captcha;
 import com.cesar31.captchaweb.model.ComponentParent;
 import com.cesar31.captchaweb.model.Err;
 import com.cesar31.captchaweb.model.Instruction;
+import com.cesar31.captchaweb.model.Operation;
 import com.cesar31.captchaweb.model.SymbolTable;
 import com.cesar31.captchaweb.model.Tag;
 import java.io.IOException;
@@ -60,18 +62,34 @@ public class ParserTest {
     public static void runAST(LinkedList<Instruction> AST) {
         AstOperation operation = new AstOperation();
 
-        
+        int count = 0;
+
         if (AST != null) {
             SymbolTable table = new SymbolTable();
-            AST.forEach(i -> {
-                i.run(table, operation);
-            });
+
+            for (Instruction i : AST) {
+                i.test(table, operation);
+            }
 
             if (operation.getErrors().isEmpty()) {
-                System.out.println("\nAST ejecutado con exito\n");
-                table.forEach(v -> {
-                    System.out.println(v.toString());
-                });
+                System.out.println("\nAST aparentemente limpio\n");
+
+                SymbolTable symbol = new SymbolTable();
+                AstOperation astO = new AstOperation();
+                for (Instruction i : AST) {
+                    i.run(symbol, astO);
+                }
+
+                if (!astO.getErrors().isEmpty()) {
+                    astO.getErrors().forEach(e -> {
+                        System.out.println(e.toString());
+                    });
+                } else {
+                    symbol.forEach(v -> {
+                        System.out.println(v.toString());
+                    });
+                }
+
             } else {
                 System.out.println("\nErrores en AST");
                 operation.getErrors().forEach(e -> {

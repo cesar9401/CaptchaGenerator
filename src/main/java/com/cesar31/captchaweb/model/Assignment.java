@@ -12,21 +12,49 @@ public class Assignment implements Instruction {
     private Token id;
     private Operation op;
     private boolean global;
-    private boolean asignment;
 
-    public Assignment(Token type, Token id, Operation op, boolean global, boolean asignment) {
+    public Assignment(Token type, Token id, Operation op, boolean global) {
         this.type = type;
         this.id = id;
         this.op = op;
         this.global = global;
-        this.asignment = asignment;
+    }
+
+    public Assignment(Token id, Operation op) {
+        this.id = id;
+        this.op = op;
     }
 
     @Override
     public Object run(SymbolTable table, AstOperation operation) {
-        Variable v = this.op.run(table, operation);
-        operation.getEh().addSymbolTable(type, id, v, global, table, asignment);
+        if (this.type != null) {
+            /* Declaracion y asignacion */
+            Variable v = this.op.run(table, operation);
+            operation.getEh().addSymbolTable(type, id, v, global, table, true);
+        } else {
+            /* Asignacion */
+            Variable v = this.op.run(table, operation);
+            operation.getEh().makeAssignment(id, v, table);
+        }
+
         return null;
+    }
+
+    @Override
+    public Object test(SymbolTable table, AstOperation operation) {
+        return this.run(table, operation);
+    }
+
+    public Token getType() {
+        return type;
+    }
+
+    public Token getId() {
+        return id;
+    }
+
+    public Operation getOp() {
+        return op;
     }
 
     @Override

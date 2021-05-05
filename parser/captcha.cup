@@ -15,8 +15,6 @@ parser code {:
 	private BuildTag tag;
 	private ErrorHandler handler;
 
-	private Enviroment e;
-
 	private List<Err> errors;
 	private Symbol cur_token;
 
@@ -81,13 +79,12 @@ terminal Token TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE, COMMA, ON_LOAD, ONCLICK, IN
 terminal Token STRING, CHAR, IF, THEN, ELSE, REPEAT, UNTIL, WHILE, THEN_WHILE, INIT, END, PROCESS;
 
 non terminal clgcic, clhead, cltitle, cllink, clbody, clspam, clinput, cltxtarea, clselect, cloption, cldiv, climg, clbutton, clh1, clparagraph, clscript;
-non terminal control_if, else_if, control_while, control_repeat, instruction, instructions, control, make_ins, type_instruction, assignment;
 
-non terminal Operation s, t, u, v, control_stat, a, b, c, d, boolean_val, function;
+non terminal Operation s, t, u, v, a, b, c, d, boolean_val, function;
 non terminal List<Token> in;
 non terminal Param color, url, cls_rws, w_h;
 non terminal Boolean mode;
-non terminal Token str, string, type_var, ini, pxl_per;
+non terminal Token str, string, type_var, pxl_per;
 non terminal Parameter id, name, href_src, bckgrnd_clr, font_size, font_family, text_align, type, cols_rows, clss, width_height, alt, onclick, opt, param;
 non terminal List<Parameter> params;
 non terminal HashMap<Param, Parameter> paragraph, button, h1, div, img, body, spam, input, txtarea, select, link, gcic, head, title, option, br, script;
@@ -96,8 +93,12 @@ non terminal List<Component> body_opt, make_option, head_opt;
 non terminal ComponentParent c_body, c_head;
 non terminal Captcha c_gcic;
 
-non terminal Assignment stat;
-non terminal LinkedList<Instruction> make_var, statement, scripting, make_script, process;
+non terminal Assignment control_stat;
+non terminal Instruction stat, control_while, control_repeat, control_if;
+non terminal LinkedList<Instruction> make_var, statement, scripting, make_script, process, assignment, instruction, ini, type_instruction, control;
+
+non terminal If if_, else_, else_if;
+non terminal List<If> list_else_if;
 
 /* gramatica principal */
 c_gcic ::=
@@ -176,8 +177,7 @@ c_script ::=
 
 /* proceso */
 process ::=
-				PROCESS:p {: /* e = new Enviroment(p.getValue(), p.getLine(), p.getColumn(), e); */ :}
-				LPAREN RPAREN LBRACKET make_script:list RBRACKET
+				PROCESS:p LPAREN RPAREN LBRACKET make_script:list RBRACKET
 					{: RESULT = list; :}
 				|
 				;
@@ -197,8 +197,10 @@ make_script ::=
 scripting ::=
 				statement:list
 					{: RESULT = list; :}
-				| assignment
-				| control
+				| assignment:list
+					{: RESULT = list; :}
+				| control:list
+					{: RESULT = list; :}
 				;
 
 statement ::=
@@ -212,6 +214,8 @@ assignment ::=
 				ID_V:id EQUAL a:v1 SEMI
 					{:
 						/* eh.makeAssignment(id, v1, e); */
+						RESULT = new LinkedList<>();
+						RESULT.add(new Assignment(id, v1));
 					:}
 				;
 
@@ -242,12 +246,13 @@ stat ::=
 						/* Asignar variables y agregar a tabla de simbolos */
 						/* eh.addSymbolTable(type, id, v1, b1, e, true); */
 						/* Nueva asignacion */
-						RESULT = new Assignment(type, id, v1, b1, true);
+						RESULT = new Assignment(type, id, v1, b1);
 					:}
 				| mode:b1 ID_V:id
 					{:
 						/* Declarar variables y agregar a tabla de simbolos */
 						/* eh.addSymbolTable(type, id, null, b1, e, false); */
+						RESULT = new Statement(type, id, b1);
 					:}
 				;
 
@@ -258,114 +263,133 @@ mode ::=
 				{: RESULT = false; :}
 				;
 
-/* instruction */
-make_ins ::=
-				make_ins instructions
-				| instructions
-				;
-
-instructions ::=
-				control
-				| instruction
-				;
-
 instruction ::=
-				statement
-				| assignment
+				statement:list
+					{: RESULT = list; :}
+				| assignment:list
+					{: RESULT = list; :}
 				;
 /* init */
 ini ::=
-				INIT LBRACE COLON make_ins COLON RBRACE END
+				INIT LBRACE COLON make_script:list COLON RBRACE END
+					{: RESULT = list; :}
 				;
 
 type_instruction ::=
-				instruction
-				| ini
+				instruction:list
+					{: RESULT = list; :}
+				| ini:list
+					{: RESULT = list; :}
 				;
 /* init */
 
 /* IF - WHILE- REPEAT */
 control ::=
-				control_if
-				| control_while
-				| control_repeat
+				control_if:if_
+					{:
+						RESULT = new LinkedList<>();
+						RESULT.add(if_);
+					:}
+				| control_while:wh
+					{:
+						RESULT = new LinkedList<>();
+						RESULT.add(wh);
+					:}
+				| control_repeat:rp
+					{:
+						RESULT = new LinkedList<>();
+						RESULT.add(rp);
+					:}
 				;
 
 /* IF */
 control_if ::=
-				IF:i
-					// {: e = new Enviroment("IF", i.getLine(), i.getColumn(), e); :}
-				LPAREN:l a:b1 RPAREN:r THEN
-					// {: eh.checkBooleanVariable("IF", l, b1, r); :}
-				type_instruction
-					// {: e = e.getDad(); :}
-				else_if
+				if_:if1
+					{:
+						List<If> list = new ArrayList<>();
+						list.add(if1);
+						RESULT = new IfInstruction(list);
+					:}
+				| if_:if1 else_:if2
+					{:
+						List<If> list = new ArrayList<>();
+						list.add(if1);
+						list.add(if2);
+						RESULT = new IfInstruction(list);
+					:}
+				| if_:if1 list_else_if:if2
+					{:
+						List<If> list = new ArrayList<>();
+						list.add(if1);
+						list.addAll(if2);
+						RESULT = new IfInstruction(list);
+					:}
+				| if_:if1 list_else_if:if2 else_:if3
+					{:
+						List<If> list = new ArrayList<>();
+						list.add(if1);
+						list.addAll(if2);
+						list.add(if3);
+						RESULT = new IfInstruction(list);
+					:}
+				;
+
+if_ ::=
+				IF LPAREN:lparen a:b1 RPAREN:rparen THEN type_instruction:list
+					{: RESULT = new If("IF", b1, list, lparen, rparen); :}
+				;
+
+else_ ::=
+				ELSE type_instruction:list
+					{: RESULT = new If("ELSE", null, list, null, null); :}
+				;
+
+list_else_if ::=
+				list_else_if:list else_if:if1
+					{:
+						list.add(if1);
+						RESULT = list;
+					:}
+				| else_if:if1
+					{:
+						RESULT = new ArrayList<>();
+						RESULT.add(if1);
+					:}
 				;
 
 else_if ::=
-				ELSE:el
-					// {: e = new Enviroment("ELSE-IF", el.getLine(), el.getColumn(), e); :}
-				IF LPAREN:l a:b1 RPAREN:r THEN
-					// {: eh.checkBooleanVariable("ELSE-IF", l, b1, r); :}
-				type_instruction
-					// {: e = e.getDad(); :}
-				else_if
-
-				| ELSE:el
-					// {: e = new Enviroment("ELSE", el.getLine(), el.getColumn(), e); :}
-				type_instruction
-					// {: e = e.getDad(); :}
-				|
+				ELSE IF LPAREN:lparen a:b1 RPAREN:rparen THEN type_instruction:list
+					{: RESULT = new If("IF_ELSE", b1, list, lparen, rparen); :}
 				;
 /* IF */
 
 /* WHILE */
 control_while ::=
-				WHILE:w
-					// {: e = new Enviroment("WHILE", w.getLine(), w.getColumn(), e); :}
-				LPAREN:l a:b1 RPAREN:r THEN_WHILE
-					// {: eh.checkBooleanVariable("WHILE", l, b1, r); :}
-				type_instruction
-					// {: e = e.getDad(); :}
+				WHILE LPAREN:l a:b1 RPAREN:r THEN_WHILE type_instruction:list
+					{: RESULT = new While(b1, list, l, r); :}
 				;
 /* WHILE */
 
 /* REPEAT */
 control_repeat ::=
 				REPEAT:r
-					// {: e = new Enviroment("REPEAT", r.getLine(), r.getColumn(), e); :}
-				LPAREN control_stat:b1 RPAREN
-				UNTIL LPAREN:lparen a:b2 RPAREN:rparen
-					// {:
-					// 	/* Revisar que b2 sea de tipo entero */
-					// 	if(b2 != null) {
-					// 		if(b2.getType() != Var.INTEGER) {
-					// 			Err err = new Err(lparen.getLine(), lparen.getColumn() + 1, "SEMANTICO", b2.getValue());
-					// 			err.setDescription("Se esperaba variable de tipo integer, se encontro variable de tipo " + b2.getType().toString().toLowerCase() + ", no se puede evaluar REPEAT.");
-					// 			getErrors().add(err);
-					// 		} else {
-					// 			if(b2.getValue() != null) {
-
-					// 			} else {
-					// 				/* Error, se maneja en metodo getFromSymbolTable */
-					// 			}
-					// 		}
-					// 	}
-					// :}
-				type_instruction
-					// {: e = e.getDad(); :}
+				LPAREN:l1 control_stat:b1 RPAREN
+				UNTIL LPAREN:l2 a:b2 RPAREN
+				type_instruction:list
+					{: RESULT = new Repeat(b1, b2, list, l1, l2); :}
 				;
 
 control_stat ::=
 				INT:t ID_V:id EQUAL a:v1
 					{:
 						// eh.checkForVariable(t, id, v1, e);
-						RESULT = v1;
+						// RESULT = new Assignment(type, id, v1, b1);
+						RESULT = new Assignment(t, id, v1, false);
 					:}
 				| ID_V:id EQUAL a:v1
 					{:
 						// eh.checkForVariable(null, id, v1, e);
-						RESULT = v1;
+						RESULT = new Assignment(id, v1);
 					:}
 				;
 /* REPEAT */

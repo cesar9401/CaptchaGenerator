@@ -1,7 +1,6 @@
 package com.cesar31.captchaweb.control;
 
 import static com.cesar31.captchaweb.model.Var.*;
-import com.cesar31.captchaweb.model.Enviroment;
 import com.cesar31.captchaweb.model.Err;
 import com.cesar31.captchaweb.model.SymbolTable;
 import com.cesar31.captchaweb.model.Token;
@@ -32,7 +31,7 @@ public class EnviromentHandler {
      * @param a
      * @param e
      */
-    public void checkForVariable(Token type, Token id, Variable a, Enviroment e) {
+    public void checkForVariable(Token type, Token id, Variable a, SymbolTable e) {
         if (type != null) {
             /* Declaracion */
             if (a != null) {
@@ -53,7 +52,7 @@ public class EnviromentHandler {
                 if (v.getType() != INTEGER) {
                     /* Error, se espera variable de tipo entero */
                     Err err = new Err(id.getLine(), id.getColumn(), "SEMANTICO", id.getValue());
-                    err.setDescription("La variable " + v.getId() + ", es de tipo " + v.getType().toString().toLowerCase() + ", se necesita variable de tipo integar para evaluar condicion para REPEAT.");
+                    err.setDescription("La variable " + v.getId() + ", es de tipo " + v.getType().toString().toLowerCase() + ", se necesita variable de tipo integer para evaluar condicion para REPEAT.");
                     this.errors.add(err);
                     // this.parser.getErrors().add(err);
                 }
@@ -62,7 +61,7 @@ public class EnviromentHandler {
             }
 
             /* Hacer asignacion, errores se verifican en metodos getFromSymbolTable & makeAssignment*/
-            makeAssignment(id, a, e);
+            // makeAssignment(id, a, e);
         }
     }
 
@@ -73,7 +72,7 @@ public class EnviromentHandler {
             } else {
                 /* Se esperaba variabla tipo boolean, no se puede evaluar condicion */
                 Err err = new Err(lparen.getLine(), lparen.getColumn() + 1, "SEMANTICO", v.getValue());
-                String description = "Se esperaba variable de tipo boolean, se encontro con variable de tipo " + v.getType().toString().toLowerCase() + "(value = " + v.getValue() + "), no es posible evaluar condicion para " + condition + ".";
+                String description = "Se esperaba variable de tipo boolean, se encontro con variable de tipo " + v.getType().toString().toLowerCase() + "(value = " + v.getValue() + "), no es posible evaluar " + condition + ".";
                 err.setDescription(description);
                 this.errors.add(err);
                 // this.parser.getErrors().add(err);
@@ -81,7 +80,7 @@ public class EnviromentHandler {
         } else {
             /* Error, no se puede evaluar la condicion */
             Err err = new Err(lparen.getLine(), lparen.getColumn() + 1, "SEMANTICO", "null");
-            String description = "Se encontro valor null. No es posible evaluar la condicion para " + condition;
+            String description = "Se encontro valor null. No es posible evaluar " + condition;
             err.setDescription(description);
             this.errors.add(err);
             // this.parser.getErrors().add(err);
@@ -95,7 +94,7 @@ public class EnviromentHandler {
      * @param a
      * @param e
      */
-    public void makeAssignment(Token id, Variable a, Enviroment e) {
+    public void makeAssignment(Token id, Variable a, SymbolTable e) {
         Variable v = this.getFromSymbolTable(id, e, false);
         if (v != null) {
             if (a != null) {
@@ -103,12 +102,7 @@ public class EnviromentHandler {
                     if (a.getValue() != null) {
                         /* Cambiar valor */
                         v.setValue(a.getValue());
-
-                        System.out.println("Asignacion: " + v + " -> " + e);
-//                        System.out.println(e);
-//                        e.getVariables().forEach((str, variable) -> {
-//                            System.out.println(variable);
-//                        });
+                        //System.out.println("Asignacion: " + v + " -> " + e);
                     } else {
                         /* Revisar else */
                         Err err = new Err(id.getLine(), id.getColumn(), "SEMANTICO", id.getValue());
@@ -119,11 +113,14 @@ public class EnviromentHandler {
                 } else {
                     /* Error tipos distintos */
                     Err err = new Err(id.getLine(), id.getColumn(), "SEMANTICO", id.getValue());
-                    err.setDescription("Esta intentando asignar una variable de tipo " + a.getType().toString().toLowerCase() + " a una variable de tipo " + v.getType().toString().toLowerCase());
+                    String description = "Esta intentando asignar una variable de tipo " + a.getType().toString().toLowerCase() + "(value = " + a.getValue() + ") a una variable de tipo " + v.getType().toString().toLowerCase() + "(id = " + v.getId() + ")";
+                    err.setDescription(description);
                     this.errors.add(err);
                     // this.parser.getErrors().add(err);
                 }
             }
+        } else {
+            /* Error se verifica en getFromSymbolTable */
         }
     }
 
@@ -148,7 +145,7 @@ public class EnviromentHandler {
                         //e.put(v);
                         // System.out.println("Agregada a tabla de simbolos: " + value);
                         e.add(v);
-                        System.out.println(v + " -> " + e);
+                        //System.out.println(v + " -> " + e);
                     } else {
                         /* La variable ya esta definida */
                         Err err = new Err(id.getLine(), id.getColumn(), "SEMANTICO", id.getValue());
@@ -183,12 +180,12 @@ public class EnviromentHandler {
                     if (!e.contains(v.getId()) /* !e.getVariables().containsKey(v.getId()) */) {
                         //e.put(v);
                         e.add(v);
-                        System.out.println(v + " -> " + e);
+                        //System.out.println(v + " -> " + e);
                         // System.out.println("Agregada a tabla de simbolos: " + v);
                     } else {
                         /* La variable ya esta definida */
                         Err err = new Err(id.getLine(), id.getColumn(), "SEMANTICO", id.getValue());
-                        err.setDescription("La variable " + id.getValue() + "ya esta definida, intente con un id distinto.");
+                        err.setDescription("La variable " + id.getValue() + ", ya esta definida intente con un id distinto.");
                         this.errors.add(err);
                         // this.parser.getErrors().add(err);
                     }
@@ -214,8 +211,9 @@ public class EnviromentHandler {
      * @param assignment
      * @return
      */
-    public Variable getFromSymbolTable(Token id, Enviroment e, boolean assignment) {
-        Variable v = e.get(id.getValue());
+    public Variable getFromSymbolTable(Token id, SymbolTable e, boolean assignment) {
+        Variable v = e.getVariable(id.getValue());
+        //Variable v = e.get(id.getValue());
 
         if (v != null) {
             if (v.getValue() == null && assignment) {

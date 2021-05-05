@@ -49,7 +49,7 @@ public class Operation implements Instruction {
         this.type = type;
         this.token = token;
     }
-
+    
     @Override
     public Variable run(SymbolTable table, AstOperation operation) {
         switch (type) {
@@ -67,12 +67,16 @@ public class Operation implements Instruction {
                     String description = "No se puede encontrar la variable " + token.getValue() + ", esta no se ha definido.";
                     err.setDescription(description);
                     operation.getErrors().add(err);
+                    
+                    return null;
                 } else if (variable.getValue() == null) {
                     /* La variable no tiene un valor definido */
                     Err err = new Err(token.getLine(), token.getColumn(), "SEMANTICO", token.getValue());
                     String description = "La variable " + token.getValue() + ", no tiene un valor definido, no es posible realizar la asignacion.";
                     err.setDescription(description);
                     operation.getErrors().add(err);
+                    
+                    return null;
                 }
 
                 return variable;
@@ -115,5 +119,10 @@ public class Operation implements Instruction {
                 return operation.getFunction().NUM_ALEATORIO();
         }
         return null;
+    }
+
+    @Override
+    public Variable test(SymbolTable table, AstOperation operation) {
+        return this.run(table, operation);
     }
 }
