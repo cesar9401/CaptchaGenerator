@@ -2,16 +2,16 @@ package com.cesar31.captchaweb.parser;
 
 import com.cesar31.captchaweb.control.AstOperation;
 import com.cesar31.captchaweb.control.DBHandler;
-import com.cesar31.captchaweb.model.Assignment;
+import com.cesar31.captchaweb.control.ParserControl;
 import com.cesar31.captchaweb.model.Captcha;
 import com.cesar31.captchaweb.model.ComponentParent;
 import com.cesar31.captchaweb.model.Err;
 import com.cesar31.captchaweb.model.Instruction;
-import com.cesar31.captchaweb.model.Operation;
 import com.cesar31.captchaweb.model.SymbolTable;
 import com.cesar31.captchaweb.model.Tag;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 import java_cup.runtime.Symbol;
@@ -22,39 +22,63 @@ import java_cup.runtime.Symbol;
  */
 public class ParserTest {
 
-    public static void main(String[] args) {
-        List<Err> errors;
-        LinkedList<Instruction> AST = null;
+    public static void main(String[] args) throws UnsupportedEncodingException {
+//        List<Err> errors;
+//        LinkedList<Instruction> AST = null;
+//
+//        String path = "html.gcic";
+//        DBHandler db = new DBHandler();
+//        String input = db.readData(path);
+//
+//        System.out.println(input);
+//        System.out.println("\n");
+//
+//        // getTokens(input);
+//        CaptchaLex lex = new CaptchaLex(new StringReader(input));
+//        CaptchaParser parser = new CaptchaParser(lex);
+//        Captcha c = null;
+//        try {
+//            c = (Captcha) parser.parse().value;
+//            AST = parser.getAST();
+//            errors = parser.getErrors();
+//        } catch (Exception ex) {
+//            errors = parser.getErrors();
+//            ex.printStackTrace(System.out);
+//        }
+//
+//        if (!errors.isEmpty()) {
+//            errors.forEach(e -> {
+//                System.out.println(e.toString());
+//            });
+//        } else if (c != null) {
+//            checkCaptcha(c);
+//            runAST(AST);
+//        } else {
+//            System.out.println("Shit!");
+//        }
 
-        String path = "test.gcic";
+        getHtml();
+    }
+
+    public static void getHtml() throws UnsupportedEncodingException {
+        String path = "html.gcic";
         DBHandler db = new DBHandler();
         String input = db.readData(path);
 
-        System.out.println(input);
-        System.out.println("\n");
+        ParserControl control = new ParserControl(input);
+        control.parseSourceCode();
 
-        // getTokens(input);
-        CaptchaLex lex = new CaptchaLex(new StringReader(input));
-        CaptchaParser parser = new CaptchaParser(lex);
-        Captcha c = null;
-        try {
-            c = (Captcha) parser.parse().value;
-            AST = parser.getAST();
-            errors = parser.getErrors();
-        } catch (Exception ex) {
-            errors = parser.getErrors();
-            ex.printStackTrace(System.out);
-        }
+        if (control.getErrors().isEmpty()) {
 
-        if (!errors.isEmpty()) {
-            errors.forEach(e -> {
-                System.out.println(e.toString());
-            });
-        } else if (c != null) {
-            checkCaptcha(c);
-            runAST(AST);
+            /* Redirigir a captcha */
+            Captcha captcha = control.getCaptcha();
+            
+            control.getHtml(captcha);
         } else {
-            System.out.println("Shit!");
+            /* Redirigir errores */
+            control.getErrors().forEach(e -> {
+                System.out.println(e);
+            });
         }
 
     }

@@ -27,6 +27,7 @@ parser code {:
 		this.tag = new BuildTag(this);
 		this.handler = new ErrorHandler(this);
 
+		this.AST = new LinkedList<>();
 		this.errors = new ArrayList<>();
 	}
 

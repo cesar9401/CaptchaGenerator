@@ -1,4 +1,5 @@
 
+<%@ page import="com.cesar31.captchaweb.model.*" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -10,11 +11,13 @@
         <title>Captcha</title>
     </head>
     <body>
-
         <jsp:include page="WEB-INF/nav.jsp"></jsp:include>
 
+            <section id="captcha">
+                <div class="container">
 
-            <h1>Hello World!</h1>
+                </div>
+            </section>
 
         <%@include file="resources/assets/js/js.html" %>
     </body>

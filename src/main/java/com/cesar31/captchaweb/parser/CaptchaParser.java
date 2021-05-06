@@ -3162,6 +3162,7 @@ public class CaptchaParser extends java_cup.runtime.lr_parser {
 		this.tag = new BuildTag(this);
 		this.handler = new ErrorHandler(this);
 
+		this.AST = new LinkedList<>();
 		this.errors = new ArrayList<>();
 	}
 
