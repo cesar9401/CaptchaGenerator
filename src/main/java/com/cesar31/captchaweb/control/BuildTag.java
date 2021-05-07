@@ -207,7 +207,7 @@ public class BuildTag {
                     addParam(tmp.remove(p));
                 } else {
                     // Agregar parametro por defecto
-                    if (p != ID) {
+                    if (s.get(p) != null) {
                         addParam(s.get(p));
                     }
                 }
@@ -332,21 +332,21 @@ public class BuildTag {
     private void setStandardParam() {
         this.s = new HashMap<>();
         s.put(ALT, new Parameter(ALT, "Mi_imagen"));
-        s.put(BACKGROUND, new Parameter(BACKGROUND, "#76D7C4"));
+        s.put(BACKGROUND, new Parameter(BACKGROUND, "#7DCEA0"));
         s.put(CLASS, new Parameter(CLASS, "row"));
-        s.put(COLOR, new Parameter(COLOR, "#DC7633"));
+        s.put(COLOR, new Parameter(COLOR, "#8E44AD"));
         s.put(COLS, new Parameter(COLS, "10"));
         s.put(FONT_FAMILY, new Parameter(FONT_FAMILY, "sans-serif"));
-        s.put(FONT_SIZE, new Parameter(FONT_SIZE, "16px"));
-        s.put(HEIGHT, new Parameter(HEIGHT, "300px"));
+        //s.put(FONT_SIZE, new Parameter(FONT_SIZE, "24px"));
+        s.put(HEIGHT, new Parameter(HEIGHT, "500px"));
         s.put(HREF, new Parameter(HREF, "https://www.google.com/"));
-        s.put(ID, new Parameter(ID, ""));
+        //s.put(ID, new Parameter(ID, "id1"));
         s.put(NAME, new Parameter(NAME, "Mi Captcha GCIC"));
-        s.put(ONCLICK, new Parameter(ONCLICK, "ON_LOAD"));
+        //s.put(ONCLICK, new Parameter(ONCLICK, "ON_LOAD"));
         s.put(ROWS, new Parameter(ROWS, "20"));
         s.put(SRC, new Parameter(SRC, "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/bojack-horseman-final-1571059533.jpg?crop=0.927xw:0.925xh;0.0538xw,0.0754xh&resize=2048:*"));
         s.put(TEXT_ALIGN, new Parameter(TEXT_ALIGN, "center"));
         s.put(TYPE, new Parameter(TYPE, "text"));
-        s.put(WIDTH, new Parameter(WIDTH, "300px"));
+        s.put(WIDTH, new Parameter(WIDTH, "500px"));
     }
 }

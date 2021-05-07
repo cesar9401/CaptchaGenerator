@@ -11,6 +11,9 @@ public class Variable {
     private boolean global;
     private String value;
 
+    public Variable() {
+    }
+
     public Variable(Var type, String id, String value) {
         this.type = type;
         this.id = id;

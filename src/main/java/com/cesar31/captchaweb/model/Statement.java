@@ -12,6 +12,9 @@ public class Statement implements Instruction {
     private Token id;
     private boolean global;
 
+    public Statement() {
+    }
+
     public Statement(Token type, Token id, boolean global) {
         this.type = type;
         this.id = id;
@@ -27,5 +30,29 @@ public class Statement implements Instruction {
     @Override
     public Object test(SymbolTable table, AstOperation operation) {
         return this.run(table, operation);
+    }
+
+    public Token getType() {
+        return type;
+    }
+
+    public void setType(Token type) {
+        this.type = type;
+    }
+
+    public Token getId() {
+        return id;
+    }
+
+    public void setId(Token id) {
+        this.id = id;
+    }
+
+    public boolean isGlobal() {
+        return global;
+    }
+
+    public void setGlobal(boolean global) {
+        this.global = global;
     }
 }

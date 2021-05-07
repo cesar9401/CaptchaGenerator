@@ -12,6 +12,9 @@ public class IfInstruction implements Instruction {
 
     private List<If> instructions;
 
+    public IfInstruction() {
+    }
+    
     public IfInstruction(List<If> instructions) {
         this.instructions = instructions;
     }
@@ -51,5 +54,13 @@ public class IfInstruction implements Instruction {
         }
 
         return null;
+    }
+
+    public List<If> getInstructions() {
+        return instructions;
+    }
+
+    public void setInstructions(List<If> instructions) {
+        this.instructions = instructions;
     }
 }

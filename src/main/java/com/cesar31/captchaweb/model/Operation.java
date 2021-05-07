@@ -125,4 +125,52 @@ public class Operation implements Instruction {
     public Variable test(SymbolTable table, AstOperation operation) {
         return this.run(table, operation);
     }
+
+    public Variable getV() {
+        return v;
+    }
+
+    public void setV(Variable v) {
+        this.v = v;
+    }
+
+    public Token getOp() {
+        return op;
+    }
+
+    public void setOp(Token op) {
+        this.op = op;
+    }
+
+    public OperationType getType() {
+        return type;
+    }
+
+    public void setType(OperationType type) {
+        this.type = type;
+    }
+
+    public Operation getLeft() {
+        return left;
+    }
+
+    public void setLeft(Operation left) {
+        this.left = left;
+    }
+
+    public Operation getRight() {
+        return right;
+    }
+
+    public void setRight(Operation right) {
+        this.right = right;
+    }
+
+    public Token getToken() {
+        return token;
+    }
+
+    public void setToken(Token token) {
+        this.token = token;
+    }
 }

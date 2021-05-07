@@ -15,6 +15,9 @@ public class Repeat implements Instruction {
 
     private Token l1, l2;
 
+    public Repeat() {
+    }
+
     public Repeat(Assignment assignment, Operation until, LinkedList<Instruction> instructions, Token l1, Token l2) {
         this.assignment = assignment;
         this.until = until;
@@ -76,5 +79,45 @@ public class Repeat implements Instruction {
         }
 
         return null;
+    }
+
+    public Assignment getAssignment() {
+        return assignment;
+    }
+
+    public void setAssignment(Assignment assignment) {
+        this.assignment = assignment;
+    }
+
+    public Operation getUntil() {
+        return until;
+    }
+
+    public void setUntil(Operation until) {
+        this.until = until;
+    }
+
+    public LinkedList<Instruction> getInstructions() {
+        return instructions;
+    }
+
+    public void setInstructions(LinkedList<Instruction> instructions) {
+        this.instructions = instructions;
+    }
+
+    public Token getL1() {
+        return l1;
+    }
+
+    public void setL1(Token l1) {
+        this.l1 = l1;
+    }
+
+    public Token getL2() {
+        return l2;
+    }
+
+    public void setL2(Token l2) {
+        this.l2 = l2;
     }
 }

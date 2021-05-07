@@ -96,7 +96,7 @@ non terminal Captcha c_gcic;
 
 non terminal Assignment control_stat;
 non terminal Instruction stat, control_while, control_repeat, control_if;
-non terminal LinkedList<Instruction> make_var, statement, scripting, make_script, process, assignment, instruction, ini, type_instruction, control;
+non terminal LinkedList<Instruction> make_var, statement, scripting, make_script, process, assignment, instruction, ini, type_instruction, control, alert, exit;
 
 non terminal If if_, else_, else_if;
 non terminal List<If> list_else_if;
@@ -179,7 +179,10 @@ c_script ::=
 /* proceso */
 process ::=
 				PROCESS:p LPAREN RPAREN LBRACKET make_script:list RBRACKET
-					{: RESULT = list; :}
+					{:
+						System.out.println("Process: " + p.getValue());
+						RESULT = list;
+					:}
 				|
 				;
 
@@ -196,10 +199,23 @@ make_script ::=
 				;
 
 scripting ::=
+				/* Declaracion/Asignacion */
 				statement:list
 					{: RESULT = list; :}
+
+				/* Asignacion */
 				| assignment:list
 					{: RESULT = list; :}
+
+				/* ALERT_INFO */
+				| alert:list
+					{: RESULT = list; :}
+
+				/* EXIT */
+				| exit:list
+					{: RESULT = list; :}
+
+				/* If, Repeat, While */
 				| control:list
 					{: RESULT = list; :}
 				;
@@ -219,6 +235,34 @@ assignment ::=
 						RESULT.add(new Assignment(id, v1));
 					:}
 				;
+
+/* ALERT_INFO */
+alert ::=
+				ALERT LPAREN:lparen a:s1 RPAREN SEMI
+					{:
+						RESULT = new LinkedList<>();
+						RESULT.add(new Alert(lparen, s1));
+					:}
+				| error LPAREN a RPAREN SEMI
+				| ALERT error a RPAREN SEMI
+				| ALERT LPAREN a error SEMI
+				| ALERT LPAREN a RPAREN error
+				;
+/* ALERT_INFO */
+
+/* EXIT */
+exit ::=
+				EXIT LPAREN RPAREN SEMI
+					{:
+						RESULT = new LinkedList<>();
+						RESULT.add(new Exit());
+					:}
+				| error LPAREN RPAREN SEMI
+				| EXIT error RPAREN SEMI
+				| EXIT LPAREN error SEMI
+				| EXIT LPAREN RPAREN error
+				;
+/* EXIT */
 
 type_var ::=
 				INT:t {: RESULT = t; :}
@@ -264,12 +308,26 @@ mode ::=
 				{: RESULT = false; :}
 				;
 
+/* Solo una instruccion */
 instruction ::=
+				/* Declaracion/Asignacion */
 				statement:list
 					{: RESULT = list; :}
+
+				/* Asignacion */
 				| assignment:list
 					{: RESULT = list; :}
+
+				/* ALERT_INFO */
+				| alert:list
+					{: RESULT = list; :}
+
+				/* EXIT */
+				| exit:list
+					{: RESULT = list; :}
 				;
+/* Solo una instruccion */
+
 /* init */
 ini ::=
 				INIT LBRACE COLON make_script:list COLON RBRACE END

@@ -68,7 +68,7 @@ public class EnviromentHandler {
     public void checkBooleanVariable(String condition, Token lparen, Variable v, Token rparen) {
         if (v != null) {
             if (v.getType() == BOOLEAN) {
-                System.out.println(condition + " -> " + v.getValue());
+                // System.out.println(condition + " -> " + v.getValue());
             } else {
                 /* Se esperaba variabla tipo boolean, no se puede evaluar condicion */
                 Err err = new Err(lparen.getLine(), lparen.getColumn() + 1, "SEMANTICO", v.getValue());

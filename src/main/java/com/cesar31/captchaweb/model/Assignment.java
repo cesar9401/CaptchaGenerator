@@ -13,6 +13,9 @@ public class Assignment implements Instruction {
     private Operation op;
     private boolean global;
 
+    public Assignment() {
+    }
+
     public Assignment(Token type, Token id, Operation op, boolean global) {
         this.type = type;
         this.id = id;
@@ -45,20 +48,40 @@ public class Assignment implements Instruction {
         return this.run(table, operation);
     }
 
+    @Override
+    public String toString() {
+        return "Assignment{" + "id=" + id + ", type=" + type + '}';
+    }
+
     public Token getType() {
         return type;
+    }
+
+    public void setType(Token type) {
+        this.type = type;
     }
 
     public Token getId() {
         return id;
     }
 
+    public void setId(Token id) {
+        this.id = id;
+    }
+
     public Operation getOp() {
         return op;
     }
 
-    @Override
-    public String toString() {
-        return "Assignment{" + "id=" + id + ", type=" + type + '}';
+    public void setOp(Operation op) {
+        this.op = op;
+    }
+
+    public boolean isGlobal() {
+        return global;
+    }
+
+    public void setGlobal(boolean global) {
+        this.global = global;
     }
 }

@@ -13,6 +13,9 @@ public class If {
     private LinkedList<Instruction> intructions;
     private Token l, r;
 
+    public If() {
+    }
+
     public If(String name, Operation condition, LinkedList<Instruction> intructions, Token l, Token r) {
         this.name = name;
         this.condition = condition;
@@ -25,19 +28,39 @@ public class If {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Operation getCondition() {
         return condition;
+    }
+
+    public void setCondition(Operation condition) {
+        this.condition = condition;
     }
 
     public LinkedList<Instruction> getIntructions() {
         return intructions;
     }
 
+    public void setIntructions(LinkedList<Instruction> intructions) {
+        this.intructions = intructions;
+    }
+
     public Token getL() {
         return l;
     }
 
+    public void setL(Token l) {
+        this.l = l;
+    }
+
     public Token getR() {
         return r;
+    }
+
+    public void setR(Token r) {
+        this.r = r;
     }
 }

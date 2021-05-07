@@ -12,6 +12,9 @@ public class Token {
     private int line;
     private int column;
 
+    public Token() {
+    }
+
     public Token(int type, String value, int line, int column) {
         this.type = type;
         this.value = value;
