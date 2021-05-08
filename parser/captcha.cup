@@ -12,6 +12,8 @@ class CaptchaParser;
 
 parser code {:
 
+	private int scriptCount;
+
 	private BuildTag tag;
 	private ErrorHandler handler;
 
@@ -29,6 +31,7 @@ parser code {:
 
 		this.AST = new LinkedList<>();
 		this.errors = new ArrayList<>();
+		this.scriptCount = 0;
 	}
 
 	public void syntax_error(Symbol cur_token) {
@@ -73,19 +76,20 @@ parser code {:
 
 terminal Token GCIC, HEAD, TITLE, LINK, BODY, SPAM, INPUT, TXTAREA, SELECT, OPTION, DIV, IMG, BR, BUTTON, H1, PARAGRAPH, SCRIPT, HREF, BCKGRND, COLOR, FONTS;
 terminal Token FONTF, ALIGN, TYPE, ID, NAME, COLS, CLASS, SRC, WIDTH, HEIGHT, ALT, CLICK, INTEGER, DECIMAL, BOOL, TRUE, FALSE;
-terminal Token CHR, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_N, ALERT, EXIT, GLOBAL, COLOUR, INTQ, PIXEL, PERCNTG, ID_, INT, DEC;
+terminal Token CHR, QS, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_N, ALERT, EXIT, GET, GLOBAL, COLOUR, INTQ, PIXEL, PERCNTG, ID_, ID_2, INT, DEC;
 terminal Token GREATER, SMALLER, LBRACE, RBRACE, LBRACKET, RBRACKET, COLON, SEMI, EQEQ, NEQ, GRTREQ, SMLLREQ, OR, AND, NOT, PLUS, MINUS, TIMES, DIVIDE;
 terminal Token URL, LPAREN, RPAREN, EQUAL, ROWS, FONTF_VALUE, ERROR;
 terminal Token TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE, COMMA, ON_LOAD, ONCLICK, IN, ID_V;
-terminal Token STRING, CHAR, IF, THEN, ELSE, REPEAT, UNTIL, WHILE, THEN_WHILE, INIT, END, PROCESS;
+terminal Token STRING, CHAR, IF, THEN, ELSE, REPEAT, UNTIL, WHILE, THEN_WHILE, INIT, END, PROCESS, INSERT;
 
 non terminal clgcic, clhead, cltitle, cllink, clbody, clspam, clinput, cltxtarea, clselect, cloption, cldiv, climg, clbutton, clh1, clparagraph, clscript;
 
 non terminal Operation s, t, u, v, a, b, c, d, boolean_val, function;
-non terminal List<Token> in;
+non terminal List<Operation> insert_op;
+non terminal List<Token> in, insert_content;
 non terminal Param color, url, cls_rws, w_h;
 non terminal Boolean mode;
-non terminal Token str, string, type_var, pxl_per;
+non terminal Token str, str_q, str_nq, string, type_var, pxl_per;
 non terminal Parameter id, name, href_src, bckgrnd_clr, font_size, font_family, text_align, type, cols_rows, clss, width_height, alt, onclick, opt, param;
 non terminal List<Parameter> params;
 non terminal HashMap<Param, Parameter> paragraph, button, h1, div, img, body, spam, input, txtarea, select, link, gcic, head, title, option, br, script;
@@ -96,7 +100,9 @@ non terminal Captcha c_gcic;
 
 non terminal Assignment control_stat;
 non terminal Instruction stat, control_while, control_repeat, control_if;
-non terminal LinkedList<Instruction> make_var, statement, scripting, make_script, process, assignment, instruction, ini, type_instruction, control, alert, exit;
+non terminal LinkedList<Instruction> make_var, statement, scripting, make_script, process, assignment, instruction, ini, type_instruction, control, alert, exit, insert;
+non terminal Variable insert_sq;
+
 
 non terminal If if_, else_, else_if;
 non terminal List<If> list_else_if;
@@ -171,7 +177,11 @@ b_opt ::=
 c_script ::=
 				script:m process:list /*make_script*/ clscript
 					{:
-						RESULT = tag.makeTag(Tag.SCRIPT, m, null);
+						//RESULT = tag.makeTag(Tag.SCRIPT, m, null);
+						RESULT = tag.makeDivInsteadScript(scriptCount);
+						scriptCount++;
+						/* Insertar etiquetas desde aqui */
+
 						AST = list;
 					:}
 				;
@@ -215,6 +225,10 @@ scripting ::=
 				| exit:list
 					{: RESULT = list; :}
 
+				/* INSERT */
+				| insert:list
+					{: RESULT = list; :}
+
 				/* If, Repeat, While */
 				| control:list
 					{: RESULT = list; :}
@@ -252,10 +266,10 @@ alert ::=
 
 /* EXIT */
 exit ::=
-				EXIT LPAREN RPAREN SEMI
+				EXIT:t LPAREN RPAREN SEMI
 					{:
 						RESULT = new LinkedList<>();
-						RESULT.add(new Exit());
+						RESULT.add(new Exit(t));
 					:}
 				| error LPAREN RPAREN SEMI
 				| EXIT error RPAREN SEMI
@@ -263,6 +277,21 @@ exit ::=
 				| EXIT LPAREN RPAREN error
 				;
 /* EXIT */
+
+/* INSERT */
+insert ::=
+				INSERT LPAREN QS input:ins QS RPAREN SEMI
+					{:
+						RESULT = new LinkedList<>();
+						RESULT.add(new Insert(tag.makeTag(Tag.INPUT, ins, null), scriptCount));
+					:}
+				| INSERT LPAREN insert_op:options RPAREN SEMI
+					{:
+						RESULT = new LinkedList<>();
+						RESULT.add(new Insert(options, scriptCount));
+					:}
+				;
+/* INSERT */
 
 type_var ::=
 				INT:t {: RESULT = t; :}
@@ -320,6 +349,10 @@ instruction ::=
 
 				/* ALERT_INFO */
 				| alert:list
+					{: RESULT = list; :}
+
+				/* INSERT */
+				| insert:list
 					{: RESULT = list; :}
 
 				/* EXIT */
@@ -506,6 +539,7 @@ function ::=
 				| REVERSE LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.REVERSE, s1, lparen); :}
 				| RANDOM_C LPAREN:lparen RPAREN {: RESULT = new Operation(OperationType.RANDOM_C, null, lparen); :}
 				| RANDOM_N LPAREN:lparen RPAREN {: RESULT = new Operation(OperationType.RANDOM_N, null, lparen); :}
+				| GET LPAREN:lparen ID_2:s1 RPAREN {: RESULT = new Operation(OperationType.GET, s1); :}
 				;
 
 v ::=
@@ -514,6 +548,11 @@ v ::=
 				| string:s1 {: RESULT = new Operation(OperationType.string, new Variable(Var.STRING, s1.getValue())); :}
 				| CHAR:ch1 {: RESULT = new Operation(OperationType.character, new Variable(Var.CHAR, ch1.getValue())); :}
 				| ID_V:s {: RESULT = new Operation(OperationType.id, s); :}
+
+				/* STRING CON COMILLAS */
+				| insert_sq:v {: RESULT = new Operation(OperationType.string, v); :}
+				/* STRING CON COMILLAS */
+
 				| boolean_val:b1 {: RESULT = b1; :}
 				| LPAREN a:n1 RPAREN {: RESULT = n1; :}
 				;
@@ -523,6 +562,7 @@ v ::=
 string ::=
 				STRING:s1 {: RESULT = s1; :}
 				| ID_:s1 {: RESULT = s1; :}
+				| ID_2:s1 {: RESULT = s1; :}
 				| INTQ:s1 {: RESULT = s1; :}
 				| FONTF_VALUE:s1 {: RESULT = s1; :}
 				| ALIGN_VALUE:s1 {: RESULT = s1; :}
@@ -621,7 +661,7 @@ c_div ::=
 					:}
 				;
 
-/* contet for p and h1 */
+/* contet for p, span and h1 */
 in ::=
 				in:list str:s
 					{:
@@ -634,8 +674,47 @@ in ::=
 						RESULT = list;
 					:}
 				;
+/* contet for p, span and h1 */
+
+/* content for insert */
+insert_op ::=
+				insert_op:list COMMA a:op1
+					{:
+						list.add(op1);
+						RESULT = list;
+					:}
+				| a:op1
+					{:
+						RESULT = new ArrayList<>();
+						RESULT.add(op1);
+					:}
+				;
+
+insert_sq ::=
+				QS insert_content:list QS
+					{: RESULT = new Variable(Var.STRING, tag.getContent(list)); :}
+				;
+
+insert_content ::=
+				insert_content:list str_nq:t
+					{:
+						list.add(t);
+						RESULT = list;
+					:}
+				| str_nq:t
+					{:
+						RESULT = new ArrayList<>();
+						RESULT.add(t);
+					:}
+				;
+/* content for insert */
 
 str ::=
+				str_q:s {: RESULT = s; :}
+				| str_nq:s {: RESULT = s; :}
+				;
+
+str_nq ::=
 				IN:s {: RESULT = s; :}
 				| ID_V:s {: RESULT = s; :}
 				| COLON:s {: RESULT = s; :}
@@ -689,6 +768,7 @@ str ::=
 				| TRUE:s {: RESULT = s; :}
 				| FALSE:s {: RESULT = s; :}
 				| CHR:s {: RESULT = s; :}
+				// | QS:s {: RESULT = s; :}
 				| STR:s {: RESULT = s; :}
 				| DESC:s {: RESULT = s; :}
 				| LETPAR:s {: RESULT = s; :}
@@ -698,21 +778,9 @@ str ::=
 				| RANDOM_N:s {: RESULT = s; :}
 				| ALERT:s {: RESULT = s; :}
 				| EXIT:s {: RESULT = s; :}
+				| GET:s {: RESULT = s; :}
 				| GLOBAL:s {: RESULT = s; :}
 				| ON_LOAD:s {: RESULT = s; :}
-				| FONTF_VALUE:s {: RESULT = setQuote(s); :}
-				| ALIGN_VALUE:s {: RESULT = setQuote(s); :}
-				| COLOUR:s {: RESULT = setQuote(s); :}
-				| TYPE_VALUE:s {: RESULT = setQuote(s); :}
-				| CLASS_VALUE:s {: RESULT = setQuote(s); :}
-				| INTQ:s {: RESULT = setQuote(s); :}
-				| PIXEL:s {: RESULT = setQuote(s); :}
-				| PERCNTG:s {: RESULT = setQuote(s); :}
-				| ONCLICK:s {: RESULT = setQuote(s); :}
-				| ID_:s {: RESULT = setQuote(s); :}
-				| URL:s {: RESULT = setQuote(s); :}
-				| STRING:s {: RESULT = setQuote(s); :}
-				| CHAR:s {: RESULT = setQuote(s); :}
 				// | SMALLER:s {: RESULT = s; :}
 				| GREATER:s {: RESULT = s; :}
 				| LBRACE:s {: RESULT = s; :}
@@ -734,6 +802,23 @@ str ::=
 				| LPAREN:s {: RESULT = s; :}
 				| RPAREN:s {: RESULT = s; :}
 				| COMMA:s {: RESULT = s; :}
+				;
+
+str_q ::=
+				FONTF_VALUE:s {: RESULT = setQuote(s); :}
+				| ALIGN_VALUE:s {: RESULT = setQuote(s); :}
+				| COLOUR:s {: RESULT = setQuote(s); :}
+				| TYPE_VALUE:s {: RESULT = setQuote(s); :}
+				| CLASS_VALUE:s {: RESULT = setQuote(s); :}
+				| INTQ:s {: RESULT = setQuote(s); :}
+				| PIXEL:s {: RESULT = setQuote(s); :}
+				| PERCNTG:s {: RESULT = setQuote(s); :}
+				| ONCLICK:s {: RESULT = setQuote(s); :}
+				| ID_:s {: RESULT = setQuote(s); :}
+				| ID_2:s {: RESULT = setQuote(s); :}
+				| URL:s {: RESULT = setQuote(s); :}
+				| STRING:s {: RESULT = setQuote(s); :}
+				| CHAR:s {: RESULT = setQuote(s); :}
 				;
 
 /* Etiqueta de apertura <C_GCIC> */

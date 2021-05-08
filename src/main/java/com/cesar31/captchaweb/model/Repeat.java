@@ -38,9 +38,17 @@ public class Repeat implements Instruction {
         while (v < Integer.valueOf(until.run(local, operation).getValue())) {
             SymbolTable localFor = new SymbolTable();
             localFor.addAll(local);
-            instructions.forEach(i -> {
-                i.run(localFor, operation);
-            });
+
+            for (Instruction i : instructions) {
+                Object o = i.run(localFor, operation);
+
+                if (o != null) {
+                    if (o instanceof Exit) {
+                        return o;
+                    }
+                }
+
+            }
             v++;
             variable.setValue(String.valueOf(v));
         }

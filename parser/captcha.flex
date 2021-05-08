@@ -58,6 +58,7 @@ char = {Qs} [^\r\n\']? {Qs}
 
 /* Id */
 Id = {Q} [\_\-\$\w]+ {Q}
+Id2 = {Qs} [\_\-\$\w]+ {Qs}
 
 /* Id Variable */
 IdV = [a-zA-Z]\w*
@@ -86,7 +87,7 @@ OnClick = {Q} \w+ "(" ")" {Q}
 Url = {Q} "http" "s"? ":" "/"{2,2} [\w\-\.]+ "." \w{2,5} "/"? \S* {Q}
 
 /* Entrada para etiquetas */
-In = [\w\"\'\?\.\\\^¿¡#$%&]+
+In = [\w\"\?\.\\\^¿¡#$%&]+
 
 Process = "PROCESS_" \w+
 
@@ -290,6 +291,9 @@ Script = {c} "_" {s}{c}{r}{i}{p}{t}{i}{n}{g}
 	"char"
 	{ return symbol(CHR, yytext()); }
 
+	{Qs}
+	{ return symbol(QS, yytext()); }
+
 	"string"
 	{ return symbol(STR, yytext()); }
 
@@ -320,6 +324,12 @@ Script = {c} "_" {s}{c}{r}{i}{p}{t}{i}{n}{g}
 
 	"EXIT"
 	{ return symbol(EXIT, yytext()); }
+
+	"getElementById"
+	{ return symbol(GET, yytext()); }
+
+	"INSERT"
+	{ return symbol(INSERT, yytext()); }
 
 	"@global"
 	{ return symbol(GLOBAL, yytext()); }
@@ -451,6 +461,9 @@ Script = {c} "_" {s}{c}{r}{i}{p}{t}{i}{n}{g}
 	/* Id */
 	{Id}
 	{ return symbol(ID_, getString(yytext())); }
+
+	{Id2}
+	{ return symbol(ID_2, getString(yytext())); }
 
 	{Url}
 	{ return symbol(URL, getString(yytext())); }

@@ -15,9 +15,6 @@ public class Component {
     // Etiquetas con parametros
     private HashMap<Param, Parameter> params;
     
-    // Etiqueta select
-    
-    
     public Component() {
         this.params = new HashMap<>();
     }

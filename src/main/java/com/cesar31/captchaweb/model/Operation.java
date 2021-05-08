@@ -53,6 +53,18 @@ public class Operation implements Instruction {
     @Override
     public Variable run(SymbolTable table, AstOperation operation) {
         switch (type) {
+            case GET:
+                if(operation.getRequest() != null) {
+                    String res = operation.getRequest().getParameter(token.getValue());
+                    // System.out.println(token.getValue());
+                    if(res != null) {
+                        return new Variable(Var.STRING, res);
+                    } else {
+                        System.out.println("Respuesta null");
+                    }
+                }
+                
+                return new Variable(Var.STRING, "");
             case integer:
             case decimal:
             case character:
@@ -123,6 +135,9 @@ public class Operation implements Instruction {
 
     @Override
     public Variable test(SymbolTable table, AstOperation operation) {
+        if(type == OperationType.GET) {
+            return new Variable(Var.STRING, token.getValue());
+        }
         return this.run(table, operation);
     }
 

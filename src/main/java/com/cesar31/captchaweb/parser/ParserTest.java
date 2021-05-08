@@ -98,29 +98,29 @@ public class ParserTest {
             if (operation.getErrors().isEmpty()) {
                 System.out.println("\nAST aparentemente limpio\n");
 
-                ObjectMapper mapper = new ObjectMapper();
-                String json = "";
-                try {
-                    json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(AST);
-                    System.out.println(json);
-                } catch (JsonProcessingException ex) {
-                    ex.printStackTrace();
+//                ObjectMapper mapper = new ObjectMapper();
+//                String json = "";
+//                try {
+//                    json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(AST);
+//                    System.out.println(json);
+//                } catch (JsonProcessingException ex) {
+//                    ex.printStackTrace();
+//                }
+                SymbolTable symbol = new SymbolTable();
+                AstOperation astO = new AstOperation();
+                for (Instruction i : AST) {
+                    i.run(symbol, astO);
                 }
-//                SymbolTable symbol = new SymbolTable();
-//                AstOperation astO = new AstOperation();
-//                for (Instruction i : AST) {
-//                    i.run(symbol, astO);
-//                }
-//
-//                if (!astO.getErrors().isEmpty()) {
-//                    astO.getErrors().forEach(e -> {
-//                        System.out.println(e.toString());
-//                    });
-//                } else {
-//                    symbol.forEach(v -> {
-//                        System.out.println(v.toString());
-//                    });
-//                }
+
+                if (!astO.getErrors().isEmpty()) {
+                    astO.getErrors().forEach(e -> {
+                        System.out.println(e.toString());
+                    });
+                } else {
+                    symbol.forEach(v -> {
+                        System.out.println(v.toString());
+                    });
+                }
 
             } else {
                 System.out.println("\nErrores en AST");

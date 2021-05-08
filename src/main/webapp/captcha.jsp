@@ -21,36 +21,24 @@
             </div>
         </section>
 
-        <!-- Modal -->
-        <div class="modal fade" id="modal-info" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modal-title">${title}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p id="modal-p"></p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-
         <%@include file="resources/assets/js/js.html" %>
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
         <c:if test="${alerts != null}">
             <script>
                 var modals = [];
                 <c:forEach var="a" items="${alerts}">
-                    modals.push({title: 'Informacion', text: '${a}'});
-                    console.log('Mensaje: ${a}');
+                modals.push({title: 'Informacion', text: '${a}'});
+                console.log('Mensaje: ${a}');
                 </c:forEach>
-                    Swal.queue(modals);
+                Swal.queue(modals);
+            </script>
+        </c:if>
+
+        <c:if test="${inserts != null}">
+            <script>
+                <c:forEach var="i" items="${inserts}">
+                    ${i}
+                </c:forEach>
             </script>
         </c:if>
     </body>

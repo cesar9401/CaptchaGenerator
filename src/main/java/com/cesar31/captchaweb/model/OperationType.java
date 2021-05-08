@@ -34,5 +34,7 @@ public enum OperationType {
     LETIMPAR,
     REVERSE,
     RANDOM_C,
-    RANDOM_N
+    RANDOM_N,
+    /* get */
+    GET
 }

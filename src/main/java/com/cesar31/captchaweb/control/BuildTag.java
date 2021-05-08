@@ -78,6 +78,14 @@ public class BuildTag {
 
         return c;
     }
+    
+    public ComponentParent makeDivInsteadScript(int script) {
+        ComponentParent c = new ComponentParent();
+        c.setTag(Tag.DIV);
+        c.getParams().put(ID, new Parameter(ID, "__script__" + script + "__"));
+        
+        return c;
+    }
 
     /**
      * Crear etiqueta padre
@@ -235,7 +243,7 @@ public class BuildTag {
      * @param tokens
      * @return
      */
-    private String getContent(List<Token> tokens) {
+    public String getContent(List<Token> tokens) {
         String content = "";
         for (Token t : tokens) {
             content += t.getValue() + " ";

@@ -33,9 +33,16 @@ public class While implements Instruction {
         while (Boolean.valueOf(op.run(table, operation).getValue())) {
             SymbolTable local = new SymbolTable();
             local.addAll(table);
-            instructions.forEach(i -> {
-                i.run(local, operation);
-            });
+
+            for (Instruction i : instructions) {
+                Object o = i.run(local, operation);
+
+                if (o != null) {
+                    if (o instanceof Exit) {
+                        return o;
+                    }
+                }
+            }
         }
 
         return null;
@@ -51,7 +58,7 @@ public class While implements Instruction {
         instructions.forEach(i -> {
             i.test(local, operation);
         });
-        
+
         return null;
     }
 

@@ -45,7 +45,7 @@ public class Alert implements Instruction {
         Variable v = op.run(table, operation);
         if (v != null) {
             if (v.getValue() != null) {
-                return v.getValue();
+                operation.getAlerts().add(v.getValue());
             }
         }
 

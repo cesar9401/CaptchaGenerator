@@ -11,7 +11,6 @@ import com.cesar31.captchaweb.model.Tag;
 import com.cesar31.captchaweb.parser.CaptchaLex;
 import com.cesar31.captchaweb.parser.CaptchaParser;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,7 +73,7 @@ public class ParserControl {
         return html;
     }
 
-    private String getChilds(Component c) {
+    public String getChilds(Component c) {
         switch (c.getTag()) {
             case H1:
                 return "<h1 " + getStyles(c) + " id='" + param(c, ID) + "'> " + c.getContent() + "</h1>\n";
@@ -94,16 +93,16 @@ public class ParserControl {
                 return "<img class='text-center' src='" + param(c, SRC) + "' id='" + param(c, ID) + "' width='" + param(c, WIDTH) + "' height='" + param(c, HEIGHT) + "' alt='" + param(c, ALT) + "' />\n";
 
             case TEXTAREA:
-                return "<textarea " + getStyles(c) + " id='" + param(c, ID) + "'> " + "</textarea>\n";
+                return "<textarea " + getStyles(c) + " id='" + param(c, ID) + "' name='" + param(c, ID) + "'> " + "</textarea>\n";
 
             case DIV:
                 return "<div " + getStyles(c) + " id='" + param(c, ID) + "'>\n" + getChildsParent((ComponentParent) c) + "</div>\n";
 
             case INPUT:
-                return "<input " + getStyles(c) + " type='" + param(c, TYPE) + "' id='" + param(c, ID) + "'/>\n";
+                return "<input " + getStyles(c) + " type='" + param(c, TYPE) + "' id='" + param(c, ID) + "' name='" + param(c, ID) + "'/>\n";
 
             case SELECT:
-                return "<select class='form-select form-select-lg' " + getStyles(c) + " id='" + param(c, ID) + "'>\n" + getChildsParent((ComponentParent) c) + "</select>\n";
+                return "<select class='form-select form-select-lg' " + getStyles(c) + " id='" + param(c, ID) + "' name='" + param(c, ID) + "'>\n" + getChildsParent((ComponentParent) c) + "</select>\n";
 
             case OPTION:
                 return "<option value='" + c.getContent() + "'> " + c.getContent() + "</option>\n";

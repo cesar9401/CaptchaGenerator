@@ -1,14 +1,11 @@
 package com.cesar31.captchaweb.servlet;
 
 import com.cesar31.captchaweb.control.AstOperation;
-import com.cesar31.captchaweb.model.Alert;
 import com.cesar31.captchaweb.model.Exit;
 import com.cesar31.captchaweb.model.Instruction;
 import com.cesar31.captchaweb.model.SymbolTable;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -50,28 +47,19 @@ public class CaptchaAnswer extends HttpServlet {
         String action = request.getParameter("action");
         System.out.println("action: " + action);
 
-        /* Listado de mensajes */
-        List<String> alerts = new ArrayList<>();
-
         SymbolTable table = new SymbolTable();
         AstOperation operation = new AstOperation();
+        operation.setRequest(request);
+        operation.setResponse(response);
 
         LinkedList<Instruction> AST = (LinkedList<Instruction>) request.getSession().getAttribute("AST");
         for (Instruction i : AST) {
             Object o = i.run(table, operation);
-            
-            /* ALERT_INFO */
-            if (i instanceof Alert) {
-                if (o != null) {
-                    System.out.println("Alerta: " + o.toString());
-                    alerts.add(o.toString());
-                }
-            }
 
-            /* Probar */
-            if (i instanceof Exit) {
-                /* Terminar ejecucion */
-                break;
+            if (o != null) {
+                if (o instanceof Exit) {
+                    break;
+                }
             }
         }
 
@@ -79,7 +67,11 @@ public class CaptchaAnswer extends HttpServlet {
             System.out.println(v.toString());
         });
 
-        request.getSession().setAttribute("alerts", alerts);
+        if(!operation.getInserts().isEmpty()) {
+            request.getSession().setAttribute("inserts", operation.getInserts());
+        }
+        
+        request.getSession().setAttribute("alerts", operation.getAlerts());
         request.getRequestDispatcher("captcha.jsp").forward(request, response);
     }
 }

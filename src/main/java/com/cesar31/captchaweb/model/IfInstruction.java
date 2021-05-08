@@ -14,7 +14,7 @@ public class IfInstruction implements Instruction {
 
     public IfInstruction() {
     }
-    
+
     public IfInstruction(List<If> instructions) {
         this.instructions = instructions;
     }
@@ -29,7 +29,13 @@ public class IfInstruction implements Instruction {
                 SymbolTable local = new SymbolTable();
                 local.addAll(table);
                 for (Instruction i : ins) {
-                    i.run(local, operation);
+                    Object o = i.run(local, operation);
+                    
+                    if(o != null) {
+                        if(o instanceof Exit) {
+                            return o;
+                        }
+                    }
                 }
                 return null;
             }
