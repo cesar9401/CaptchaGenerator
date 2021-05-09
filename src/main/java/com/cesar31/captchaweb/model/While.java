@@ -11,17 +11,14 @@ public class While implements Instruction {
 
     private Operation op;
     private LinkedList<Instruction> instructions;
-
     private Token l;
-    private Token r;
 
     public While() {
     }
 
-    public While(Operation op, LinkedList<Instruction> instructions, Token l, Token r) {
+    public While(Operation op, LinkedList<Instruction> instructions, Token l) {
         /* Parentesis */
         this.l = l;
-        this.r = r;
 
         /* Instrucciones while */
         this.op = op;
@@ -51,7 +48,7 @@ public class While implements Instruction {
     @Override
     public Object test(SymbolTable table, AstOperation operation) {
         Variable v = op.test(table, operation);
-        operation.getEh().checkBooleanVariable("WHILE", l, v, r);
+        operation.getEh().checkBooleanVariable("WHILE", l, v);
 
         SymbolTable local = new SymbolTable();
         local.addAll(table);
@@ -84,13 +81,5 @@ public class While implements Instruction {
 
     public void setL(Token l) {
         this.l = l;
-    }
-
-    public Token getR() {
-        return r;
-    }
-
-    public void setR(Token r) {
-        this.r = r;
     }
 }

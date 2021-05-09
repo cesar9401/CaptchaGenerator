@@ -1,19 +1,23 @@
 package com.cesar31.captchaweb.control;
 
+import com.cesar31.captchaweb.model.AST;
 import com.cesar31.captchaweb.model.Captcha;
 import com.cesar31.captchaweb.model.Component;
-import com.cesar31.captchaweb.model.ComponentParent;
 import com.cesar31.captchaweb.model.Err;
 import com.cesar31.captchaweb.model.Instruction;
 import com.cesar31.captchaweb.model.Param;
 import static com.cesar31.captchaweb.model.Param.*;
+import com.cesar31.captchaweb.model.SymbolTable;
 import com.cesar31.captchaweb.model.Tag;
 import com.cesar31.captchaweb.parser.CaptchaLex;
 import com.cesar31.captchaweb.parser.CaptchaParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -21,24 +25,28 @@ import java.util.List;
  */
 public class ParserControl {
 
+    private String path;
+    private HttpServletRequest request;
+    private String link;
+
     private String source;
+
     private List<Err> errors = new ArrayList<>();
     private Captcha captcha;
-    private LinkedList<Instruction> AST;
+    private HashMap<String, AST> scripts;
 
     private String title;
     private String background;
-    private String style;
+    private static String style;
 
     public ParserControl() {
         this.errors = new ArrayList<>();
-        this.AST = new LinkedList<>();
     }
 
-    public ParserControl(String source) {
+    public ParserControl(String source, String path) {
         this();
-        //this.source = new String(source.getBytes("ISO-8859-1"), "UTF-8");
         this.source = source;
+        this.path = path;
     }
 
     public void parseSourceCode() {
@@ -46,72 +54,129 @@ public class ParserControl {
         CaptchaParser parser = new CaptchaParser(lex);
         try {
             this.captcha = (Captcha) parser.parse().value;
-            this.AST = parser.getAST();
+            this.scripts = parser.getScripts();
             this.errors = parser.getErrors();
         } catch (Exception ex) {
             this.errors = parser.getErrors();
             ex.printStackTrace(System.out);
+        } finally {
+            checkSource();
         }
     }
 
+    /**
+     * Revisar Errores y AST's
+     */
+    private void checkSource() {
+        /* Archivo parseado con exito */
+        if (this.errors.isEmpty()) {
+
+            /* Revisar posibles errores en AST's */
+            this.scripts.forEach((s, ast) -> {
+                AstOperation operation = new AstOperation();
+                SymbolTable table = new SymbolTable();
+
+                for (Instruction i : ast.getInstructions()) {
+                    i.test(table, operation);
+                }
+
+                /* Agregar posibles errores */
+                if (!operation.getErrors().isEmpty()) {
+                    this.errors.addAll(operation.getErrors());
+                }
+            });
+
+            if (this.errors.isEmpty()) {
+                /* Almacenar captcha y mostrar enlace */
+                DBHandler db = new DBHandler();
+
+                /* nombre archivo */
+                String name = captcha.getParams().get(Param.ID).getValue();
+
+                /* json */
+                String json = getJson(captcha);
+               
+                db.writeFile(path + name + ".gcic", json);
+
+                /* original */
+                db.writeFile(path + "script/" + name + ".gcic", source);
+
+                this.link = "http://localhost:8080/CaptchaGenerator/CaptchaMain?id=" + name + ".gcic";
+            }
+        }
+    }
+
+    private String getJson(Captcha c) {
+        String json = "";
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(c);
+        } catch (JsonProcessingException ex) {
+            ex.printStackTrace(System.out);
+        }
+
+        return json;
+    }
+
     public String getHtml(Captcha captcha) {
-        for(Component c : captcha.getHead().getChildren()) {
-            if(c.getTag() == Tag.TITLE) {
+        for (Component c : captcha.getHead().getChildren()) {
+            if (c.getTag() == Tag.TITLE) {
                 this.title = c.getContent();
                 break;
             }
         }
-        
+
         this.background = (captcha.getBody().getParams().get(BACKGROUND) != null) ? captcha.getBody().getParams().get(BACKGROUND).getValue() : "#5DADE2";
-        
+
         String html = "";
 
         for (Component c : captcha.getBody().getChildren()) {
-            html += "<div class='row'>\n<div class='col text-center m-2'>\n" + getChilds(c) + "</div>\n</div>\n";
+            html += "<div class='row'>\n<div class='col text-center m-2'>\n" + getChilds(c) + "\n</div>\n</div>\n";
         }
 
         return html;
     }
 
-    public String getChilds(Component c) {
+    public static String getChilds(Component c) {
         switch (c.getTag()) {
             case H1:
-                return "<h1 " + getStyles(c) + " id='" + param(c, ID) + "'> " + c.getContent() + "</h1>\n";
+                return "<h1 " + getStyles(c) + " id='" + param(c, ID) + "'> " + c.getContent() + "</h1>";
             case P:
-                return "<p " + getStyles(c) + " id='" + param(c, ID) + "'> " + c.getContent() + "</p>\n";
+                return "<p " + getStyles(c) + " id='" + param(c, ID) + "'> " + c.getContent() + "</p>";
 
             case SPAN:
-                return "<div " + getStyles(c) + " id='" + param(c, ID) + "'>\n<span>" + c.getContent() + "<span>\n</div>\n";
+                return "<div " + getStyles(c) + " id='" + param(c, ID) + "'><span>" + c.getContent() + "</span></div>";
 
             case BUTTON:
-                return "<button class='btn btn-primary btn-lg' " + getStyles(c) + " id='" + param(c, ID) + "' type='submit' name='action' value='" + param(c, ONCLICK) + "'> " + c.getContent() + "</button>\n";
+                return "<button class='btn btn-primary btn-lg' " + getStyles(c) + " id='" + param(c, ID) + "' type='submit' name='action' value='" + param(c, ONCLICK) + "'> " + c.getContent() + "</button>";
 
             case BR:
-                return "<br>\n";
+                return "<br>";
 
             case IMG:
-                return "<img class='text-center' src='" + param(c, SRC) + "' id='" + param(c, ID) + "' width='" + param(c, WIDTH) + "' height='" + param(c, HEIGHT) + "' alt='" + param(c, ALT) + "' />\n";
+                return "<img class='text-center' src='" + param(c, SRC) + "' id='" + param(c, ID) + "' width='" + param(c, WIDTH) + "' height='" + param(c, HEIGHT) + "' alt='" + param(c, ALT) + "' />";
 
             case TEXTAREA:
-                return "<textarea " + getStyles(c) + " id='" + param(c, ID) + "' name='" + param(c, ID) + "'> " + "</textarea>\n";
+                return "<textarea " + getStyles(c) + " id='" + param(c, ID) + "' name='" + param(c, ID) + "'> " + "</textarea>";
 
             case DIV:
-                return "<div " + getStyles(c) + " id='" + param(c, ID) + "'>\n" + getChildsParent((ComponentParent) c) + "</div>\n";
+                return "<div " + getStyles(c) + " id='" + param(c, ID) + "'>" + getChildsParent(c) + "</div>";
 
             case INPUT:
-                return "<input " + getStyles(c) + " type='" + param(c, TYPE) + "' id='" + param(c, ID) + "' name='" + param(c, ID) + "'/>\n";
+                return "<input " + getStyles(c) + " type='" + param(c, TYPE) + "' id='" + param(c, ID) + "' name='" + param(c, ID) + "'/>";
 
             case SELECT:
-                return "<select class='form-select form-select-lg' " + getStyles(c) + " id='" + param(c, ID) + "' name='" + param(c, ID) + "'>\n" + getChildsParent((ComponentParent) c) + "</select>\n";
+                return "<select class='form-select form-select-lg' " + getStyles(c) + " id='" + param(c, ID) + "' name='" + param(c, ID) + "'>" + getChildsParent(c) + "</select>";
 
             case OPTION:
-                return "<option value='" + c.getContent() + "'> " + c.getContent() + "</option>\n";
+                return "<option value='" + c.getContent() + "'> " + c.getContent() + "</option>";
 
         }
         return "";
     }
 
-    private String getChildsParent(ComponentParent p) {
+    private static String getChildsParent(Component p) {
         String html = "";
         for (Component c : p.getChildren()) {
             html += getChilds(c);
@@ -119,7 +184,7 @@ public class ParserControl {
         return html;
     }
 
-    private String getStyles(Component c) {
+    private static String getStyles(Component c) {
         style = "style='";
 
         c.getParams().forEach((param, parameter) -> {
@@ -146,7 +211,7 @@ public class ParserControl {
         return style;
     }
 
-    private String param(Component c, Param p) {
+    private static String param(Component c, Param p) {
         return (c.getParams().get(p) != null) ? c.getParams().get(p).getValue() : "";
     }
 
@@ -158,8 +223,8 @@ public class ParserControl {
         return captcha;
     }
 
-    public LinkedList<Instruction> getAST() {
-        return AST;
+    public HashMap<String, AST> getScripts() {
+        return scripts;
     }
 
     public String getTitle() {
@@ -168,5 +233,9 @@ public class ParserControl {
 
     public String getBackground() {
         return background;
+    }
+
+    public String getLink() {
+        return link;
     }
 }

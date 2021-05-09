@@ -65,7 +65,7 @@ public class EnviromentHandler {
         }
     }
 
-    public void checkBooleanVariable(String condition, Token lparen, Variable v, Token rparen) {
+    public void checkBooleanVariable(String condition, Token lparen, Variable v) {
         if (v != null) {
             if (v.getType() == BOOLEAN) {
                 // System.out.println(condition + " -> " + v.getValue());

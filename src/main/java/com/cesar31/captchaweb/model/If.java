@@ -11,17 +11,16 @@ public class If {
     private String name;
     private Operation condition;
     private LinkedList<Instruction> intructions;
-    private Token l, r;
+    private Token l;
 
     public If() {
     }
 
-    public If(String name, Operation condition, LinkedList<Instruction> intructions, Token l, Token r) {
+    public If(String name, Operation condition, LinkedList<Instruction> intructions, Token l) {
         this.name = name;
         this.condition = condition;
         this.intructions = intructions;
         this.l = l;
-        this.r = r;
     }
 
     public String getName() {
@@ -54,13 +53,5 @@ public class If {
 
     public void setL(Token l) {
         this.l = l;
-    }
-
-    public Token getR() {
-        return r;
-    }
-
-    public void setR(Token r) {
-        this.r = r;
     }
 }

@@ -11,6 +11,7 @@
         <title>Captcha</title>
     </head>
     <body>
+
         <jsp:include page="WEB-INF/nav.jsp"></jsp:include>
 
             <section id="upload-file">
@@ -49,30 +50,75 @@
                                                           onscroll="scroll_changed(this)"
                                                           name="source"
                                                           id="source" required>
-                                                </textarea>
-                                            </span>
-                                        </div>
+                                                ${source}
+                                            </textarea>
+                                        </span>
                                     </div>
-                                    <div class="row my-0">
-                                        <div class="col d-flex justify-content-end my-0">
-                                            <span class="badge bg-danger">
-                                                <p class="my-0 fs-6 text" id="info">Posicion actual: (0,0)</p>
-                                            </span>
-                                        </div>
+                                </div>
+                                <div class="row my-0">
+                                    <div class="col d-flex justify-content-end my-0">
+                                        <span class="badge bg-danger">
+                                            <p class="my-0 fs-6 text" id="info">Posicion actual: (0,0)</p>
+                                        </span>
                                     </div>
-                                    <div class="row text-center">
-                                        <div class="col-4 offset-4 d-grid">
-                                            <button type="submit" name="action" value="get-source" class="btn btn-dark btn-lg btn-block mb-4">Compilar</button>
-                                        </div>
+                                </div>
+                                <div class="row text-center">
+                                    <div class="col-4 offset-4 d-grid">
+                                        <button type="submit" name="action" value="get-source" class="btn btn-dark btn-lg btn-block mb-4">Compilar</button>
                                     </div>
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <section id="errors" hidden>
+            <div class="container">
+                <div class="row">
+                    <div class="col text-center my-2">
+                        <h1 class="text-danger mt-4">Errores</h1>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Linea</th>
+                                    <th scope="col">Columna</th>
+                                    <th scope="col">Tipo</th>
+                                    <th scope="col">Lexema</th>
+                                    <th scope="col">Descripcion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach var="e" items="${errors}">
+                                    <tr>
+                                        <th scope="row">${e.line}</th>
+                                        <th scope="row">${e.column}</th>
+                                        <td>${e.type}</td>
+                                        <td>${e.lexema}</td>
+                                        <td>${e.description}</td>
+                                    </tr>                                    
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <%@include file="resources/assets/js/js.html" %>
         <script src="resources/assets/js/editor.js"></script>
         <script src="resources/assets/js/upload.js"></script>
+
+        <c:if test="${errors != null}">
+            <script>
+                document.getElementById('errors').removeAttribute('hidden');
+            </script>
+        </c:if>
     </body>
 </html>

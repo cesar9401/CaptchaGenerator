@@ -1,6 +1,7 @@
 package com.cesar31.captchaweb.servlet;
 
 import com.cesar31.captchaweb.control.AstOperation;
+import com.cesar31.captchaweb.model.AST;
 import com.cesar31.captchaweb.model.Exit;
 import com.cesar31.captchaweb.model.Instruction;
 import com.cesar31.captchaweb.model.SymbolTable;
@@ -47,31 +48,31 @@ public class CaptchaAnswer extends HttpServlet {
         String action = request.getParameter("action");
         System.out.println("action: " + action);
 
-        SymbolTable table = new SymbolTable();
-        AstOperation operation = new AstOperation();
-        operation.setRequest(request);
-        operation.setResponse(response);
-
-        LinkedList<Instruction> AST = (LinkedList<Instruction>) request.getSession().getAttribute("AST");
-        for (Instruction i : AST) {
-            Object o = i.run(table, operation);
-
-            if (o != null) {
-                if (o instanceof Exit) {
-                    break;
-                }
-            }
-        }
-
-        table.forEach(v -> {
-            System.out.println(v.toString());
-        });
-
-        if(!operation.getInserts().isEmpty()) {
-            request.getSession().setAttribute("inserts", operation.getInserts());
-        }
+//        SymbolTable table = new SymbolTable();
+//        AstOperation operation = new AstOperation();
+//        operation.setRequest(request);
+//        operation.setResponse(response);
+//
+//        AST ast = (AST) request.getSession().getAttribute("AST");
+//        for (Instruction i : ast.getInstructions()) {
+//            Object o = i.run(table, operation);
+//
+//            if (o != null) {
+//                if (o instanceof Exit) {
+//                    break;
+//                }
+//            }
+//        }
+//
+//        table.forEach(v -> {
+//            System.out.println(v.toString());
+//        });
+//
+//        if(!operation.getInserts().isEmpty()) {
+//            request.getSession().setAttribute("inserts", operation.getInserts());
+//        }
         
-        request.getSession().setAttribute("alerts", operation.getAlerts());
+        //request.getSession().setAttribute("alerts", operation.getAlerts());
         request.getRequestDispatcher("captcha.jsp").forward(request, response);
     }
 }

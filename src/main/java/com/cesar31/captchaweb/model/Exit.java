@@ -10,7 +10,7 @@ public class Exit implements Instruction {
     
     private Token token;
 
-    private Exit() {
+    public Exit() {
     }
     
     public Exit(Token token) {

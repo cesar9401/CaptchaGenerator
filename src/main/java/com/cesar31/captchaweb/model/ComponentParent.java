@@ -10,18 +10,18 @@ import java.util.List;
 public class ComponentParent extends Component {
     // Para DIV y BODY y HEAD, SELECT
 
-    private List<Component> children;
+    //private List<Component> children;
     
-    public ComponentParent() {
+    private ComponentParent() {
         super();
-        this.children = new ArrayList<>();
+        //this.children = new ArrayList<>();
     }
 
-    public List<Component> getChildren() {
-        return children;
-    }
-
-    public void setChildren(List<Component> children) {
-        this.children = children;
-    }
+//    public List<Component> getChildren() {
+//        return children;
+//    }
+//
+//    public void setChildren(List<Component> children) {
+//        this.children = children;
+//    }
 }

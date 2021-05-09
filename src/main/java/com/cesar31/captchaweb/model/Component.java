@@ -1,6 +1,8 @@
 package com.cesar31.captchaweb.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -8,22 +10,27 @@ import java.util.HashMap;
  */
 public class Component {
 
-    private Tag tag;    
+    private Tag tag;
     // h1, p y span
     private String content;
 
     // Etiquetas con parametros
     private HashMap<Param, Parameter> params;
-    
+
+    /* hijos */
+    // Para DIV y BODY y HEAD, SELECT
+    private List<Component> children;
+
     public Component() {
         this.params = new HashMap<>();
+        this.children = new ArrayList<>();
     }
 
     public Component(Tag tag) {
         this();
         this.tag = tag;
     }
-    
+
     public Tag getTag() {
         return tag;
     }
@@ -46,6 +53,14 @@ public class Component {
 
     public void setParams(HashMap<Param, Parameter> params) {
         this.params = params;
+    }
+
+    public List<Component> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Component> children) {
+        this.children = children;
     }
 
     @Override

@@ -12,8 +12,9 @@ class CaptchaParser;
 
 parser code {:
 
-	private int scriptCount;
+	private HashMap<String, AST> scripts;
 
+	private int scriptCount;
 	private BuildTag tag;
 	private ErrorHandler handler;
 
@@ -22,15 +23,18 @@ parser code {:
 
 	private Token type;
 
-	private LinkedList<Instruction> AST;
+	//private AST ast;
 
 	public CaptchaParser(CaptchaLex lex) {
 		super(lex);
 		this.tag = new BuildTag(this);
 		this.handler = new ErrorHandler(this);
 
-		this.AST = new LinkedList<>();
+		// this.AST = new LinkedList<>();
 		this.errors = new ArrayList<>();
+
+		this.scripts = new HashMap<>();
+
 		this.scriptCount = 0;
 	}
 
@@ -68,8 +72,8 @@ parser code {:
 		return t;
 	}
 
-	public LinkedList<Instruction> getAST() {
-		return AST;
+	public HashMap<String, AST> getScripts() {
+		return scripts;
 	}
 
 :}
@@ -93,16 +97,17 @@ non terminal Token str, str_q, str_nq, string, type_var, pxl_per;
 non terminal Parameter id, name, href_src, bckgrnd_clr, font_size, font_family, text_align, type, cols_rows, clss, width_height, alt, onclick, opt, param;
 non terminal List<Parameter> params;
 non terminal HashMap<Param, Parameter> paragraph, button, h1, div, img, body, spam, input, txtarea, select, link, gcic, head, title, option, br, script;
-non terminal Component c_script, c_title, c_link, c_spam, c_h1, c_button, c_paragraph, c_img, c_input, c_txtarea, c_select, b_opt, c_br, c_div, c_option, h_opt;
+non terminal Component c_script, c_title, c_link, c_spam, c_h1, c_button, c_paragraph, c_img, c_input, c_txtarea, b_opt, c_br, c_option, h_opt, c_body, c_head, c_select, c_div;
 non terminal List<Component> body_opt, make_option, head_opt;
-non terminal ComponentParent c_body, c_head;
 non terminal Captcha c_gcic;
 
 non terminal Assignment control_stat;
 non terminal Instruction stat, control_while, control_repeat, control_if;
-non terminal LinkedList<Instruction> make_var, statement, scripting, make_script, process, assignment, instruction, ini, type_instruction, control, alert, exit, insert;
+non terminal LinkedList<Instruction> make_var, statement, scripting, make_script, assignment, instruction, ini, type_instruction, control, alert, exit, insert;
 non terminal Variable insert_sq;
+non terminal AST process;
 
+non terminal make_process;
 
 non terminal If if_, else_, else_if;
 non terminal List<If> list_else_if;
@@ -175,26 +180,36 @@ b_opt ::=
 				;
 
 c_script ::=
-				script:m process:list /*make_script*/ clscript
+				script:m make_process /*make_script*/ clscript
 					{:
 						//RESULT = tag.makeTag(Tag.SCRIPT, m, null);
 						RESULT = tag.makeDivInsteadScript(scriptCount);
 						scriptCount++;
 						/* Insertar etiquetas desde aqui */
 
-						AST = list;
+						//AST = list;
 					:}
 				;
+
+/* make_process */
+make_process ::=
+				make_process process /* process -> linkedlist */
+				|
+				;
+/* make_process */
 
 /* proceso */
 process ::=
 				PROCESS:p LPAREN RPAREN LBRACKET make_script:list RBRACKET
 					{:
-						System.out.println("Process: " + p.getValue());
-						RESULT = list;
+						//System.out.println("Process: " + p.getValue());
+						AST ast = new AST(p.getValue(), scriptCount);
+						ast.addAll(list);
+						scripts.put(p.getValue(), ast);
+						// RESULT = list;
 					:}
-				|
 				;
+/* proceso */
 
 make_script ::=
 				make_script:list scripting:a
@@ -428,12 +443,12 @@ control_if ::=
 
 if_ ::=
 				IF LPAREN:lparen a:b1 RPAREN:rparen THEN type_instruction:list
-					{: RESULT = new If("IF", b1, list, lparen, rparen); :}
+					{: RESULT = new If("IF", b1, list, lparen); :}
 				;
 
 else_ ::=
 				ELSE type_instruction:list
-					{: RESULT = new If("ELSE", null, list, null, null); :}
+					{: RESULT = new If("ELSE", null, list, null); :}
 				;
 
 list_else_if ::=
@@ -451,14 +466,14 @@ list_else_if ::=
 
 else_if ::=
 				ELSE IF LPAREN:lparen a:b1 RPAREN:rparen THEN type_instruction:list
-					{: RESULT = new If("IF_ELSE", b1, list, lparen, rparen); :}
+					{: RESULT = new If("IF_ELSE", b1, list, lparen); :}
 				;
 /* IF */
 
 /* WHILE */
 control_while ::=
 				WHILE LPAREN:l a:b1 RPAREN:r THEN_WHILE type_instruction:list
-					{: RESULT = new While(b1, list, l, r); :}
+					{: RESULT = new While(b1, list, l); :}
 				;
 /* WHILE */
 
@@ -692,7 +707,15 @@ insert_op ::=
 
 insert_sq ::=
 				QS insert_content:list QS
-					{: RESULT = new Variable(Var.STRING, tag.getContent(list)); :}
+					{:
+						String s = tag.getContent(list);
+						// System.out.println("insert_sq -> " + s);
+						if(s.length() == 1) {
+							RESULT = new Variable(Var.CHAR, s);
+						} else {
+							RESULT = new Variable(Var.STRING, s);
+						}
+					:}
 				;
 
 insert_content ::=

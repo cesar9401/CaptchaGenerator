@@ -44,7 +44,7 @@ public class BuildTag {
         this.parser = parser;
     }
 
-    public Captcha makeCaptcha(Tag tag, HashMap<Param, Parameter> params, ComponentParent head, ComponentParent body) {
+    public Captcha makeCaptcha(Tag tag, HashMap<Param, Parameter> params, Component head, Component body) {
         Captcha c = new Captcha();
         c.setTag(tag);
 
@@ -79,8 +79,8 @@ public class BuildTag {
         return c;
     }
     
-    public ComponentParent makeDivInsteadScript(int script) {
-        ComponentParent c = new ComponentParent();
+    public Component makeDivInsteadScript(int script) {
+        Component c = new Component();
         c.setTag(Tag.DIV);
         c.getParams().put(ID, new Parameter(ID, "__script__" + script + "__"));
         
@@ -95,8 +95,8 @@ public class BuildTag {
      * @param children
      * @return
      */
-    public ComponentParent makeTagParent(Tag tag, HashMap<Param, Parameter> map, List<Component> children) {
-        ComponentParent c = new ComponentParent();
+    public Component makeTagParent(Tag tag, HashMap<Param, Parameter> map, List<Component> children) {
+        Component c = new Component();
         c.setTag(tag);
 
         if (map != null) {

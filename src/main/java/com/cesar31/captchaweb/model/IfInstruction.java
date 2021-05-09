@@ -49,7 +49,7 @@ public class IfInstruction implements Instruction {
         for (If if_ : this.instructions) {
             if (if_.getCondition() != null) {
                 Variable v = if_.getCondition().test(table, operation);
-                operation.getEh().checkBooleanVariable(if_.getName(), if_.getL(), v, if_.getR());
+                operation.getEh().checkBooleanVariable(if_.getName(), if_.getL(), v);
             }
 
             SymbolTable local = new SymbolTable();

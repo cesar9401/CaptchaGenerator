@@ -29,22 +29,28 @@ public class Insert implements Instruction {
 
     @Override
     public Object test(SymbolTable table, AstOperation operation) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(this.operations != null) {
+            for(Operation o : operations) {
+                o.test(table, operation);
+            }
+        }
+        return null;
     }
 
     @Override
     public Object run(SymbolTable table, AstOperation operation) {
         if (this.component != null) {
-            ParserControl c = new ParserControl();
-            String html = c.getChilds(component);
-            String ins = "document.getElementById('__script__" + script + "__').innerHTML += \"" + html.replace("\n", "") + "\";";
+            String html = ParserControl.getChilds(component);
+            String ins = "document.getElementById('__script__" + script + "__').innerHTML += \"" + html + "\";";
             operation.getInserts().add(ins);
         } else if (this.operations != null) {
+            String insert = "";
             for (Operation o : operations) {
                 Variable v = o.run(table, operation);
-                String ins = "document.getElementById('__script__" + script + "__').innerHTML +=\n\"<p class='my-2 text-center'>" + v.getValue() + "</p>\";";
-                operation.getInserts().add(ins);
+                insert += v.getValue().concat(" ");
             }
+            String ins = "document.getElementById('__script__" + script + "__').innerHTML += \"<p class='fs-4 text-warning bg-dark my-2 text-center'>" + insert + "</p>\";";
+            operation.getInserts().add(ins);
         }
 
         return null;

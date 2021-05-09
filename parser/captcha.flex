@@ -54,7 +54,7 @@ Decimal = {Integer} \. \d+
 
 /* string and char */
 string = {Q} ([^\r\n\"]|[\n])* {Q}
-char = {Qs} [^\r\n\']? {Qs}
+char = {Qs} [^\r\n\']{1,1} {Qs}
 
 /* Id */
 Id = {Q} [\_\-\$\w]+ {Q}
@@ -338,6 +338,9 @@ Script = {c} "_" {s}{c}{r}{i}{p}{t}{i}{n}{g}
 	"ON_LOAD"
 	{ return symbol(ON_LOAD, yytext()); }
 
+	{char}
+	{ return symbol(CHAR, getString(yytext())); }
+
 	/* font-family */
 	{Q} "Courier" {Q}
 	{ return symbol(FONTF_VALUE, getString(yytext())); }
@@ -470,9 +473,6 @@ Script = {c} "_" {s}{c}{r}{i}{p}{t}{i}{n}{g}
 
 	{string}
 	{ return symbol(STRING, getString(yytext())); }
-
-	{char}
-	{ return symbol(CHAR, getString(yytext())); }
 
 	/* numbers */
 	{Integer}

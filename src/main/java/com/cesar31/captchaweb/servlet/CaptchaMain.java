@@ -1,9 +1,13 @@
 package com.cesar31.captchaweb.servlet;
 
+import com.cesar31.captchaweb.control.DBHandler;
 import com.cesar31.captchaweb.control.ParserControl;
+import com.cesar31.captchaweb.model.AST;
+import com.cesar31.captchaweb.model.Captcha;
 import com.cesar31.captchaweb.model.Instruction;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,7 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "CaptchaMain", urlPatterns = {"/CaptchaMain"})
 public class CaptchaMain extends HttpServlet {
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    private final String PATH = "/resources/db/";
+
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -29,6 +34,29 @@ public class CaptchaMain extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String path = request.getServletContext().getRealPath(PATH);
+        path = path.replace("target/CaptchaGenerator-1.0", "src/main/webapp");
+        String id = request.getParameter("id");
+
+        DBHandler db = new DBHandler();
+        Captcha c = db.getCaptcha(path, id);
+
+        if (c != null) {
+            ParserControl control = new ParserControl();
+            String html = control.getHtml(c);
+            String title = control.getTitle();
+            String background = control.getBackground();
+
+            request.setAttribute("title", title);
+            request.setAttribute("background", background);
+            request.setAttribute("html", html);
+
+            request.getRequestDispatcher("captcha.jsp").forward(request, response);
+        } else {
+            /* Captcha no existe */
+            request.getRequestDispatcher("captcha-not-found.jsp").forward(request, response);
+        }
+
     }
 
     /**
@@ -51,32 +79,27 @@ public class CaptchaMain extends HttpServlet {
     }
 
     private void getSource(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //String source = request.getParameter("source");
+        /* Archivo de entrada */
         String source = new String(request.getParameter("source").getBytes("ISO-8859-1"), "UTF-8");
-        ParserControl control = new ParserControl(source);
+        String path = request.getServletContext().getRealPath(PATH);
+        path = path.replace("target/CaptchaGenerator-1.0", "src/main/webapp");
+
+        /* Direccion de almacenamiento */
+        ParserControl control = new ParserControl(source, path);
         control.parseSourceCode();
+
         if (control.getErrors().isEmpty()) {
-            /* Recordad verificar errores AST antes de mostrar captcha */
-            LinkedList<Instruction> AST = control.getAST();
+            /* Sin errores, mostrar link */
 
-            /* Redirigir a captcha */
-            String html = control.getHtml(control.getCaptcha());
-            String title = control.getTitle();
-            String background = control.getBackground();
-
-            request.getSession().setAttribute("html", html);
-            request.getSession().setAttribute("title", title);
-            request.getSession().setAttribute("background", background);
-            
-            /* AST */
-            request.getSession().setAttribute("AST", AST);
-            
-            request.getRequestDispatcher("captcha.jsp").forward(request, response);
+            String link = control.getLink();
+            System.out.println(link);
+            request.setAttribute("link", link);
+            request.getRequestDispatcher("index.jsp").forward(request, response);
         } else {
-            /* Redirigir errores */
-            control.getErrors().forEach(e -> {
-                System.out.println(e);
-            });
+
+            request.setAttribute("source", source);
+            request.setAttribute("errors", control.getErrors());
+            request.getRequestDispatcher("editor.jsp").forward(request, response);
         }
     }
 }
