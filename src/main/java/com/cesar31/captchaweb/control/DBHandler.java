@@ -105,12 +105,4 @@ public class DBHandler {
 
         return list;
     }
-    
-    public static void main(String[] args) {
-        DBHandler db = new DBHandler();
-        List<String> list = db.getList("/home/cesar31/Java/CaptchaGenerator/src/main/webapp/resources/db/script/");
-        list.forEach(s -> {
-            System.out.println(s);
-        });
-    }
 }

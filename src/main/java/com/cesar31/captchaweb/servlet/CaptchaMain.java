@@ -56,7 +56,6 @@ public class CaptchaMain extends HttpServlet {
             /* Captcha no existe */
             request.getRequestDispatcher("captcha-not-found.jsp").forward(request, response);
         }
-
     }
 
     /**

@@ -10582,7 +10582,7 @@ class CUP$CaptchaParser$actions {
 		int sleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).left;
 		int sright = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).right;
 		Token s = (Token)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.peek()).value;
-		 RESULT = new Parameter(Param.ID, s.getValue()); 
+		 RESULT = new Parameter(Param.ID, s.getValue(), s); 
               CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("id",40, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
@@ -10621,7 +10621,7 @@ class CUP$CaptchaParser$actions {
 		int sleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).left;
 		int sright = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).right;
 		Token s = (Token)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.peek()).value;
-		 RESULT = new Parameter(Param.NAME, s.getValue()); 
+		 RESULT = new Parameter(Param.NAME, s.getValue(), s); 
               CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("name",41, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
@@ -10663,7 +10663,7 @@ class CUP$CaptchaParser$actions {
 		int sleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).left;
 		int sright = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).right;
 		Token s = (Token)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.peek()).value;
-		 RESULT = new Parameter(p, s.getValue()); 
+		 RESULT = new Parameter(p, s.getValue(), s); 
               CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("href_src",42, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
@@ -10723,7 +10723,7 @@ class CUP$CaptchaParser$actions {
 		int sleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).left;
 		int sright = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).right;
 		Token s = (Token)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.peek()).value;
-		 RESULT = new Parameter(p, s.getValue()); 
+		 RESULT = new Parameter(p, s.getValue(), s); 
               CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("bckgrnd_clr",43, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
@@ -10780,7 +10780,7 @@ class CUP$CaptchaParser$actions {
 		int sleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).left;
 		int sright = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).right;
 		Token s = (Token)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.peek()).value;
-		 RESULT = new Parameter(Param.FONT_SIZE, s.getValue()); 
+		 RESULT = new Parameter(Param.FONT_SIZE, s.getValue(), s); 
               CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("font_size",44, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
@@ -10810,7 +10810,7 @@ class CUP$CaptchaParser$actions {
 		int sleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).left;
 		int sright = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).right;
 		Token s = (Token)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.peek()).value;
-		 RESULT = new Parameter(Param.FONT_FAMILY, s.getValue()); 
+		 RESULT = new Parameter(Param.FONT_FAMILY, s.getValue(), s); 
               CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("font_family",45, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
@@ -10849,7 +10849,7 @@ class CUP$CaptchaParser$actions {
 		int sleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).left;
 		int sright = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).right;
 		Token s = (Token)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.peek()).value;
-		 RESULT = new Parameter(Param.TEXT_ALIGN, s.getValue()); 
+		 RESULT = new Parameter(Param.TEXT_ALIGN, s.getValue(), s); 
               CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("text_align",46, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
@@ -10888,7 +10888,7 @@ class CUP$CaptchaParser$actions {
 		int sleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).left;
 		int sright = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).right;
 		Token s = (Token)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.peek()).value;
-		 RESULT = new Parameter(Param.TYPE, s.getValue()); 
+		 RESULT = new Parameter(Param.TYPE, s.getValue(), s); 
               CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("type",47, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
@@ -10930,7 +10930,7 @@ class CUP$CaptchaParser$actions {
 		int sleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).left;
 		int sright = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).right;
 		Token s = (Token)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.peek()).value;
-		 RESULT = new Parameter(p, s.getValue()); 
+		 RESULT = new Parameter(p, s.getValue(), s); 
               CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("cols_rows",48, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
@@ -10987,7 +10987,7 @@ class CUP$CaptchaParser$actions {
 		int sleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).left;
 		int sright = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).right;
 		Token s = (Token)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.peek()).value;
-		 RESULT = new Parameter(Param.CLASS, s.getValue()); 
+		 RESULT = new Parameter(Param.CLASS, s.getValue(), s); 
               CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("clss",49, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
@@ -11029,7 +11029,7 @@ class CUP$CaptchaParser$actions {
 		int sleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).left;
 		int sright = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).right;
 		Token s = (Token)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.peek()).value;
-		 RESULT = new Parameter(p, s.getValue()); 
+		 RESULT = new Parameter(p, s.getValue(), s); 
               CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("width_height",50, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
@@ -11116,7 +11116,7 @@ class CUP$CaptchaParser$actions {
 		int sleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).left;
 		int sright = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).right;
 		Token s = (Token)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.peek()).value;
-		 RESULT = new Parameter(Param.ALT, s.getValue()); 
+		 RESULT = new Parameter(Param.ALT, s.getValue(), s); 
               CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("alt",51, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;
@@ -11146,7 +11146,7 @@ class CUP$CaptchaParser$actions {
 		int sleft = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).left;
 		int sright = ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()).right;
 		Token s = (Token)((java_cup.runtime.Symbol) CUP$CaptchaParser$stack.peek()).value;
-		 RESULT = new Parameter(Param.ONCLICK, s.getValue()); 
+		 RESULT = new Parameter(Param.ONCLICK, s.getValue(), s); 
               CUP$CaptchaParser$result = parser.getSymbolFactory().newSymbol("onclick",52, ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.elementAt(CUP$CaptchaParser$top-2)), ((java_cup.runtime.Symbol)CUP$CaptchaParser$stack.peek()), RESULT);
             }
           return CUP$CaptchaParser$result;

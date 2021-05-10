@@ -50,8 +50,8 @@
                                                           onscroll="scroll_changed(this)"
                                                           name="source"
                                                           id="source" required>
-                                                ${source}
-                                            </textarea>
+                                                <c:if test="${source != null}">${source.trim()}</c:if>
+                                                </textarea>
                                         </span>
                                     </div>
                                 </div>
@@ -75,7 +75,7 @@
         </section>
 
         <section id="errors" hidden>
-            <div class="container">
+            <div class="container mb-4">
                 <div class="row">
                     <div class="col text-center my-2">
                         <h1 class="text-danger mt-4">Errores</h1>
@@ -83,7 +83,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col">
+                    <div class="col mb-4">
                         <table class="table table-striped table-bordered">
                             <thead>
                                 <tr>
@@ -118,6 +118,7 @@
         <c:if test="${errors != null}">
             <script>
                 document.getElementById('errors').removeAttribute('hidden');
+                document.location.hash = '#errors';
             </script>
         </c:if>
     </body>

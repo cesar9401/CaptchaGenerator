@@ -1034,7 +1034,7 @@ opt ::=
 
 id ::=
 				ID EQUAL ID_:s
-					{: RESULT = new Parameter(Param.ID, s.getValue()); :}
+					{: RESULT = new Parameter(Param.ID, s.getValue(), s); :}
 				| error EQUAL ID_
 				| ID error ID_
 				| ID EQUAL error
@@ -1042,7 +1042,7 @@ id ::=
 
 name ::=
 				NAME EQUAL STRING:s
-					{: RESULT = new Parameter(Param.NAME, s.getValue()); :}
+					{: RESULT = new Parameter(Param.NAME, s.getValue(), s); :}
 				| error EQUAL STRING
 				| NAME error STRING
 				| NAME EQUAL error
@@ -1051,7 +1051,7 @@ name ::=
 /* href/src */
 href_src ::=
 				url:p EQUAL URL:s
-					{: RESULT = new Parameter(p, s.getValue()); :}
+					{: RESULT = new Parameter(p, s.getValue(), s); :}
 				| error EQUAL URL
 				| url error URL
 				| url EQUAL error
@@ -1068,7 +1068,7 @@ url ::=
 /* background / color */
 bckgrnd_clr ::=
 				color:p EQUAL COLOUR:s
-					{: RESULT = new Parameter(p, s.getValue()); :}
+					{: RESULT = new Parameter(p, s.getValue(), s); :}
 				| error EQUAL COLOUR
 				| color error COLOUR
 				| color EQUAL error
@@ -1084,7 +1084,7 @@ color ::=
 
 font_size ::=
 				FONTS EQUAL PIXEL:s
-					{: RESULT = new Parameter(Param.FONT_SIZE, s.getValue()); :}
+					{: RESULT = new Parameter(Param.FONT_SIZE, s.getValue(), s); :}
 				// | error EQUAL PIXEL
 				| FONTS error PIXEL
 				| FONTS EQUAL error
@@ -1092,7 +1092,7 @@ font_size ::=
 
 font_family ::=
 				FONTF EQUAL FONTF_VALUE:s
-					{: RESULT = new Parameter(Param.FONT_FAMILY, s.getValue()); :}
+					{: RESULT = new Parameter(Param.FONT_FAMILY, s.getValue(), s); :}
 				| error EQUAL FONTF_VALUE
 				| FONTF error FONTF_VALUE
 				| FONTF EQUAL error
@@ -1100,7 +1100,7 @@ font_family ::=
 
 text_align ::=
 				ALIGN EQUAL ALIGN_VALUE:s
-					{: RESULT = new Parameter(Param.TEXT_ALIGN, s.getValue()); :}
+					{: RESULT = new Parameter(Param.TEXT_ALIGN, s.getValue(), s); :}
 				| error EQUAL ALIGN_VALUE
 				| ALIGN error ALIGN_VALUE
 				| ALIGN EQUAL error
@@ -1109,7 +1109,7 @@ text_align ::=
 /* type for inputs */
 type ::=
 				TYPE EQUAL TYPE_VALUE:s
-					{: RESULT = new Parameter(Param.TYPE, s.getValue()); :}
+					{: RESULT = new Parameter(Param.TYPE, s.getValue(), s); :}
 				| error EQUAL TYPE_VALUE
 				| TYPE error TYPE_VALUE
 				| TYPE EQUAL error
@@ -1117,7 +1117,7 @@ type ::=
 
 cols_rows ::=
 				cls_rws:p EQUAL INTQ:s
-					{: RESULT = new Parameter(p, s.getValue()); :}
+					{: RESULT = new Parameter(p, s.getValue(), s); :}
 				| error EQUAL INTQ
 				| cls_rws error INTQ
 				| cls_rws EQUAL error
@@ -1132,7 +1132,7 @@ cls_rws ::=
 
 clss ::=
 				CLASS EQUAL CLASS_VALUE:s
-					{: RESULT = new Parameter(Param.CLASS, s.getValue()); :}
+					{: RESULT = new Parameter(Param.CLASS, s.getValue(), s); :}
 				| error EQUAL CLASS_VALUE
 				| CLASS error CLASS_VALUE
 				| CLASS EQUAL error
@@ -1141,7 +1141,7 @@ clss ::=
 /* width/height */
 width_height ::=
 				w_h:p EQUAL pxl_per:s
-					{: RESULT = new Parameter(p, s.getValue()); :}
+					{: RESULT = new Parameter(p, s.getValue(), s); :}
 				| error EQUAL pxl_per
 				| w_h error pxl_per
 				| w_h EQUAL error
@@ -1162,7 +1162,7 @@ pxl_per ::=
 /* alt */
 alt ::=
 				ALT EQUAL STRING:s
-					{: RESULT = new Parameter(Param.ALT, s.getValue()); :}
+					{: RESULT = new Parameter(Param.ALT, s.getValue(), s); :}
 				// | error EQUAL STRING // alt ::= error ...  and name ::= error ...
 				| ALT error STRING
 				| ALT EQUAL error
@@ -1171,7 +1171,7 @@ alt ::=
 /* onclick */
 onclick ::=
 				CLICK EQUAL ONCLICK:s
-					{: RESULT = new Parameter(Param.ONCLICK, s.getValue()); :}
+					{: RESULT = new Parameter(Param.ONCLICK, s.getValue(), s); :}
 				| error EQUAL ONCLICK
 				| CLICK error ONCLICK
 				| CLICK EQUAL error

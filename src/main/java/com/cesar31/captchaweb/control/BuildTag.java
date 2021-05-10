@@ -28,6 +28,8 @@ public class BuildTag {
     private HashMap<Param, Boolean> tagParam;
     private List<Err> errors;
 
+    private HashMap<String, Parameter> ids;
+
     private HashMap<Param, Parameter> s;
 
     public BuildTag() {
@@ -35,6 +37,7 @@ public class BuildTag {
         this.tmp = new HashMap<>();
         this.tagParam = new HashMap<>();
         this.errors = new ArrayList<>();
+        this.ids = new HashMap<>();
 
         this.setStandardParam();
     }
@@ -78,12 +81,12 @@ public class BuildTag {
 
         return c;
     }
-    
+
     public Component makeDivInsteadScript(int script) {
         Component c = new Component();
         c.setTag(Tag.DIV);
         c.getParams().put(ID, new Parameter(ID, "__script__" + script + "__"));
-        
+
         return c;
     }
 
@@ -212,6 +215,20 @@ public class BuildTag {
         tagParam.forEach((Param p, Boolean b) -> {
             if (b) {
                 if (tmp.containsKey(p)) {
+                    if (p == ID) {
+                        /* Verificar id repetidos */
+                        if (!this.ids.containsKey(tmp.get(p).getValue())) {
+                            this.ids.put(tmp.get(p).getValue(), tmp.get(p));
+                        } else {
+                            /* Crear error por id repetido */
+                            Token t = this.tmp.get(p).getToken();
+                            Err e = new Err(t.getLine(), t.getColumn(), "SEMANTICO", t.getValue());
+                            String description = "El id(" + t.getValue() + ") que desea utilizar en la etiqueta " + tag + ", no esta disponible, intente con otro.";
+                            e.setDescription(description);
+                            this.errors.add(e);
+                        }
+                    }
+
                     addParam(tmp.remove(p));
                 } else {
                     // Agregar parametro por defecto

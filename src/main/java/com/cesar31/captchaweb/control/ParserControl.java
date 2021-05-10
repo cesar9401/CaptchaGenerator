@@ -7,8 +7,10 @@ import com.cesar31.captchaweb.model.Err;
 import com.cesar31.captchaweb.model.Instruction;
 import com.cesar31.captchaweb.model.Param;
 import static com.cesar31.captchaweb.model.Param.*;
+import com.cesar31.captchaweb.model.Parameter;
 import com.cesar31.captchaweb.model.SymbolTable;
 import com.cesar31.captchaweb.model.Tag;
+import com.cesar31.captchaweb.model.Token;
 import com.cesar31.captchaweb.parser.CaptchaLex;
 import com.cesar31.captchaweb.parser.CaptchaParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -87,21 +89,31 @@ public class ParserControl {
             });
 
             if (this.errors.isEmpty()) {
-                /* Almacenar captcha y mostrar enlace */
-                DBHandler db = new DBHandler();
-
                 /* nombre archivo */
                 String name = captcha.getParams().get(Param.ID).getValue();
+                name += ".gcic";
 
-                /* json */
-                String json = getJson(captcha);
-               
-                db.writeFile(path + name + ".gcic", json);
+                DBHandler db = new DBHandler();
 
-                /* original */
-                db.writeFile(path + "script/" + name + ".gcic", source);
+                /* Verificar si id esta disponible */
+                if (!db.getList(path + "script/").contains(name)) {
+                    /* json */
+                    String json = getJson(captcha);
 
-                this.link = "http://localhost:8080/CaptchaGenerator/CaptchaMain?id=" + name + ".gcic";
+                    db.writeFile(path + name, json);
+
+                    /* original */
+                    db.writeFile(path + "script/" + name, source);
+
+                    /* Captcha guardado, mostrar enlace */
+                    this.link = "http://localhost:8080/CaptchaGenerator/CaptchaMain?id=" + name;
+                } else {
+                    /* Agregar error por id ocupado */
+                    Token t = captcha.getParams().get(Param.ID).getToken();
+                    Err e = new Err(t.getLine(), t.getColumn(), "SEMANTICO", captcha.getParams().get(Param.ID).getValue());
+                    e.setDescription("El id que desea utilizar no esta disponible, intente con otro");
+                    this.errors.add(e);
+                }
             }
         }
     }
