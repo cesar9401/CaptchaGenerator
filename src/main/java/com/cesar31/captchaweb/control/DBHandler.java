@@ -2,6 +2,9 @@ package com.cesar31.captchaweb.control;
 
 import com.cesar31.captchaweb.model.AST;
 import com.cesar31.captchaweb.model.Captcha;
+import com.cesar31.captchaweb.model.Exit;
+import com.cesar31.captchaweb.model.Instruction;
+import com.cesar31.captchaweb.model.SymbolTable;
 import com.cesar31.captchaweb.parser.CaptchaLex;
 import com.cesar31.captchaweb.parser.CaptchaParser;
 import java.io.BufferedReader;
@@ -15,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -24,7 +29,7 @@ public class DBHandler {
 
     private Captcha captcha;
     private HashMap<String, AST> scripts;
-    
+
     public DBHandler() {
         this.scripts = new HashMap<>();
     }
@@ -70,23 +75,22 @@ public class DBHandler {
             ex.printStackTrace(System.out);
         }
     }
-    
+
     public Captcha getCaptcha(String path, String name) {
+        /* entrar a carpeta script */
         path += "script/";
-        
-        if(getList(path).contains(name)) {
-            System.out.println("Contiene " + name);
+
+        if (getList(path).contains(name)) {
+            // System.out.println("Contiene " + name);
             String data = readData(path + name);
             parseFileGcic(data);
-            
+
             return this.captcha;
-        } else {
-            System.out.println("No contiene " + name);
         }
-        
+
         return null;
     }
-    
+
     private void parseFileGcic(String data) {
         CaptchaLex lex = new CaptchaLex(new StringReader(data));
         CaptchaParser parser = new CaptchaParser(lex);
@@ -97,12 +101,49 @@ public class DBHandler {
             ex.printStackTrace(System.out);
         }
     }
-    
+
     public List<String> getList(String path) {
         List<String> list = new ArrayList<>();
         File file = new File(path);
         list.addAll(Arrays.asList(file.list()));
 
         return list;
+    }
+
+    public void executeScript(String process, HttpServletRequest request, HttpServletResponse response) {
+        AST ast = this.scripts.get(process);
+        
+        if(ast != null) {
+            AstOperation operation = new AstOperation();
+            operation.setRequest(request);
+            operation.setResponse(response);
+            
+            SymbolTable table = new SymbolTable();
+            
+            for(Instruction i : ast.getInstructions()) {
+                Object o = i.run(table, operation);
+                
+                if(o != null) {
+                    if(o instanceof Exit) {
+                        break;
+                    }
+                }
+            }
+            
+            table.forEach(v -> {
+                System.out.println(v.toString());
+            });
+            
+            if(!operation.getInserts().isEmpty()) {
+                request.setAttribute("inserts", operation.getInserts());
+            }
+            
+            if(!operation.getAlerts().isEmpty()) {
+                request.setAttribute("alerts", operation.getAlerts());
+            }
+            
+        } else {
+            System.out.println("No existe: " + process);
+        }
     }
 }

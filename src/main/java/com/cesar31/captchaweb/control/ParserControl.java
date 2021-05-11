@@ -7,7 +7,6 @@ import com.cesar31.captchaweb.model.Err;
 import com.cesar31.captchaweb.model.Instruction;
 import com.cesar31.captchaweb.model.Param;
 import static com.cesar31.captchaweb.model.Param.*;
-import com.cesar31.captchaweb.model.Parameter;
 import com.cesar31.captchaweb.model.SymbolTable;
 import com.cesar31.captchaweb.model.Tag;
 import com.cesar31.captchaweb.model.Token;
@@ -15,11 +14,12 @@ import com.cesar31.captchaweb.parser.CaptchaLex;
 import com.cesar31.captchaweb.parser.CaptchaParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 public class ParserControl {
 
     private String path;
-    private HttpServletRequest request;
+    // private HttpServletRequest request;
     private String link;
 
     private String source;
@@ -221,6 +221,27 @@ public class ParserControl {
 
         style += "'";
         return style;
+    }
+
+    public List<Captcha> getCaptchas(String path) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        List<Captcha> captchas = new ArrayList<>();
+        DBHandler db = new DBHandler();
+        List<String> list = db.getList(path);
+
+        for (String s : list) {
+            if (!s.equals("script")) {
+                try {
+                    Captcha tmp = mapper.readValue(new File(path + s), Captcha.class);
+                    captchas.add(tmp);
+                } catch (IOException ex) {
+                    ex.printStackTrace(System.out);
+                }
+            }
+        }
+
+        return captchas;
     }
 
     private static String param(Component c, Param p) {

@@ -16,6 +16,7 @@
             <section id="captcha">
                 <div class="container">
                     <form action="CaptchaAnswer" method="post">
+                        <input type="hidden" value="${id}" name="@id">
                     ${html}
                 </form>
             </div>

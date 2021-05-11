@@ -239,6 +239,15 @@ public class BuildTag {
             }
         });
 
+        if (tag == Tag.GCIC) {
+            if (!this.params.containsKey(Param.ID)) {
+                /* crear error, etiqueta GCIC debe llevar id */
+                Err e = new Err(token.getLine(), token.getColumn(), "SEMANTICO", "");
+                e.setDescription("En la etiqueta " + Tag.GCIC + " el parametro id es obligatorio para identificar al captcha.");
+                this.errors.add(e);
+            }
+        }
+
         if (!tmp.isEmpty()) {
             // Crear error por parametros que no van
             tmp.forEach((Param p, Parameter u) -> {

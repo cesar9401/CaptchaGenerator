@@ -13,8 +13,18 @@
 
         <jsp:include page="WEB-INF/nav.jsp"></jsp:include>
 
+            <section id="section-title">
+                <div class="container">
+                    <div class="row">
+                        <div class="col text-center mb-4 mt-2">
+                            <h1 class="text-danger my-0">Generador de Captchas</h1>
+                            <small class="text-danger">Ingenieria Cunoc</small>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-            <h1>Hello World!</h1>
+
 
         <%@include file="resources/assets/js/js.html" %>
     </body>

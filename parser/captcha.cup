@@ -93,7 +93,7 @@ non terminal List<Operation> insert_op;
 non terminal List<Token> in, insert_content;
 non terminal Param color, url, cls_rws, w_h;
 non terminal Boolean mode;
-non terminal Token str, str_q, str_nq, string, type_var, pxl_per;
+non terminal Token str, str_q, str_nq, string, type_var, pxl_per, process_name;
 non terminal Parameter id, name, href_src, bckgrnd_clr, font_size, font_family, text_align, type, cols_rows, clss, width_height, alt, onclick, opt, param;
 non terminal List<Parameter> params;
 non terminal HashMap<Param, Parameter> paragraph, button, h1, div, img, body, spam, input, txtarea, select, link, gcic, head, title, option, br, script;
@@ -200,14 +200,18 @@ make_process ::=
 
 /* proceso */
 process ::=
-				PROCESS:p LPAREN RPAREN LBRACKET make_script:list RBRACKET
+				process_name:p LPAREN RPAREN LBRACKET make_script:list RBRACKET
 					{:
-						//System.out.println("Process: " + p.getValue());
+						/* Verificar que no hayan procesos con el mismo nombre */
 						AST ast = new AST(p.getValue(), scriptCount);
 						ast.addAll(list);
 						scripts.put(p.getValue(), ast);
-						// RESULT = list;
 					:}
+				;
+
+process_name ::=
+				PROCESS:p {: RESULT = p; :}
+				| ON_LOAD:p {: RESULT = p; :}
 				;
 /* proceso */
 

@@ -2,12 +2,9 @@ package com.cesar31.captchaweb.servlet;
 
 import com.cesar31.captchaweb.control.DBHandler;
 import com.cesar31.captchaweb.control.ParserControl;
-import com.cesar31.captchaweb.model.AST;
 import com.cesar31.captchaweb.model.Captcha;
-import com.cesar31.captchaweb.model.Instruction;
+import com.cesar31.captchaweb.model.Param;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -47,6 +44,9 @@ public class CaptchaMain extends HttpServlet {
             String title = control.getTitle();
             String background = control.getBackground();
 
+            /* enviar id */
+            request.setAttribute("id", id);
+            
             request.setAttribute("title", title);
             request.setAttribute("background", background);
             request.setAttribute("html", html);
