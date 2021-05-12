@@ -13,6 +13,7 @@ class CaptchaParser;
 parser code {:
 
 	private HashMap<String, AST> scripts;
+	private HashMap<Integer, AST> onloadScripts;
 
 	private int scriptCount;
 	private BuildTag tag;
@@ -34,6 +35,7 @@ parser code {:
 		this.errors = new ArrayList<>();
 
 		this.scripts = new HashMap<>();
+		this.onloadScripts = new HashMap<>();
 
 		this.scriptCount = 0;
 	}
@@ -72,6 +74,10 @@ parser code {:
 		return t;
 	}
 
+	public HashMap<Integer, AST> getOnloadScripts() {
+		return onloadScripts;
+	}
+
 	public HashMap<String, AST> getScripts() {
 		return scripts;
 	}
@@ -87,8 +93,12 @@ terminal Token TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE, COMMA, ON_LOAD, ONCLICK, IN
 terminal Token STRING, CHAR, IF, THEN, ELSE, REPEAT, UNTIL, WHILE, THEN_WHILE, INIT, END, PROCESS, INSERT;
 
 non terminal clgcic, clhead, cltitle, cllink, clbody, clspam, clinput, cltxtarea, clselect, cloption, cldiv, climg, clbutton, clh1, clparagraph, clscript;
+non terminal make_process;
 
 non terminal Operation s, t, u, v, a, b, c, d, boolean_val, function;
+
+non terminal Operation asc, desc, letpar, letimpar, reverse;
+
 non terminal List<Operation> insert_op;
 non terminal List<Token> in, insert_content;
 non terminal Param color, url, cls_rws, w_h;
@@ -106,8 +116,6 @@ non terminal Instruction stat, control_while, control_repeat, control_if;
 non terminal LinkedList<Instruction> make_var, statement, scripting, make_script, assignment, instruction, ini, type_instruction, control, alert, exit, insert;
 non terminal Variable insert_sq;
 non terminal AST process;
-
-non terminal make_process;
 
 non terminal If if_, else_, else_if;
 non terminal List<If> list_else_if;
@@ -193,7 +201,7 @@ c_script ::=
 
 /* make_process */
 make_process ::=
-				make_process process /* process -> linkedlist */
+				make_process process
 				|
 				;
 /* make_process */
@@ -203,9 +211,7 @@ process ::=
 				process_name:p LPAREN RPAREN LBRACKET make_script:list RBRACKET
 					{:
 						/* Verificar que no hayan procesos con el mismo nombre */
-						AST ast = new AST(p.getValue(), scriptCount);
-						ast.addAll(list);
-						scripts.put(p.getValue(), ast);
+						tag.addProcess(p, list, scriptCount);
 					:}
 				;
 
@@ -336,15 +342,10 @@ make_var ::=
 stat ::=
 				mode:b1 ID_V:id EQUAL a:v1
 					{:
-						/* Asignar variables y agregar a tabla de simbolos */
-						/* eh.addSymbolTable(type, id, v1, b1, e, true); */
-						/* Nueva asignacion */
 						RESULT = new Assignment(type, id, v1, b1);
 					:}
 				| mode:b1 ID_V:id
 					{:
-						/* Declarar variables y agregar a tabla de simbolos */
-						/* eh.addSymbolTable(type, id, null, b1, e, false); */
 						RESULT = new Statement(type, id, b1);
 					:}
 				;
@@ -515,7 +516,7 @@ a ::=
 b ::=
         b:b1 AND:op d:b2 {: RESULT = new Operation(OperationType.AND, b1, b2, op); :}
         | d:b1 {: RESULT = b1; :}
-        ;
+				;
 
 d ::=
 				s:n1 SMALLER:op s:n2 {: RESULT = new Operation(OperationType.SMALLER, n1, n2, op); :}
@@ -551,14 +552,51 @@ c ::=
 
 function ::=
 				v:b1 {: RESULT = b1; :}
-				| ASC LPAREN:lparen a:s1 RPAREN  {: RESULT = new Operation(OperationType.ASC, s1, lparen); :}
-				| DESC LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.DESC, s1, lparen); :}
-				| LETPAR LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.LETPAR, s1, lparen); :}
-				| LETIMPAR LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.LETIMPAR, s1, lparen); :}
-				| REVERSE LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.REVERSE, s1, lparen); :}
+				| asc:r {: RESULT =	r; :}
+				| desc:r {: RESULT = r; :}
+				| letpar:r {: RESULT = r; :}
+				| letimpar:r {: RESULT = r; :}
+				| reverse:r {: RESULT = r; :}
+
+				// | ASC LPAREN:lparen a:s1 RPAREN  {: RESULT = new Operation(OperationType.ASC, s1, lparen); :}
+				// | DESC LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.DESC, s1, lparen); :}
+				// | LETPAR LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.LETPAR, s1, lparen); :}
+				// | LETIMPAR LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.LETIMPAR, s1, lparen); :}
+				// | REVERSE LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.REVERSE, s1, lparen); :}
 				| RANDOM_C LPAREN:lparen RPAREN {: RESULT = new Operation(OperationType.RANDOM_C, null, lparen); :}
 				| RANDOM_N LPAREN:lparen RPAREN {: RESULT = new Operation(OperationType.RANDOM_N, null, lparen); :}
 				| GET LPAREN:lparen ID_2:s1 RPAREN {: RESULT = new Operation(OperationType.GET, s1); :}
+				;
+
+asc ::=
+				ASC LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.ASC, s1, lparen); :}
+				| error LPAREN a RPAREN
+				| ASC error a RPAREN
+				| ASC LPAREN a error
+				;
+
+desc ::=
+				DESC LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.DESC, s1, lparen); :}
+				| DESC error a RPAREN
+				| DESC LPAREN a error
+				;
+
+letpar ::=
+				LETPAR LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.LETPAR, s1, lparen); :}
+				| LETPAR error a RPAREN
+				| LETPAR LPAREN a error
+				;
+
+letimpar ::=
+				LETIMPAR LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.LETIMPAR, s1, lparen); :}
+				| LETIMPAR error a RPAREN
+				| LETIMPAR LPAREN a error
+				;
+
+reverse ::=
+				REVERSE LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.REVERSE, s1, lparen); :}
+				| REVERSE error a RPAREN
+				| REVERSE LPAREN a error
 				;
 
 v ::=
@@ -574,6 +612,7 @@ v ::=
 
 				| boolean_val:b1 {: RESULT = b1; :}
 				| LPAREN a:n1 RPAREN {: RESULT = n1; :}
+				| error
 				;
 /* Operaciones logicas y aritmeticas */
 
@@ -797,6 +836,7 @@ str_nq ::=
 				| CHR:s {: RESULT = s; :}
 				// | QS:s {: RESULT = s; :}
 				| STR:s {: RESULT = s; :}
+				| ASC:s {: RESULT = s; :}
 				| DESC:s {: RESULT = s; :}
 				| LETPAR:s {: RESULT = s; :}
 				| LETIMPAR:s {: RESULT = s; :}

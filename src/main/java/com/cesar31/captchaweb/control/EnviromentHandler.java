@@ -100,15 +100,12 @@ public class EnviromentHandler {
             if (a != null) {
                 if (v.getType() == a.getType()) {
                     if (a.getValue() != null) {
-                        /* Cambiar valor */
                         v.setValue(a.getValue());
-                        //System.out.println("Asignacion: " + v + " -> " + e);
                     } else {
                         /* Revisar else */
                         Err err = new Err(id.getLine(), id.getColumn(), "SEMANTICO", id.getValue());
-                        err.setDescription("Esta intentando asignar un valor null a la variable " + v.getId());
+                        err.setDescription("Esta intentando asignar un valor null a la variable " + v.getId() + ". Verifique que alguno de los operadores no tenga valor nulo.");
                         this.errors.add(err);
-                        // this.parser.getErrors().add(err);
                     }
                 } else {
                     /* Error tipos distintos */
@@ -116,7 +113,6 @@ public class EnviromentHandler {
                     String description = "Esta intentando asignar una variable de tipo " + a.getType().toString().toLowerCase() + "(value = " + a.getValue() + ") a una variable de tipo " + v.getType().toString().toLowerCase() + "(id = " + v.getId() + ")";
                     err.setDescription(description);
                     this.errors.add(err);
-                    // this.parser.getErrors().add(err);
                 }
             }
         } else {
@@ -141,11 +137,8 @@ public class EnviromentHandler {
                 if (getVar(type) == value.getType() && value.getValue() != null) {
                     Variable v = new Variable(getVar(type), id.getValue(), global, value.getValue());
 
-                    if (!e.contains(v.getId()) /* !e.getVariables().containsKey(v.getId()) */) {
-                        //e.put(v);
-                        // System.out.println("Agregada a tabla de simbolos: " + value);
+                    if (!e.contains(v.getId())) {
                         e.add(v);
-                        //System.out.println(v + " -> " + e);
                     } else {
                         /* La variable ya esta definida */
                         Err err = new Err(id.getLine(), id.getColumn(), "SEMANTICO", id.getValue());
@@ -177,24 +170,19 @@ public class EnviromentHandler {
             } else {
                 if (!assignment) {
                     Variable v = new Variable(getVar(type), id.getValue(), global, null);
-                    if (!e.contains(v.getId()) /* !e.getVariables().containsKey(v.getId()) */) {
-                        //e.put(v);
+                    if (!e.contains(v.getId())) {
                         e.add(v);
-                        //System.out.println(v + " -> " + e);
-                        // System.out.println("Agregada a tabla de simbolos: " + v);
                     } else {
                         /* La variable ya esta definida */
                         Err err = new Err(id.getLine(), id.getColumn(), "SEMANTICO", id.getValue());
                         err.setDescription("La variable " + id.getValue() + ", ya esta definida intente con un id distinto.");
                         this.errors.add(err);
-                        // this.parser.getErrors().add(err);
                     }
                 } else {
                     /* No se puede asignar por valor nulo */
                     Err err = new Err(id.getLine(), id.getColumn(), "SEMANTICO", id.getValue());
                     err.setDescription("Uno de los operadores es nulo, no es posible obtener el valor para la variable " + id.getValue());
                     this.errors.add(err);
-                    // this.parser.getErrors().add(err);
                 }
             }
         } else {

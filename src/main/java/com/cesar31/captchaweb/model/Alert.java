@@ -33,7 +33,7 @@ public class Alert implements Instruction {
         } else {
             /* Error, argumento null*/
             Err e = new Err(l.getLine(), l.getColumn() + 1, "SEMANTICO", "null");
-            e.setDescription("Se encontro argumento null en la funcion: ALERT_INFO, no se puede evaluar.");
+            e.setDescription("Se encontro argumento null en la funcion: ALERT_INFO, no se puede evaluar. Verifique que si alguno(s) de lo(s) argumento(s) es nulo.");
             operation.getErrors().add(e);
         }
 

@@ -19,7 +19,7 @@ public class ErrorHandler {
 
     public void getErrors(Token token, String type, List<String> expected) {
         String typeError = (type.equals("ERROR")) ? "LEXICO" : "SINTACTICO";
-        String lexema = (type.equals("EOF")) ? "Fin de entrada" : token.getValue();
+        String lexema = (type.equals("EOF")) ? "Fin de entrada" : "(" + token.getType() + ")" + token.getValue();
 
         Err e = new Err(token.getLine(), token.getColumn(), typeError, lexema);
         String description = typeError.equals("LEXICO") ? "La cadena no se reconoce en el lenguaje." : "";
@@ -30,7 +30,7 @@ public class ErrorHandler {
             if (i == expected.size() - 1) {
                 description += ".";
             } else {
-                description += ".";
+                description += ", ";
             }
         }
         e.setDescription(description);

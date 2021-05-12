@@ -2,15 +2,12 @@ package com.cesar31.captchaweb.parser;
 
 import com.cesar31.captchaweb.control.AstOperation;
 import com.cesar31.captchaweb.control.DBHandler;
-import com.cesar31.captchaweb.control.ParserControl;
 import com.cesar31.captchaweb.model.AST;
 import com.cesar31.captchaweb.model.Captcha;
-import com.cesar31.captchaweb.model.ComponentParent;
 import com.cesar31.captchaweb.model.Err;
 import com.cesar31.captchaweb.model.Instruction;
 import com.cesar31.captchaweb.model.Param;
 import com.cesar31.captchaweb.model.SymbolTable;
-import com.cesar31.captchaweb.model.Tag;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
@@ -18,7 +15,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java_cup.runtime.Symbol;
 
@@ -150,15 +146,6 @@ public class ParserTest {
         } catch (IOException ex) {
             ex.printStackTrace(System.out);
         }
-    }
-
-    public static void getChildren(ComponentParent p) {
-        p.getChildren().forEach(b -> {
-            System.out.println(b.getTag() + "<" + b.getParams() + ">" + " \"" + b.getContent() + "\"");
-            if (b.getTag() == Tag.DIV) {
-                getChildren((ComponentParent) b);
-            }
-        });
     }
 
     public static void getTokens(String input) {

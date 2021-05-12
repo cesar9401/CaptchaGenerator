@@ -7,6 +7,7 @@ import com.cesar31.captchaweb.model.Err;
 import com.cesar31.captchaweb.model.Instruction;
 import com.cesar31.captchaweb.model.Param;
 import static com.cesar31.captchaweb.model.Param.*;
+import com.cesar31.captchaweb.model.Parameter;
 import com.cesar31.captchaweb.model.SymbolTable;
 import com.cesar31.captchaweb.model.Tag;
 import com.cesar31.captchaweb.model.Token;
@@ -69,49 +70,83 @@ public class ParserControl {
     /**
      * Revisar Errores y AST's
      */
+//    private void checkSource() {
+//        /* Archivo parseado con exito */
+//        if (this.errors.isEmpty()) {
+//
+//            /* Revisar posibles errores en AST's */
+//            this.scripts.forEach((s, ast) -> {
+//                AstOperation operation = new AstOperation();
+//                SymbolTable table = new SymbolTable();
+//
+//                for (Instruction i : ast.getInstructions()) {
+//                    i.test(table, operation);
+//                }
+//
+//                /* Agregar posibles errores */
+//                if (!operation.getErrors().isEmpty()) {
+//                    this.errors.addAll(operation.getErrors());
+//                }
+//            });
+//
+//            if (this.errors.isEmpty()) {
+//                /* nombre archivo */
+//                String name = captcha.getParams().get(Param.ID).getValue();
+//                name += ".gcic";
+//
+//                DBHandler db = new DBHandler();
+//
+//                /* Verificar si id esta disponible */
+//                if (!db.getList(path + "script/").contains(name)) {
+//                    /* json */
+//                    String json = getJson(captcha);
+//
+//                    db.writeFile(path + name, json);
+//
+//                    /* original */
+//                    db.writeFile(path + "script/" + name, source);
+//
+//                    /* Captcha guardado, mostrar enlace */
+//                    this.link = "http://localhost:8080/CaptchaGenerator/CaptchaMain?id=" + name;
+//                } else {
+//                    /* Agregar error por id ocupado */
+//                    Token t = captcha.getParams().get(Param.ID).getToken();
+//                    Err e = new Err(t.getLine(), t.getColumn(), "SEMANTICO", captcha.getParams().get(Param.ID).getValue());
+//                    e.setDescription("El id que desea utilizar no esta disponible, intente con otro");
+//                    this.errors.add(e);
+//                }
+//            }
+//        }
+//    }
+    /**
+     * Si no hay errores, almacenar en db
+     */
     private void checkSource() {
-        /* Archivo parseado con exito */
-        if (this.errors.isEmpty()) {
+        if (this.captcha != null) {
+            Parameter id = this.captcha.getParams().get(Param.ID);
 
-            /* Revisar posibles errores en AST's */
-            this.scripts.forEach((s, ast) -> {
-                AstOperation operation = new AstOperation();
-                SymbolTable table = new SymbolTable();
-
-                for (Instruction i : ast.getInstructions()) {
-                    i.test(table, operation);
-                }
-
-                /* Agregar posibles errores */
-                if (!operation.getErrors().isEmpty()) {
-                    this.errors.addAll(operation.getErrors());
-                }
-            });
-
-            if (this.errors.isEmpty()) {
-                /* nombre archivo */
-                String name = captcha.getParams().get(Param.ID).getValue();
-                name += ".gcic";
-
+            if (id != null) {
                 DBHandler db = new DBHandler();
 
-                /* Verificar si id esta disponible */
+                String name = id.getValue() + ".gcic";
                 if (!db.getList(path + "script/").contains(name)) {
-                    /* json */
-                    String json = getJson(captcha);
+                    if (this.errors.isEmpty()) {
+                        /* No hay errores, archivos para almacenamiento */
 
-                    db.writeFile(path + name, json);
+                        // archivo json
+                        String json = getJson(captcha);
+                        db.writeFile(path + name, json);
 
-                    /* original */
-                    db.writeFile(path + "script/" + name, source);
+                        /* original */
+                        db.writeFile(path + "script/" + name, source);
 
-                    /* Captcha guardado, mostrar enlace */
-                    this.link = "http://localhost:8080/CaptchaGenerator/CaptchaMain?id=" + name;
+                        /* Captcha guardado, mostrar enlace */
+                        this.link = "http://localhost:8080/CaptchaGenerator/CaptchaMain?id=" + name;
+                    }
                 } else {
-                    /* Agregar error por id ocupado */
                     Token t = captcha.getParams().get(Param.ID).getToken();
                     Err e = new Err(t.getLine(), t.getColumn(), "SEMANTICO", captcha.getParams().get(Param.ID).getValue());
-                    e.setDescription("El id que desea utilizar no esta disponible, intente con otro");
+                    e.setDescription("El id que desea utilizar no esta disponible, intente con otro.");
                     this.errors.add(e);
                 }
             }

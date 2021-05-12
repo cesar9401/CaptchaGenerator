@@ -1,18 +1,21 @@
 package com.cesar31.captchaweb.control;
 
+import com.cesar31.captchaweb.model.AST;
 import com.cesar31.captchaweb.model.Captcha;
 import com.cesar31.captchaweb.model.Component;
-import com.cesar31.captchaweb.model.ComponentParent;
 import com.cesar31.captchaweb.model.Err;
+import com.cesar31.captchaweb.model.Instruction;
 import com.cesar31.captchaweb.model.Param;
 import static com.cesar31.captchaweb.model.Tag.*;
 import static com.cesar31.captchaweb.model.Param.*;
 import com.cesar31.captchaweb.model.Parameter;
+import com.cesar31.captchaweb.model.SymbolTable;
 import com.cesar31.captchaweb.model.Tag;
 import com.cesar31.captchaweb.model.Token;
 import com.cesar31.captchaweb.parser.CaptchaParser;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -261,6 +264,58 @@ public class BuildTag {
         this.parser.getErrors().addAll(errors);
 
         return this.params;
+    }
+
+    public void addProcess(Token process, LinkedList<Instruction> list, int scriptCount) {
+        if (!process.getValue().equals("ON_LOAD")) {
+            AST ast = new AST(process.getValue(), scriptCount);
+            ast.addAll(list);
+
+            if (!this.parser.getScripts().containsKey(process.getValue())) {
+                this.parser.getScripts().put(process.getValue(), ast);
+            } else {
+                Err e = new Err(process.getLine(), process.getColumn(), "SEMANTICO", process.getValue());
+                e.setDescription("Ya existe un proceso con el nombre " + process.getValue() + ", intente con otro nombre distinto, no es posible evaluar las instrucciones para el proceso.");
+                this.parser.getErrors().add(e);
+            }
+
+            /* Revisar ast aqui */
+            checkAST(ast);
+
+        } else {
+            AST ast = new AST(process.getValue(), scriptCount);
+            ast.addAll(list);
+
+            if (!this.parser.getOnloadScripts().containsKey(scriptCount)) {
+                this.parser.getOnloadScripts().put(scriptCount, ast);
+            } else {
+                /* Error, onload repetido en etiqueta script */
+                Err e = new Err(process.getLine(), process.getColumn(), "SEMANTICO", process.getValue());
+                e.setDescription("Ya existe un proceso con el nombre " + process.getValue() + ", en la etiqueta <SCRIPTING>, no es posible agregar otro. Intente con otro nombre");
+                this.parser.getErrors().add(e);
+            }
+
+            /* Revisar ast aqui */
+            checkAST(ast);
+        }
+    }
+
+    /**
+     * Revisar ast para busqueda de errores
+     *
+     * @param ast
+     */
+    private void checkAST(AST ast) {
+        AstOperation operation = new AstOperation();
+        SymbolTable table = new SymbolTable();
+
+        for (Instruction i : ast.getInstructions()) {
+            i.test(table, operation);
+        }
+
+        if (!operation.getErrors().isEmpty()) {
+            this.parser.getErrors().addAll(operation.getErrors());
+        }
     }
 
     /**

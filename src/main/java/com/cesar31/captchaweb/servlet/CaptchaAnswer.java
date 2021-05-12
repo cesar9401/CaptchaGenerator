@@ -74,15 +74,25 @@ public class CaptchaAnswer extends HttpServlet {
             String html = control.getHtml(c);
             String title = control.getTitle();
             String background = control.getBackground();
-            
+
             request.setAttribute("id", id);
             request.setAttribute("title", title);
             request.setAttribute("background", background);
             request.setAttribute("html", html);
-            
+
+            /* Ejecutar ON_LOAD aqui */
+            db.executeOnLoad(request, response);
+
             /* ejecutar codigo aqui */
             db.executeScript(script, request, response);
             
+            if(!db.getInserts().isEmpty()) {
+                request.setAttribute("inserts", db.getInserts());
+            }
+            if(!db.getAlerts().isEmpty()) {
+                request.setAttribute("alerts", db.getAlerts());
+            }
+
             request.getRequestDispatcher("captcha.jsp").forward(request, response);
         } else {
             request.getRequestDispatcher("captcha-not-found.jsp").forward(request, response);

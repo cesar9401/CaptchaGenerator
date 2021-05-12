@@ -29,9 +29,18 @@ public class DBHandler {
 
     private Captcha captcha;
     private HashMap<String, AST> scripts;
+    private HashMap<Integer, AST> onload;
+
+    /* Inserts and Alerts */
+    private List<String> inserts;
+    private List<String> alerts;
 
     public DBHandler() {
         this.scripts = new HashMap<>();
+        this.onload = new HashMap<>();
+
+        this.inserts = new ArrayList<>();
+        this.alerts = new ArrayList<>();
     }
 
     /**
@@ -97,6 +106,7 @@ public class DBHandler {
         try {
             this.captcha = (Captcha) parser.parse().value;
             this.scripts = parser.getScripts();
+            this.onload = parser.getOnloadScripts();
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
         }
@@ -112,38 +122,85 @@ public class DBHandler {
 
     public void executeScript(String process, HttpServletRequest request, HttpServletResponse response) {
         AST ast = this.scripts.get(process);
-        
-        if(ast != null) {
+
+        if (ast != null) {
             AstOperation operation = new AstOperation();
             operation.setRequest(request);
             operation.setResponse(response);
-            
+
             SymbolTable table = new SymbolTable();
-            
-            for(Instruction i : ast.getInstructions()) {
+
+            for (Instruction i : ast.getInstructions()) {
                 Object o = i.run(table, operation);
-                
-                if(o != null) {
-                    if(o instanceof Exit) {
+
+                if (o != null) {
+                    if (o instanceof Exit) {
                         break;
                     }
                 }
             }
-            
+
             table.forEach(v -> {
                 System.out.println(v.toString());
             });
-            
-            if(!operation.getInserts().isEmpty()) {
-                request.setAttribute("inserts", operation.getInserts());
+
+            if (!operation.getInserts().isEmpty()) {
+                this.inserts.addAll(operation.getInserts());
+                // request.setAttribute("inserts", operation.getInserts());
             }
-            
-            if(!operation.getAlerts().isEmpty()) {
-                request.setAttribute("alerts", operation.getAlerts());
+
+            if (!operation.getAlerts().isEmpty()) {
+                this.alerts.addAll(operation.getAlerts());
+                // request.setAttribute("alerts", operation.getAlerts());
             }
-            
+
         } else {
             System.out.println("No existe: " + process);
         }
+    }
+
+    public void executeOnLoad(HttpServletRequest request, HttpServletResponse response) {
+        if (this.onload != null) {
+            if (!this.onload.isEmpty()) {
+
+                this.onload.forEach((iterator, ast) -> {
+                    AstOperation operation = new AstOperation();
+
+                    /* No es necesario, pero para evitar algun posible error */
+                    operation.setRequest(request);
+                    operation.setResponse(response);
+
+                    SymbolTable table = new SymbolTable();
+
+                    for (Instruction i : ast.getInstructions()) {
+                        Object o = i.run(table, operation);
+
+                        if (o != null) {
+                            if (o instanceof Exit) {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!operation.getInserts().isEmpty()) {
+                        this.inserts.addAll(operation.getInserts());
+                        // request.setAttribute("inserts", operation.getInserts());
+                    }
+
+                    if (!operation.getAlerts().isEmpty()) {
+                        this.alerts.addAll(operation.getAlerts());
+                        // request.setAttribute("alerts", operation.getAlerts());
+                    }
+                });
+            }
+        }
+    }
+
+    public List<String> getInserts() {
+        return inserts;
+    }
+
+    public List<String> getAlerts() {
+        return alerts;
     }
 }
