@@ -97,7 +97,7 @@ non terminal make_process;
 
 non terminal Operation s, t, u, v, a, b, c, d, boolean_val, function;
 
-non terminal Operation asc, desc, letpar, letimpar, reverse;
+non terminal Operation asc, desc, letpar, letimpar, reverse, random_c, random_n, get;
 
 non terminal List<Operation> insert_op;
 non terminal List<Token> in, insert_content;
@@ -190,12 +190,8 @@ b_opt ::=
 c_script ::=
 				script:m make_process /*make_script*/ clscript
 					{:
-						//RESULT = tag.makeTag(Tag.SCRIPT, m, null);
 						RESULT = tag.makeDivInsteadScript(scriptCount);
 						scriptCount++;
-						/* Insertar etiquetas desde aqui */
-
-						//AST = list;
 					:}
 				;
 
@@ -264,6 +260,10 @@ statement ::=
 					{: type = t; :}
 				make_var:list SEMI
 					{: RESULT = list; :}
+
+				| error make_var SEMI
+				// | type_var error SEMI
+				// | type_var make_var error
 				;
 
 assignment ::=
@@ -273,6 +273,7 @@ assignment ::=
 						RESULT = new LinkedList<>();
 						RESULT.add(new Assignment(id, v1));
 					:}
+				| error SEMI
 				;
 
 /* ALERT_INFO */
@@ -385,6 +386,12 @@ instruction ::=
 ini ::=
 				INIT LBRACE COLON make_script:list COLON RBRACE END
 					{: RESULT = list; :}
+				| error LBRACE COLON make_script COLON RBRACE END
+				| INIT error COLON make_script COLON RBRACE END
+				| INIT LBRACE error make_script COLON RBRACE END
+				| INIT LBRACE COLON make_script error RBRACE END
+				| INIT LBRACE COLON make_script COLON error END
+				| INIT LBRACE COLON make_script COLON RBRACE error
 				;
 
 type_instruction ::=
@@ -449,11 +456,17 @@ control_if ::=
 if_ ::=
 				IF LPAREN:lparen a:b1 RPAREN:rparen THEN type_instruction:list
 					{: RESULT = new If("IF", b1, list, lparen); :}
+				| error LPAREN a RPAREN THEN type_instruction
+				| IF error a RPAREN THEN type_instruction
+				| IF LPAREN a error THEN type_instruction
+				| IF LPAREN a RPAREN error type_instruction
+				// | IF LPAREN a RPAREN THEN error
 				;
 
 else_ ::=
 				ELSE type_instruction:list
 					{: RESULT = new If("ELSE", null, list, null); :}
+				// | ELSE error
 				;
 
 list_else_if ::=
@@ -472,35 +485,46 @@ list_else_if ::=
 else_if ::=
 				ELSE IF LPAREN:lparen a:b1 RPAREN:rparen THEN type_instruction:list
 					{: RESULT = new If("IF_ELSE", b1, list, lparen); :}
+				| ELSE error LPAREN a RPAREN THEN type_instruction
+				| ELSE IF error a RPAREN THEN type_instruction
+				| ELSE IF LPAREN a error THEN type_instruction
+				| ELSE IF LPAREN a RPAREN error type_instruction
+				// | ELSE IF LPAREN a RPAREN THEN error
 				;
 /* IF */
 
 /* WHILE */
 control_while ::=
-				WHILE LPAREN:l a:b1 RPAREN:r THEN_WHILE type_instruction:list
+				WHILE LPAREN:l a:b1 RPAREN THEN_WHILE type_instruction:list
 					{: RESULT = new While(b1, list, l); :}
+				| error LPAREN a RPAREN THEN_WHILE type_instruction
+				| WHILE error a RPAREN THEN_WHILE type_instruction
+				| WHILE LPAREN a error THEN_WHILE type_instruction
+				| WHILE LPAREN a RPAREN error type_instruction
+				// | WHILE LPAREN a RPAREN THEN_WHILE error
 				;
 /* WHILE */
 
 /* REPEAT */
 control_repeat ::=
-				REPEAT:r
-				LPAREN:l1 control_stat:b1 RPAREN
-				UNTIL LPAREN:l2 a:b2 RPAREN
-				type_instruction:list
+				REPEAT LPAREN:l1 control_stat:b1 RPAREN UNTIL LPAREN:l2 a:b2 RPAREN type_instruction:list
 					{: RESULT = new Repeat(b1, b2, list, l1, l2); :}
+				| error LPAREN control_stat RPAREN UNTIL LPAREN a RPAREN type_instruction
+				| REPEAT error control_stat RPAREN UNTIL LPAREN a RPAREN type_instruction
+				| REPEAT LPAREN error RPAREN UNTIL LPAREN a RPAREN type_instruction
+				| REPEAT LPAREN control_stat error UNTIL LPAREN a RPAREN type_instruction
+				| REPEAT LPAREN control_stat RPAREN error LPAREN a RPAREN type_instruction
+				| REPEAT LPAREN control_stat RPAREN UNTIL error a RPAREN type_instruction
+				| REPEAT LPAREN control_stat RPAREN UNTIL LPAREN a error type_instruction
 				;
 
 control_stat ::=
 				INT:t ID_V:id EQUAL a:v1
 					{:
-						// eh.checkForVariable(t, id, v1, e);
-						// RESULT = new Assignment(type, id, v1, b1);
 						RESULT = new Assignment(t, id, v1, false);
 					:}
 				| ID_V:id EQUAL a:v1
 					{:
-						// eh.checkForVariable(null, id, v1, e);
 						RESULT = new Assignment(id, v1);
 					:}
 				;
@@ -557,20 +581,26 @@ function ::=
 				| letpar:r {: RESULT = r; :}
 				| letimpar:r {: RESULT = r; :}
 				| reverse:r {: RESULT = r; :}
+				| random_c:r {: RESULT = r; :}
+				| random_n:r {: RESULT = r; :}
+				| get:r {: RESULT = r; :}
+
+				| error LPAREN a RPAREN
+				| error LPAREN RPAREN
 
 				// | ASC LPAREN:lparen a:s1 RPAREN  {: RESULT = new Operation(OperationType.ASC, s1, lparen); :}
 				// | DESC LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.DESC, s1, lparen); :}
 				// | LETPAR LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.LETPAR, s1, lparen); :}
 				// | LETIMPAR LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.LETIMPAR, s1, lparen); :}
 				// | REVERSE LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.REVERSE, s1, lparen); :}
-				| RANDOM_C LPAREN:lparen RPAREN {: RESULT = new Operation(OperationType.RANDOM_C, null, lparen); :}
-				| RANDOM_N LPAREN:lparen RPAREN {: RESULT = new Operation(OperationType.RANDOM_N, null, lparen); :}
-				| GET LPAREN:lparen ID_2:s1 RPAREN {: RESULT = new Operation(OperationType.GET, s1); :}
+				// | RANDOM_C LPAREN:lparen RPAREN {: RESULT = new Operation(OperationType.RANDOM_C, null, lparen); :}
+				// | RANDOM_N LPAREN:lparen RPAREN {: RESULT = new Operation(OperationType.RANDOM_N, null, lparen); :}
+				// | GET LPAREN:lparen ID_2:s1 RPAREN {: RESULT = new Operation(OperationType.GET, s1); :}
 				;
 
 asc ::=
 				ASC LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.ASC, s1, lparen); :}
-				| error LPAREN a RPAREN
+				// | error LPAREN a RPAREN
 				| ASC error a RPAREN
 				| ASC LPAREN a error
 				;
@@ -597,6 +627,24 @@ reverse ::=
 				REVERSE LPAREN:lparen a:s1 RPAREN {: RESULT = new Operation(OperationType.REVERSE, s1, lparen); :}
 				| REVERSE error a RPAREN
 				| REVERSE LPAREN a error
+				;
+
+random_c ::=
+				RANDOM_C LPAREN:lparen RPAREN {: RESULT = new Operation(OperationType.RANDOM_C, null, lparen); :}
+				| RANDOM_C error RPAREN
+				| RANDOM_C LPAREN error
+				;
+
+random_n ::=
+				RANDOM_N LPAREN:lparen RPAREN {: RESULT = new Operation(OperationType.RANDOM_N, null, lparen); :}
+				| RANDOM_N error RPAREN
+				| RANDOM_N LPAREN error
+				;
+
+get ::=
+				GET LPAREN:lparen ID_2:s1 RPAREN {: RESULT = new Operation(OperationType.GET, s1); :}
+				| GET error RPAREN
+				| GET LPAREN error
 				;
 
 v ::=
@@ -893,7 +941,8 @@ gcic ::=
 				SMALLER:t GCIC params:list GREATER
 					{: RESULT = tag.getParameters(t, Tag.GCIC, list); :}
 				| error GCIC params GREATER
-				| SMALLER error params GREATER
+				| SMALLER:t error params:list GREATER
+					{: RESULT = tag.getParameters(t, Tag.GCIC, list); :}
 				// | SMALLER GCIC params error
 				;
 
@@ -974,7 +1023,8 @@ option ::=
 				SMALLER:t OPTION params:list GREATER
 					{: RESULT = tag.getParameters(t, Tag.OPTION, list); :}
 				| error OPTION params GREATER
-				| SMALLER error params GREATER
+				| SMALLER:t error params:list GREATER
+					{: RESULT = tag.getParameters(t, Tag.OPTION, list); :}
 				// | SMALLER OPTION params error
 				;
 
@@ -1019,7 +1069,8 @@ h1 ::=
 				SMALLER:t H1 params:list GREATER
 					{: RESULT = tag.getParameters(t, Tag.H1, list); :}
 				| error H1 params GREATER
-				| SMALLER error params GREATER
+				| SMALLER:t error params:list GREATER
+					{: RESULT = tag.getParameters(t, Tag.H1, list); :}
 				// | SMALLER H1 params error
 				;
 
@@ -1036,7 +1087,7 @@ paragraph ::=
 script ::=
 				SMALLER:t SCRIPT params:list GREATER
 					{: RESULT = tag.getParameters(t, Tag.SCRIPT, list); :}
-				| error SCRIPT params GREATER
+				| error SCRIPT params:list GREATER
 				// | SMALLER error params GREATER
 				// | SMALLER SCRIPT params error
 				;
@@ -1049,14 +1100,17 @@ params ::=
 						RESULT = list;
 					:}
 				|
-						{: RESULT = new ArrayList<Parameter>(); :}
+					{: RESULT = new ArrayList<Parameter>(); :}
 				;
 
 param ::=
 				LBRACKET opt:p RBRACKET
 					{: RESULT = p; :}
-				| error opt RBRACKET
-				| LBRACKET opt error
+				| error opt:p RBRACKET
+					{: RESULT = p; :}
+				| LBRACKET opt:p error
+					{: RESULT = p; :}
+				| LBRACKET error RBRACKET
 				;
 
 opt ::=
@@ -1073,22 +1127,25 @@ opt ::=
 				| width_height:p  {: RESULT = p; :}
 				| alt:p  {: RESULT = p; :}
 				| onclick:p  {: RESULT = p; :}
-				| error
 				;
 
 id ::=
 				ID EQUAL ID_:s
 					{: RESULT = new Parameter(Param.ID, s.getValue(), s); :}
-				| error EQUAL ID_
-				| ID error ID_
+				// | error EQUAL ID_:s
+				// 	{: RESULT = new Parameter(Param.ID, s.getValue(), s); :}
+				| ID error ID_:s
+					{: RESULT = new Parameter(Param.ID, s.getValue(), s); :}
 				| ID EQUAL error
 				;
 
 name ::=
-				NAME EQUAL STRING:s
+				NAME EQUAL string:s
 					{: RESULT = new Parameter(Param.NAME, s.getValue(), s); :}
-				| error EQUAL STRING
-				| NAME error STRING
+				| error EQUAL string:s
+					{: RESULT = new Parameter(Param.NAME, s.getValue(), s); :}
+				| NAME error string:s
+					{: RESULT = new Parameter(Param.NAME, s.getValue(), s); :}
 				| NAME EQUAL error
 				;
 
@@ -1096,8 +1153,9 @@ name ::=
 href_src ::=
 				url:p EQUAL URL:s
 					{: RESULT = new Parameter(p, s.getValue(), s); :}
-				| error EQUAL URL
-				| url error URL
+				// | error EQUAL URL
+				| url:p error URL:s
+					{: RESULT = new Parameter(p, s.getValue(), s); :}
 				| url EQUAL error
 				;
 
@@ -1113,8 +1171,9 @@ url ::=
 bckgrnd_clr ::=
 				color:p EQUAL COLOUR:s
 					{: RESULT = new Parameter(p, s.getValue(), s); :}
-				| error EQUAL COLOUR
-				| color error COLOUR
+				// | error EQUAL COLOUR
+				| color:p error COLOUR:s
+					{: RESULT = new Parameter(p, s.getValue(), s); :}
 				| color EQUAL error
 				;
 
@@ -1130,23 +1189,28 @@ font_size ::=
 				FONTS EQUAL PIXEL:s
 					{: RESULT = new Parameter(Param.FONT_SIZE, s.getValue(), s); :}
 				// | error EQUAL PIXEL
-				| FONTS error PIXEL
+				| FONTS error PIXEL:s
+					{: RESULT = new Parameter(Param.FONT_SIZE, s.getValue(), s); :}
 				| FONTS EQUAL error
 				;
 
 font_family ::=
 				FONTF EQUAL FONTF_VALUE:s
 					{: RESULT = new Parameter(Param.FONT_FAMILY, s.getValue(), s); :}
-				| error EQUAL FONTF_VALUE
-				| FONTF error FONTF_VALUE
+				// | error EQUAL FONTF_VALUE:s
+				// 	{: RESULT = new Parameter(Param.FONT_FAMILY, s.getValue(), s); :}
+				| FONTF error FONTF_VALUE:s
+					{: RESULT = new Parameter(Param.FONT_FAMILY, s.getValue(), s); :}
 				| FONTF EQUAL error
 				;
 
 text_align ::=
 				ALIGN EQUAL ALIGN_VALUE:s
 					{: RESULT = new Parameter(Param.TEXT_ALIGN, s.getValue(), s); :}
-				| error EQUAL ALIGN_VALUE
-				| ALIGN error ALIGN_VALUE
+				// | error EQUAL ALIGN_VALUE:s
+				// 	{: RESULT = new Parameter(Param.TEXT_ALIGN, s.getValue(), s); :}
+				| ALIGN error ALIGN_VALUE:s
+					{: RESULT = new Parameter(Param.TEXT_ALIGN, s.getValue(), s); :}
 				| ALIGN EQUAL error
 				;
 
@@ -1154,16 +1218,19 @@ text_align ::=
 type ::=
 				TYPE EQUAL TYPE_VALUE:s
 					{: RESULT = new Parameter(Param.TYPE, s.getValue(), s); :}
-				| error EQUAL TYPE_VALUE
-				| TYPE error TYPE_VALUE
+				// | error EQUAL TYPE_VALUE:s
+				// 	{: RESULT = new Parameter(Param.TYPE, s.getValue(), s); :}
+				| TYPE error TYPE_VALUE:s
+					{: RESULT = new Parameter(Param.TYPE, s.getValue(), s); :}
 				| TYPE EQUAL error
 				;
 
 cols_rows ::=
 				cls_rws:p EQUAL INTQ:s
 					{: RESULT = new Parameter(p, s.getValue(), s); :}
-				| error EQUAL INTQ
-				| cls_rws error INTQ
+				// | error EQUAL INTQ
+				| cls_rws:p error INTQ:s
+					{: RESULT = new Parameter(p, s.getValue(), s); :}
 				| cls_rws EQUAL error
 				;
 
@@ -1177,8 +1244,10 @@ cls_rws ::=
 clss ::=
 				CLASS EQUAL CLASS_VALUE:s
 					{: RESULT = new Parameter(Param.CLASS, s.getValue(), s); :}
-				| error EQUAL CLASS_VALUE
-				| CLASS error CLASS_VALUE
+				// | error EQUAL CLASS_VALUE:s
+				// 	{: RESULT = new Parameter(Param.CLASS, s.getValue(), s); :}
+				| CLASS error CLASS_VALUE:s
+					{: RESULT = new Parameter(Param.CLASS, s.getValue(), s); :}
 				| CLASS EQUAL error
 				;
 
@@ -1186,8 +1255,9 @@ clss ::=
 width_height ::=
 				w_h:p EQUAL pxl_per:s
 					{: RESULT = new Parameter(p, s.getValue(), s); :}
-				| error EQUAL pxl_per
-				| w_h error pxl_per
+				// | error EQUAL pxl_per
+				| w_h:p error pxl_per:s
+					{: RESULT = new Parameter(p, s.getValue(), s); :}
 				| w_h EQUAL error
 				;
 
@@ -1205,10 +1275,11 @@ pxl_per ::=
 
 /* alt */
 alt ::=
-				ALT EQUAL STRING:s
+				ALT EQUAL string:s
 					{: RESULT = new Parameter(Param.ALT, s.getValue(), s); :}
-				// | error EQUAL STRING // alt ::= error ...  and name ::= error ...
-				| ALT error STRING
+				// | error EQUAL string // alt ::= error ...  and name ::= error ...
+				| ALT error string:s
+					{: RESULT = new Parameter(Param.ALT, s.getValue(), s); :}
 				| ALT EQUAL error
 				;
 
@@ -1216,8 +1287,10 @@ alt ::=
 onclick ::=
 				CLICK EQUAL ONCLICK:s
 					{: RESULT = new Parameter(Param.ONCLICK, s.getValue(), s); :}
-				| error EQUAL ONCLICK
-				| CLICK error ONCLICK
+				// | error EQUAL ONCLICK:s
+				// 	{: RESULT = new Parameter(Param.ONCLICK, s.getValue(), s); :}
+				| CLICK error ONCLICK:s
+					{: RESULT = new Parameter(Param.ONCLICK, s.getValue(), s); :}
 				| CLICK EQUAL error
 				;
 /* --------------- Etiquetas de cierre --------------- */
