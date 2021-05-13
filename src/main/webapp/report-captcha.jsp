@@ -23,22 +23,27 @@
 
                     <div class="row">
                         <div class="col">
-                            <table class="table table-striped table-hover table-bordered">
+                            <table class="table table-striped table-hover table-bordered text-center">
                                 <thead>
                                     <tr>
-                                        <th scope="col">Id</th>
-                                        <th scope="col">Nombre</th>
                                         <th scope="col">Enlace</th>
-                                        <th scope="col">Handle</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Intentos</th>
+                                        <th scope="col">Aciertos</th>
+                                        <th scope="col">Fallos</th>
+                                        <th scope="col">Ultimo intento</th>
+
                                     </tr>
                                 </thead>
                                 <tbody>
                                 <c:forEach var="c" items="${list}">
                                     <tr>
-                                        <th scope="row">${c.params.get(Param.ID).value}</th>
-                                        <td>${c.params.get(Param.NAME).value}</td>
-                                        <td><a href="CaptchaMain?id=${c.params.get(Param.ID).value}.gcic" target="_blank">Click Aqui</a></td>
-                                        <td>@mdo</td>
+                                        <td><a href="CaptchaMain?id=${c.params.get(Param.ID).value}.gcic" target="_blank">${c.params.get(Param.ID).value}</a></td>
+                                        <td scope="row">${c.params.get(Param.NAME).value}</td>
+                                        <td>${c.times}</td>
+                                        <td>${c.success}</td>
+                                        <td>${c.mistakes}</td>
+                                        <td>${c.date}</td>
                                     </tr>
                                 </c:forEach>
                             </tbody>

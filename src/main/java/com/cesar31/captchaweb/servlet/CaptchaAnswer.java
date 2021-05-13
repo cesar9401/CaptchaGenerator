@@ -3,17 +3,14 @@ package com.cesar31.captchaweb.servlet;
 import com.cesar31.captchaweb.control.DBHandler;
 import com.cesar31.captchaweb.control.ParserControl;
 import com.cesar31.captchaweb.model.Captcha;
-import com.cesar31.captchaweb.model.Component;
-import com.cesar31.captchaweb.model.Param;
-import com.cesar31.captchaweb.model.Tag;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.text.html.HTML;
 
 /**
  *
@@ -94,8 +91,14 @@ public class CaptchaAnswer extends HttpServlet {
                 /* Instrucciones para redirigir */
                 String url = db.getUrl(c);
                 request.setAttribute("url", url);
-            }
 
+                /* Contar como acierto */
+                db.updateCaptcha(id, path, true);
+            } else {
+                /* Contar como fallo */
+                db.updateCaptcha(id, path, false);
+            }
+            
             request.getRequestDispatcher("captcha.jsp").forward(request, response);
         } else {
             request.getRequestDispatcher("captcha-not-found.jsp").forward(request, response);

@@ -10,6 +10,8 @@ import com.cesar31.captchaweb.model.SymbolTable;
 import com.cesar31.captchaweb.model.Tag;
 import com.cesar31.captchaweb.parser.CaptchaLex;
 import com.cesar31.captchaweb.parser.CaptchaParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,6 +19,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -125,6 +128,13 @@ public class DBHandler {
         return list;
     }
 
+    /**
+     * Ejecutar proceso segun nombre
+     *
+     * @param process
+     * @param request
+     * @param response
+     */
     public void executeScript(String process, HttpServletRequest request, HttpServletResponse response) {
         AST ast = this.scripts.get(process);
 
@@ -147,7 +157,7 @@ public class DBHandler {
 
             /* Si es global, guardar variable en sesion  */
             table.forEach(v -> {
-                if(v.isGlobal()) {
+                if (v.isGlobal()) {
                     request.getSession().setAttribute(process + " - " + v.getId(), v);
                 }
                 System.out.println(v.toString());
@@ -163,7 +173,7 @@ public class DBHandler {
                 // request.setAttribute("alerts", operation.getAlerts());
             }
 
-            if(operation.isRedirect()) {
+            if (operation.isRedirect()) {
                 this.redirect = true;
             }
         } else {
@@ -171,6 +181,12 @@ public class DBHandler {
         }
     }
 
+    /**
+     * Ejecutar proceso onload
+     *
+     * @param request
+     * @param response
+     */
     public void executeOnLoad(HttpServletRequest request, HttpServletResponse response) {
         if (this.onload != null) {
             if (!this.onload.isEmpty()) {
@@ -203,8 +219,8 @@ public class DBHandler {
                         this.alerts.addAll(operation.getAlerts());
                         // request.setAttribute("alerts", operation.getAlerts());
                     }
-                    
-                    if(operation.isRedirect()) {
+
+                    if (operation.isRedirect()) {
                         /* Redirigir */
                         this.redirect = true;
                     }
@@ -213,6 +229,51 @@ public class DBHandler {
         }
     }
 
+    /**
+     * Actualizar archivo con informacion captcha
+     *
+     * @param id
+     * @param path
+     * @param success
+     */
+    public void updateCaptcha(String id, String path, boolean success) {
+        ObjectMapper mapper = new ObjectMapper();
+        Captcha c = null;
+        try {
+            c = mapper.readValue(new File(path + id), Captcha.class);
+        } catch (IOException ex) {
+            ex.printStackTrace(System.out);
+        }
+
+        if (c != null) {
+            c.setTimes(c.getTimes() + 1);
+            c.setDate(LocalDate.now().toString());
+            if (success) {
+                c.setSuccess(c.getSuccess() + 1);
+            } else {
+                c.setMistakes(c.getMistakes() + 1);
+            }
+
+            /* Actualizar informacion */
+            String json = "";
+            try {
+                json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(c);
+            } catch (JsonProcessingException ex) {
+                ex.printStackTrace(System.out);
+            }
+
+            this.writeFile(path + id, json);
+        } else {
+            System.out.println("Captcha nulo");
+        }
+    }
+
+    /**
+     * Obtener direccion destino del captcha
+     *
+     * @param c
+     * @return
+     */
     public String getUrl(Captcha c) {
         Component head = c.getHead();
         for (Component ch : head.getChildren()) {

@@ -1,8 +1,6 @@
 
 package com.cesar31.captchaweb.model;
 
-import java.time.LocalDate;
-
 /**
  *
  * @author cesar31
@@ -16,7 +14,7 @@ public class Captcha extends Component{
     private Integer times;
     private Integer success;
     private Integer mistakes;
-    private LocalDate lastDate;
+    private String date;
 
     public Captcha() {
         super();
@@ -62,11 +60,11 @@ public class Captcha extends Component{
         this.mistakes = mistakes;
     }
 
-    public LocalDate getLastDate() {
-        return lastDate;
+    public String getDate() {
+        return date;
     }
 
-    public void setLastDate(LocalDate lastDate) {
-        this.lastDate = lastDate;
+    public void setDate(String date) {
+        this.date = date;
     }
 }
