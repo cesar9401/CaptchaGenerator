@@ -30,7 +30,8 @@ function input_changed(obj_txt) {
     cntline = count_lines(obj_txt.value);
     if (cntline === 0)
         cntline = 1;
-    tmp_arr = obj_rownr.value.split("\n");
+    let value = obj_rownr.value;
+    tmp_arr = value.split("\n");
     cntline_old = parseInt(tmp_arr[tmp_arr.length - 1], 10);
     // if there was a change in line count
     if (cntline !== cntline_old) {

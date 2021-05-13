@@ -325,6 +325,9 @@ Script = {c} "_" {s}{c}{r}{i}{p}{t}{i}{n}{g}
 	"EXIT"
 	{ return symbol(EXIT, yytext()); }
 
+	"REDIRECT"
+	{ return symbol(REDIRECT, yytext()); }
+
 	"getElementById"
 	{ return symbol(GET, yytext()); }
 

@@ -17,8 +17,9 @@ public class AstOperation {
     private Function function;
     private EnviromentHandler eh;
     private List<String> alerts;
-    
+
     private List<String> inserts;
+    private boolean redirect;
 
     private HttpServletRequest request;
     private HttpServletResponse response;
@@ -30,6 +31,7 @@ public class AstOperation {
         this.eh = new EnviromentHandler(errors);
         this.alerts = new ArrayList<>();
         this.inserts = new ArrayList<>();
+        this.redirect = false;
     }
 
     public List<Err> getErrors() {
@@ -74,5 +76,13 @@ public class AstOperation {
 
     public void setInserts(List<String> inserts) {
         this.inserts = inserts;
+    }
+
+    public boolean isRedirect() {
+        return redirect;
+    }
+
+    public void setRedirect(boolean redirect) {
+        this.redirect = redirect;
     }
 }

@@ -86,7 +86,7 @@ parser code {:
 
 terminal Token GCIC, HEAD, TITLE, LINK, BODY, SPAM, INPUT, TXTAREA, SELECT, OPTION, DIV, IMG, BR, BUTTON, H1, PARAGRAPH, SCRIPT, HREF, BCKGRND, COLOR, FONTS;
 terminal Token FONTF, ALIGN, TYPE, ID, NAME, COLS, CLASS, SRC, WIDTH, HEIGHT, ALT, CLICK, INTEGER, DECIMAL, BOOL, TRUE, FALSE;
-terminal Token CHR, QS, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_N, ALERT, EXIT, GET, GLOBAL, COLOUR, INTQ, PIXEL, PERCNTG, ID_, ID_2, INT, DEC;
+terminal Token CHR, QS, STR, ASC, DESC, LETPAR, LETIMPAR, REVERSE, RANDOM_C, RANDOM_N, ALERT, EXIT, REDIRECT, GET, GLOBAL, COLOUR, INTQ, PIXEL, PERCNTG, ID_, ID_2, INT, DEC;
 terminal Token GREATER, SMALLER, LBRACE, RBRACE, LBRACKET, RBRACKET, COLON, SEMI, EQEQ, NEQ, GRTREQ, SMLLREQ, OR, AND, NOT, PLUS, MINUS, TIMES, DIVIDE;
 terminal Token URL, LPAREN, RPAREN, EQUAL, ROWS, FONTF_VALUE, ERROR;
 terminal Token TYPE_VALUE, ALIGN_VALUE, CLASS_VALUE, COMMA, ON_LOAD, ONCLICK, IN, ID_V;
@@ -113,7 +113,7 @@ non terminal Captcha c_gcic;
 
 non terminal Assignment control_stat;
 non terminal Instruction stat, control_while, control_repeat, control_if;
-non terminal LinkedList<Instruction> make_var, statement, scripting, make_script, assignment, instruction, ini, type_instruction, control, alert, exit, insert;
+non terminal LinkedList<Instruction> make_var, statement, scripting, make_script, assignment, instruction, ini, type_instruction, control, alert, exit, insert, redirect;
 non terminal Variable insert_sq;
 non terminal AST process;
 
@@ -188,7 +188,7 @@ b_opt ::=
 				;
 
 c_script ::=
-				script:m make_process /*make_script*/ clscript
+				script:m make_process clscript
 					{:
 						RESULT = tag.makeDivInsteadScript(scriptCount);
 						scriptCount++;
@@ -205,10 +205,17 @@ make_process ::=
 /* proceso */
 process ::=
 				process_name:p LPAREN RPAREN LBRACKET make_script:list RBRACKET
-					{:
-						/* Verificar que no hayan procesos con el mismo nombre */
-						tag.addProcess(p, list, scriptCount);
-					:}
+					{: tag.addProcess(p, list, scriptCount); :}
+
+				| error LPAREN RPAREN LBRACKET make_script RBRACKET
+				| process_name:p error RPAREN LBRACKET make_script:list RBRACKET
+					{: tag.addProcess(p, list, scriptCount); :}
+				| process_name:p LPAREN error LBRACKET make_script:list RBRACKET
+					{: tag.addProcess(p, list, scriptCount); :}
+				| process_name:p LPAREN RPAREN error make_script:list RBRACKET
+					{: tag.addProcess(p, list, scriptCount); :}
+				| process_name:p LPAREN RPAREN LBRACKET make_script:list error
+					{: tag.addProcess(p, list, scriptCount); :}
 				;
 
 process_name ::=
@@ -246,6 +253,10 @@ scripting ::=
 				| exit:list
 					{: RESULT = list; :}
 
+				/* REDIREC */
+				| redirect:list
+					{: RESULT = list; :}
+
 				/* INSERT */
 				| insert:list
 					{: RESULT = list; :}
@@ -269,7 +280,6 @@ statement ::=
 assignment ::=
 				ID_V:id EQUAL a:v1 SEMI
 					{:
-						/* eh.makeAssignment(id, v1, e); */
 						RESULT = new LinkedList<>();
 						RESULT.add(new Assignment(id, v1));
 					:}
@@ -279,30 +289,46 @@ assignment ::=
 /* ALERT_INFO */
 alert ::=
 				ALERT LPAREN:lparen a:s1 RPAREN SEMI
-					{:
-						RESULT = new LinkedList<>();
-						RESULT.add(new Alert(lparen, s1));
-					:}
-				| error LPAREN a RPAREN SEMI
+					{: RESULT = new LinkedList<>(); RESULT.add(new Alert(lparen, s1)); :}
+				| error LPAREN:lparen a:s1 RPAREN SEMI
+					{: RESULT = new LinkedList<>(); RESULT.add(new Alert(lparen, s1)); :}
 				| ALERT error a RPAREN SEMI
-				| ALERT LPAREN a error SEMI
-				| ALERT LPAREN a RPAREN error
+
+				| ALERT LPAREN:lparen a:s1 error SEMI
+					{: RESULT = new LinkedList<>(); RESULT.add(new Alert(lparen, s1)); :}
+				| ALERT LPAREN:lparen a:s1 RPAREN error
+					{: RESULT = new LinkedList<>(); RESULT.add(new Alert(lparen, s1)); :}
 				;
 /* ALERT_INFO */
 
 /* EXIT */
 exit ::=
 				EXIT:t LPAREN RPAREN SEMI
-					{:
-						RESULT = new LinkedList<>();
-						RESULT.add(new Exit(t));
-					:}
+					{: RESULT = new LinkedList<>(); RESULT.add(new Exit(t)); :}
 				| error LPAREN RPAREN SEMI
-				| EXIT error RPAREN SEMI
-				| EXIT LPAREN error SEMI
-				| EXIT LPAREN RPAREN error
+
+				| EXIT:t error RPAREN SEMI
+					{: RESULT = new LinkedList<>(); RESULT.add(new Exit(t)); :}
+				| EXIT:t LPAREN error SEMI
+					{: RESULT = new LinkedList<>(); RESULT.add(new Exit(t)); :}
+				| EXIT:t LPAREN RPAREN error
+					{: RESULT = new LinkedList<>(); RESULT.add(new Exit(t)); :}
 				;
 /* EXIT */
+
+/* REDIRECT */
+redirect ::=
+				REDIRECT:t LPAREN RPAREN SEMI
+					{: RESULT = new LinkedList<>(); RESULT.add(new Redirect(t)); :}
+				// | error LPAREN RPAREN SEMI
+				| REDIRECT:t error RPAREN SEMI
+					{: RESULT = new LinkedList<>(); RESULT.add(new Redirect(t)); :}
+				| REDIRECT:t LPAREN error SEMI
+					{: RESULT = new LinkedList<>(); RESULT.add(new Redirect(t)); :}
+				| REDIRECT:t LPAREN RPAREN error
+					{: RESULT = new LinkedList<>(); RESULT.add(new Redirect(t)); :}
+				;
+/* REDIRECT */
 
 /* INSERT */
 insert ::=
@@ -379,6 +405,10 @@ instruction ::=
 				/* EXIT */
 				| exit:list
 					{: RESULT = list; :}
+
+				/* REDIREC */
+				| redirect:list
+					{: RESULT = list; :}
 				;
 /* Solo una instruccion */
 
@@ -386,12 +416,18 @@ instruction ::=
 ini ::=
 				INIT LBRACE COLON make_script:list COLON RBRACE END
 					{: RESULT = list; :}
-				| error LBRACE COLON make_script COLON RBRACE END
-				| INIT error COLON make_script COLON RBRACE END
-				| INIT LBRACE error make_script COLON RBRACE END
-				| INIT LBRACE COLON make_script error RBRACE END
-				| INIT LBRACE COLON make_script COLON error END
-				| INIT LBRACE COLON make_script COLON RBRACE error
+				| error LBRACE COLON make_script:list COLON RBRACE END
+					{: RESULT = list; :}
+				| INIT error COLON make_script:list COLON RBRACE END
+					{: RESULT = list; :}
+				| INIT LBRACE error make_script:list COLON RBRACE END
+					{: RESULT = list; :}
+				| INIT LBRACE COLON make_script:list error RBRACE END
+					{: RESULT = list; :}
+				| INIT LBRACE COLON make_script:list COLON error END
+					{: RESULT = list; :}
+				| INIT LBRACE COLON make_script:list COLON RBRACE error
+					{: RESULT = list; :}
 				;
 
 type_instruction ::=
@@ -454,12 +490,16 @@ control_if ::=
 				;
 
 if_ ::=
-				IF LPAREN:lparen a:b1 RPAREN:rparen THEN type_instruction:list
+				IF LPAREN:lparen a:b1 RPAREN THEN type_instruction:list
 					{: RESULT = new If("IF", b1, list, lparen); :}
-				| error LPAREN a RPAREN THEN type_instruction
-				| IF error a RPAREN THEN type_instruction
-				| IF LPAREN a error THEN type_instruction
-				| IF LPAREN a RPAREN error type_instruction
+				| error LPAREN:lparen a:b1 RPAREN THEN type_instruction:list
+					{: RESULT = new If("IF", b1, list, lparen); :}
+				| IF error a:b1 RPAREN THEN type_instruction:list
+
+				| IF LPAREN:lparen a:b1 error THEN type_instruction:list
+					{: RESULT = new If("IF", b1, list, lparen); :}
+				| IF LPAREN:lparen a:b1 RPAREN error type_instruction:list
+					{: RESULT = new If("IF", b1, list, lparen); :}
 				// | IF LPAREN a RPAREN THEN error
 				;
 
@@ -485,10 +525,14 @@ list_else_if ::=
 else_if ::=
 				ELSE IF LPAREN:lparen a:b1 RPAREN:rparen THEN type_instruction:list
 					{: RESULT = new If("IF_ELSE", b1, list, lparen); :}
-				| ELSE error LPAREN a RPAREN THEN type_instruction
+				| ELSE error LPAREN:lparen a:b1 RPAREN THEN type_instruction:list
+					{: RESULT = new If("IF_ELSE", b1, list, lparen); :}
 				| ELSE IF error a RPAREN THEN type_instruction
-				| ELSE IF LPAREN a error THEN type_instruction
-				| ELSE IF LPAREN a RPAREN error type_instruction
+
+				| ELSE IF LPAREN:lparen a:b1 error THEN type_instruction:list
+					{: RESULT = new If("IF_ELSE", b1, list, lparen); :}
+				| ELSE IF LPAREN:lparen a:b1 RPAREN error type_instruction:list
+					{: RESULT = new If("IF_ELSE", b1, list, lparen); :}
 				// | ELSE IF LPAREN a RPAREN THEN error
 				;
 /* IF */
@@ -497,10 +541,14 @@ else_if ::=
 control_while ::=
 				WHILE LPAREN:l a:b1 RPAREN THEN_WHILE type_instruction:list
 					{: RESULT = new While(b1, list, l); :}
-				| error LPAREN a RPAREN THEN_WHILE type_instruction
+				| error LPAREN:l a:b1 RPAREN THEN_WHILE type_instruction:list
+					{: RESULT = new While(b1, list, l); :}
 				| WHILE error a RPAREN THEN_WHILE type_instruction
-				| WHILE LPAREN a error THEN_WHILE type_instruction
-				| WHILE LPAREN a RPAREN error type_instruction
+
+				| WHILE LPAREN:l a:b1 error THEN_WHILE type_instruction:list
+					{: RESULT = new While(b1, list, l); :}
+				| WHILE LPAREN:l a:b1 RPAREN error type_instruction:list
+					{: RESULT = new While(b1, list, l); :}
 				// | WHILE LPAREN a RPAREN THEN_WHILE error
 				;
 /* WHILE */
@@ -509,13 +557,17 @@ control_while ::=
 control_repeat ::=
 				REPEAT LPAREN:l1 control_stat:b1 RPAREN UNTIL LPAREN:l2 a:b2 RPAREN type_instruction:list
 					{: RESULT = new Repeat(b1, b2, list, l1, l2); :}
-				| error LPAREN control_stat RPAREN UNTIL LPAREN a RPAREN type_instruction
+				| error LPAREN:l1 control_stat:b1 RPAREN UNTIL LPAREN:l2 a:b2 RPAREN type_instruction:list
+					{: RESULT = new Repeat(b1, b2, list, l1, l2); :}
 				| REPEAT error control_stat RPAREN UNTIL LPAREN a RPAREN type_instruction
 				| REPEAT LPAREN error RPAREN UNTIL LPAREN a RPAREN type_instruction
-				| REPEAT LPAREN control_stat error UNTIL LPAREN a RPAREN type_instruction
-				| REPEAT LPAREN control_stat RPAREN error LPAREN a RPAREN type_instruction
+				| REPEAT LPAREN:l1 control_stat:b1 error UNTIL LPAREN:l2 a:b2 RPAREN type_instruction:list
+					{: RESULT = new Repeat(b1, b2, list, l1, l2); :}
+				| REPEAT LPAREN:l1 control_stat:b1 RPAREN error LPAREN:l2 a:b2 RPAREN type_instruction:list
+					{: RESULT = new Repeat(b1, b2, list, l1, l2); :}
 				| REPEAT LPAREN control_stat RPAREN UNTIL error a RPAREN type_instruction
-				| REPEAT LPAREN control_stat RPAREN UNTIL LPAREN a error type_instruction
+				| REPEAT LPAREN:l1 control_stat:b1 RPAREN UNTIL LPAREN:l2 a:b2 error type_instruction:list
+					{: RESULT = new Repeat(b1, b2, list, l1, l2); :}
 				;
 
 control_stat ::=

@@ -1,21 +1,19 @@
 package com.cesar31.captchaweb.servlet;
 
-import com.cesar31.captchaweb.control.AstOperation;
 import com.cesar31.captchaweb.control.DBHandler;
 import com.cesar31.captchaweb.control.ParserControl;
-import com.cesar31.captchaweb.model.AST;
 import com.cesar31.captchaweb.model.Captcha;
-import com.cesar31.captchaweb.model.Exit;
-import com.cesar31.captchaweb.model.Instruction;
-import com.cesar31.captchaweb.model.SymbolTable;
+import com.cesar31.captchaweb.model.Component;
+import com.cesar31.captchaweb.model.Param;
+import com.cesar31.captchaweb.model.Tag;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.text.html.HTML;
 
 /**
  *
@@ -59,9 +57,7 @@ public class CaptchaAnswer extends HttpServlet {
             throws ServletException, IOException {
         String script = request.getParameter("action");
         script = script.replace("()", "");
-        System.out.println("script: " + script);
         String id = request.getParameter("@id");
-        System.out.println("id = " + id);
 
         String path = request.getServletContext().getRealPath(PATH);
         path = path.replace("target/CaptchaGenerator-1.0", "src/main/webapp");
@@ -85,44 +81,25 @@ public class CaptchaAnswer extends HttpServlet {
 
             /* ejecutar codigo aqui */
             db.executeScript(script, request, response);
-            
-            if(!db.getInserts().isEmpty()) {
+
+            if (!db.getInserts().isEmpty()) {
                 request.setAttribute("inserts", db.getInserts());
             }
-            if(!db.getAlerts().isEmpty()) {
+
+            if (!db.getAlerts().isEmpty()) {
                 request.setAttribute("alerts", db.getAlerts());
+            }
+
+            if (db.isRedirect()) {
+                /* Instrucciones para redirigir */
+                String url = db.getUrl(c);
+                request.setAttribute("url", url);
             }
 
             request.getRequestDispatcher("captcha.jsp").forward(request, response);
         } else {
             request.getRequestDispatcher("captcha-not-found.jsp").forward(request, response);
         }
-
-//        SymbolTable table = new SymbolTable();
-//        AstOperation operation = new AstOperation();
-//        operation.setRequest(request);
-//        operation.setResponse(response);
-//
-//        AST ast = (AST) request.getSession().getAttribute("AST");
-//        for (Instruction i : ast.getInstructions()) {
-//            Object o = i.run(table, operation);
-//
-//            if (o != null) {
-//                if (o instanceof Exit) {
-//                    break;
-//                }
-//            }
-//        }
-//
-//        table.forEach(v -> {
-//            System.out.println(v.toString());
-//        });
-//
-//        if(!operation.getInserts().isEmpty()) {
-//            request.getSession().setAttribute("inserts", operation.getInserts());
-//        }
-        //request.getSession().setAttribute("alerts", operation.getAlerts());
-        //request.getRequestDispatcher("captcha.jsp").forward(request, response);
     }
 
     private void getList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

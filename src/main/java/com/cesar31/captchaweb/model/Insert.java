@@ -29,8 +29,8 @@ public class Insert implements Instruction {
 
     @Override
     public Object test(SymbolTable table, AstOperation operation) {
-        if(this.operations != null) {
-            for(Operation o : operations) {
+        if (this.operations != null) {
+            for (Operation o : operations) {
                 o.test(table, operation);
             }
         }

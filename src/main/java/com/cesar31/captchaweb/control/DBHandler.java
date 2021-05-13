@@ -2,9 +2,12 @@ package com.cesar31.captchaweb.control;
 
 import com.cesar31.captchaweb.model.AST;
 import com.cesar31.captchaweb.model.Captcha;
+import com.cesar31.captchaweb.model.Component;
 import com.cesar31.captchaweb.model.Exit;
 import com.cesar31.captchaweb.model.Instruction;
+import com.cesar31.captchaweb.model.Param;
 import com.cesar31.captchaweb.model.SymbolTable;
+import com.cesar31.captchaweb.model.Tag;
 import com.cesar31.captchaweb.parser.CaptchaLex;
 import com.cesar31.captchaweb.parser.CaptchaParser;
 import java.io.BufferedReader;
@@ -30,6 +33,7 @@ public class DBHandler {
     private Captcha captcha;
     private HashMap<String, AST> scripts;
     private HashMap<Integer, AST> onload;
+    private boolean redirect;
 
     /* Inserts and Alerts */
     private List<String> inserts;
@@ -39,6 +43,7 @@ public class DBHandler {
         this.scripts = new HashMap<>();
         this.onload = new HashMap<>();
 
+        this.redirect = false;
         this.inserts = new ArrayList<>();
         this.alerts = new ArrayList<>();
     }
@@ -128,7 +133,7 @@ public class DBHandler {
             operation.setRequest(request);
             operation.setResponse(response);
 
-            SymbolTable table = new SymbolTable();
+            SymbolTable table = new SymbolTable(process);
 
             for (Instruction i : ast.getInstructions()) {
                 Object o = i.run(table, operation);
@@ -140,7 +145,11 @@ public class DBHandler {
                 }
             }
 
+            /* Si es global, guardar variable en sesion  */
             table.forEach(v -> {
+                if(v.isGlobal()) {
+                    request.getSession().setAttribute(process + " - " + v.getId(), v);
+                }
                 System.out.println(v.toString());
             });
 
@@ -154,6 +163,9 @@ public class DBHandler {
                 // request.setAttribute("alerts", operation.getAlerts());
             }
 
+            if(operation.isRedirect()) {
+                this.redirect = true;
+            }
         } else {
             System.out.println("No existe: " + process);
         }
@@ -191,9 +203,29 @@ public class DBHandler {
                         this.alerts.addAll(operation.getAlerts());
                         // request.setAttribute("alerts", operation.getAlerts());
                     }
+                    
+                    if(operation.isRedirect()) {
+                        /* Redirigir */
+                        this.redirect = true;
+                    }
                 });
             }
         }
+    }
+
+    public String getUrl(Captcha c) {
+        Component head = c.getHead();
+        for (Component ch : head.getChildren()) {
+            if (ch.getTag() == Tag.LINK) {
+                return ch.getParams().get(Param.HREF).getValue();
+            }
+        }
+
+        return "";
+    }
+
+    public boolean isRedirect() {
+        return redirect;
     }
 
     public List<String> getInserts() {

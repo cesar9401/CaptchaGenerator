@@ -50,7 +50,7 @@
                                                           onscroll="scroll_changed(this)"
                                                           name="source"
                                                           id="source" required>
-                                                <c:if test="${source != null}">${source.trim()}</c:if>
+                                                <c:if test="${source != null}">${source}</c:if>
                                                 </textarea>
                                         </span>
                                     </div>

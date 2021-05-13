@@ -33,6 +33,24 @@ public class Assignment implements Instruction {
         if (this.type != null) {
             /* Declaracion y asignacion */
             Variable v = this.op.run(table, operation);
+
+            /* Obtener el valor de variable global, si ya existe */
+            if (global) {
+                if (operation.getRequest() != null) {
+                    /* Obtener valor, si ya existe */
+                    Variable variable = (Variable) operation.getRequest().getSession().getAttribute(table.getProcess() + " - " + id.getValue());
+
+                    /* Ya existe */
+                    if (variable != null) {
+                        if (variable.getValue() != null) {
+                            v.setValue(variable.getValue());
+                        }
+                    } else {
+                        System.out.println("No existe aun: " + id.getValue());
+                    }
+                }
+            }
+
             operation.getEh().addSymbolTable(type, id, v, global, table, true);
         } else {
             /* Asignacion */

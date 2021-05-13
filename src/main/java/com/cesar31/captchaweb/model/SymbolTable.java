@@ -9,13 +9,27 @@ import java.util.LinkedList;
 public class SymbolTable extends LinkedList<Variable> {
 
     /* Atributos */
+    private String process;
+    
     /**
      * Constructor
      */
     public SymbolTable() {
         super();
     }
-
+    
+    public SymbolTable(String process) {
+        super();
+        this.process = process;
+    }
+    
+    public void setGlobalValue(String id, String value) {
+        Variable v = getVariable(id);
+        if(v != null) {
+            v.setValue(value);
+        }
+    }
+    
     public Variable getVariable(String id) {
         for (Variable v : this) {
             if (v.getId().equals(id)) {
@@ -32,5 +46,9 @@ public class SymbolTable extends LinkedList<Variable> {
             }
         }
         return false;
+    }
+
+    public String getProcess() {
+        return process;
     }
 }

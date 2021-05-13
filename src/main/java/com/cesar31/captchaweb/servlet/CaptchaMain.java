@@ -46,18 +46,25 @@ public class CaptchaMain extends HttpServlet {
 
             /* enviar id */
             request.setAttribute("id", id);
-            
+
             request.setAttribute("title", title);
             request.setAttribute("background", background);
             request.setAttribute("html", html);
-            
+
             /* Ejecutar ON_LOAD aqui */
             db.executeOnLoad(request, response);
-            if(!db.getInserts().isEmpty()) {
+            if (!db.getInserts().isEmpty()) {
                 request.setAttribute("inserts", db.getInserts());
             }
-            if(!db.getAlerts().isEmpty()) {
+
+            if (!db.getAlerts().isEmpty()) {
                 request.setAttribute("alerts", db.getAlerts());
+            }
+
+            if (db.isRedirect()) {
+                /* Instrucciones para redirigir */
+                String url = db.getUrl(c);
+                request.setAttribute("url", url);
             }
 
             request.getRequestDispatcher("captcha.jsp").forward(request, response);

@@ -30,9 +30,9 @@ public class IfInstruction implements Instruction {
                 local.addAll(table);
                 for (Instruction i : ins) {
                     Object o = i.run(local, operation);
-                    
-                    if(o != null) {
-                        if(o instanceof Exit) {
+
+                    if (o != null) {
+                        if (o instanceof Exit) {
                             return o;
                         }
                     }
