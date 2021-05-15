@@ -1,8 +1,10 @@
 package com.cesar31.captchaweb.control;
 
 import com.cesar31.captchaweb.model.Err;
+import com.cesar31.captchaweb.model.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,6 +14,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class AstOperation {
 
+    private SymbolTable main;
+    private Stack<String> scope; 
+    
     private List<Err> errors;
     private MakeOperation make;
     private Function function;
@@ -32,6 +37,8 @@ public class AstOperation {
         this.alerts = new ArrayList<>();
         this.inserts = new ArrayList<>();
         this.redirect = false;
+        this.main = new SymbolTable();
+        this.scope = new Stack<>();
     }
 
     public List<Err> getErrors() {
@@ -84,5 +91,13 @@ public class AstOperation {
 
     public void setRedirect(boolean redirect) {
         this.redirect = redirect;
+    }
+
+    public Stack<String> getScope() {
+        return scope;
+    }
+
+    public SymbolTable getMain() {
+        return main;
     }
 }

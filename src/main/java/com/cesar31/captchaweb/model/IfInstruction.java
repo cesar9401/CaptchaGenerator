@@ -28,6 +28,10 @@ public class IfInstruction implements Instruction {
             if (condition) {
                 SymbolTable local = new SymbolTable();
                 local.addAll(table);
+
+                /*scope*/
+                operation.getScope().push(if_.getName());
+
                 for (Instruction i : ins) {
                     Object o = i.run(local, operation);
 
@@ -37,6 +41,9 @@ public class IfInstruction implements Instruction {
                         }
                     }
                 }
+
+                /* recuperar scope */
+                operation.getScope().pop();
                 return null;
             }
         }

@@ -23,7 +23,7 @@ public class Statement implements Instruction {
 
     @Override
     public Object run(SymbolTable table, AstOperation operation) {
-        operation.getEh().addSymbolTable(type, id, null, global, table, false);
+        operation.getEh().addSymbolTable(type, id, null, global, table, false, operation);
         return null;
     }
 

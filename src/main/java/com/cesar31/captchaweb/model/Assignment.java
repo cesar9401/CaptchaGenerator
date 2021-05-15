@@ -33,7 +33,7 @@ public class Assignment implements Instruction {
         if (this.type != null) {
             /* Declaracion y asignacion */
             Variable v = this.op.run(table, operation);
-
+                        
             /* Obtener el valor de variable global, si ya existe */
             if (global) {
                 if (operation.getRequest() != null) {
@@ -51,7 +51,7 @@ public class Assignment implements Instruction {
                 }
             }
 
-            operation.getEh().addSymbolTable(type, id, v, global, table, true);
+            operation.getEh().addSymbolTable(type, id, v, global, table, true, operation);
         } else {
             /* Asignacion */
             Variable v = this.op.run(table, operation);

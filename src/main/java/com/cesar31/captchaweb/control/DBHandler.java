@@ -8,6 +8,7 @@ import com.cesar31.captchaweb.model.Instruction;
 import com.cesar31.captchaweb.model.Param;
 import com.cesar31.captchaweb.model.SymbolTable;
 import com.cesar31.captchaweb.model.Tag;
+import com.cesar31.captchaweb.model.Variable;
 import com.cesar31.captchaweb.parser.CaptchaLex;
 import com.cesar31.captchaweb.parser.CaptchaParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -131,19 +132,24 @@ public class DBHandler {
     /**
      * Ejecutar proceso segun nombre
      *
+     * @param id
      * @param process
      * @param request
      * @param response
      */
-    public void executeScript(String process, HttpServletRequest request, HttpServletResponse response) {
+    public void executeScript(String id, String process, HttpServletRequest request, HttpServletResponse response) {
         AST ast = this.scripts.get(process);
 
         if (ast != null) {
             AstOperation operation = new AstOperation();
             operation.setRequest(request);
             operation.setResponse(response);
+            operation.getScope().push(process);
 
-            SymbolTable table = new SymbolTable(process);
+            operation.getMain().setProcess(process);
+            operation.getMain().setCaptcha(id);
+
+            SymbolTable table = new SymbolTable(id, process);
 
             for (Instruction i : ast.getInstructions()) {
                 Object o = i.run(table, operation);
@@ -160,6 +166,13 @@ public class DBHandler {
                 if (v.isGlobal()) {
                     request.getSession().setAttribute(process + " - " + v.getId(), v);
                 }
+            });
+
+            // recuperar y guardar tabla para comparar ejecucion
+            checkTable(process, operation.getMain(), request, response);
+
+            System.out.println("\nGlobal");
+            operation.getMain().forEach(v -> {
                 System.out.println(v.toString());
             });
 
@@ -184,10 +197,11 @@ public class DBHandler {
     /**
      * Ejecutar proceso onload
      *
+     * @param id
      * @param request
      * @param response
      */
-    public void executeOnLoad(HttpServletRequest request, HttpServletResponse response) {
+    public void executeOnLoad(String id, HttpServletRequest request, HttpServletResponse response) {
         if (this.onload != null) {
             if (!this.onload.isEmpty()) {
 
@@ -197,8 +211,9 @@ public class DBHandler {
                     /* No es necesario, pero para evitar algun posible error */
                     operation.setRequest(request);
                     operation.setResponse(response);
+                    operation.getScope().push("ON_LOAD");
 
-                    SymbolTable table = new SymbolTable();
+                    SymbolTable table = new SymbolTable(id, "ON_LOAD");
 
                     for (Instruction i : ast.getInstructions()) {
                         Object o = i.run(table, operation);
@@ -227,6 +242,23 @@ public class DBHandler {
                 });
             }
         }
+    }
+
+    private void checkTable(String process, SymbolTable current, HttpServletRequest request, HttpServletResponse response) {
+        SymbolTable previous = (SymbolTable) request.getSession().getAttribute(process);
+        if (previous != null) {
+            for (Variable v : current) {
+                for (Variable w : previous) {
+                    if (v.getId().equals(w.getId())) {
+                        v.setTried(v.getTried() + 1);
+                    }
+                }
+            }
+        }
+
+        request.setAttribute("process", current);
+        request.getSession().setAttribute("name", process);
+        request.getSession().setAttribute(process, current);
     }
 
     /**

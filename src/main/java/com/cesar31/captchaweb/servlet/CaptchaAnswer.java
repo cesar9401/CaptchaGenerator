@@ -3,6 +3,7 @@ package com.cesar31.captchaweb.servlet;
 import com.cesar31.captchaweb.control.DBHandler;
 import com.cesar31.captchaweb.control.ParserControl;
 import com.cesar31.captchaweb.model.Captcha;
+import com.cesar31.captchaweb.model.SymbolTable;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -38,7 +39,11 @@ public class CaptchaAnswer extends HttpServlet {
                 /* listado de captchas */
                 getList(request, response);
                 break;
+            case "symbol-table":
+                getSymbolTable(request, response);
+                break;
         }
+
     }
 
     /**
@@ -74,10 +79,10 @@ public class CaptchaAnswer extends HttpServlet {
             request.setAttribute("html", html);
 
             /* Ejecutar ON_LOAD aqui */
-            db.executeOnLoad(request, response);
+            db.executeOnLoad(id, request, response);
 
             /* ejecutar codigo aqui */
-            db.executeScript(script, request, response);
+            db.executeScript(id, script, request, response);
 
             if (!db.getInserts().isEmpty()) {
                 request.setAttribute("inserts", db.getInserts());
@@ -98,7 +103,7 @@ public class CaptchaAnswer extends HttpServlet {
                 /* Contar como fallo */
                 db.updateCaptcha(id, path, false);
             }
-            
+
             request.getRequestDispatcher("captcha.jsp").forward(request, response);
         } else {
             request.getRequestDispatcher("captcha-not-found.jsp").forward(request, response);
@@ -116,5 +121,20 @@ public class CaptchaAnswer extends HttpServlet {
 
         request.setAttribute("list", captchas);
         request.getRequestDispatcher("report-captcha.jsp").forward(request, response);
+    }
+
+    private void getSymbolTable(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String name = (String) request.getSession().getAttribute("name");
+        if (name != null) {
+            SymbolTable table = (SymbolTable) request.getSession().getAttribute(name);
+            if (table != null) {
+                request.setAttribute("table", table);
+                request.getRequestDispatcher("symbol-table.jsp").forward(request, response);
+            } else {
+                request.getRequestDispatcher("captcha-not-found.jsp").forward(request, response);
+            }
+        } else {
+            request.getRequestDispatcher("captcha-not-found.jsp").forward(request, response);
+        }
     }
 }

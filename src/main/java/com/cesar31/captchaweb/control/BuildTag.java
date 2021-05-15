@@ -308,6 +308,7 @@ public class BuildTag {
     private void checkAST(AST ast) {
         AstOperation operation = new AstOperation();
         SymbolTable table = new SymbolTable();
+        operation.getScope().push(ast.getName());
 
         for (Instruction i : ast.getInstructions()) {
             i.test(table, operation);

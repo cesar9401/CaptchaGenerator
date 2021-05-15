@@ -13,7 +13,7 @@ import java.util.List;
 public class Function {
 
     private List<Err> errors;
-
+    
     public Function() {
     }
 
@@ -98,8 +98,10 @@ public class Function {
         if (a.getType() == STRING) {
             String value = "";
             for (int i = 0; i < a.getValue().length(); i++) {
-                if (i % 2 == 0) {
+                if ((i + 1) % 2 == 0) {
                     value += (int) a.getValue().charAt(i);
+                } else {
+                    value += a.getValue().charAt(i);
                 }
             }
 
@@ -118,8 +120,10 @@ public class Function {
         if (a.getType() == STRING) {
             String value = "";
             for (int i = 0; i < a.getValue().length(); i++) {
-                if (i % 2 == 1) {
+                if ((i + 1) % 2 == 1) {
                     value += (int) a.getValue().charAt(i);
+                } else {
+                    value += a.getValue().charAt(i);
                 }
             }
 

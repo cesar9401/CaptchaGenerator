@@ -1,26 +1,33 @@
 package com.cesar31.captchaweb.model;
 
+import java.io.Serializable;
+
 /**
  *
  * @author cesar31
  */
-public class Variable {
+public class Variable implements Serializable{
 
     private Var type;
     private String id;
     private boolean global;
     private String value;
+    private String scope;
+    private Integer tried;
 
     public Variable() {
+        this.tried = 1;
     }
 
     public Variable(Var type, String id, String value) {
+        this();
         this.type = type;
         this.id = id;
         this.value = value;
     }
 
     public Variable(Var type, String id, boolean global, String value) {
+        this();
         this.type = type;
         this.id = id;
         this.global = global;
@@ -28,6 +35,7 @@ public class Variable {
     }
 
     public Variable(Var type, String value) {
+        this();
         this.type = type;
         this.value = value;
     }
@@ -68,8 +76,24 @@ public class Variable {
         this.value = value;
     }
 
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+    public Integer getTried() {
+        return tried;
+    }
+
+    public void setTried(Integer tried) {
+        this.tried = tried;
+    }
+
     @Override
     public String toString() {
-        return "Variable{" + "type=" + type + ", id=" + id + ", global=" + global + ", value=" + value + '}';
+        return "Variable{" + "type=" + type + ", id=" + id + ", global=" + global + ", value=" + value + ", scope=" + scope + ", tried=" + tried + '}';
     }
 }

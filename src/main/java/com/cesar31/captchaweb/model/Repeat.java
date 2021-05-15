@@ -31,13 +31,24 @@ public class Repeat implements Instruction {
     public Object run(SymbolTable table, AstOperation operation) {
         SymbolTable local = new SymbolTable();
         local.addAll(table);
+        
+        /* scope */
+        operation.getScope().push("Definicion REPEAT");
+        
         assignment.run(local, operation);
         Variable variable = local.getVariable(this.assignment.getId().getValue());
         Integer valor = Integer.valueOf(variable.getValue());
         int v = valor;
+        
+        /* recuperar scope def REPEAT */
+        operation.getScope().pop();
+        
         while (v < Integer.valueOf(until.run(local, operation).getValue())) {
             SymbolTable localFor = new SymbolTable();
             localFor.addAll(local);
+            
+            /* scope */
+            operation.getScope().push("REPEAT");
 
             for (Instruction i : instructions) {
                 Object o = i.run(localFor, operation);
@@ -53,6 +64,8 @@ public class Repeat implements Instruction {
             variable.setValue(String.valueOf(v));
         }
 
+        /* recuperar scope */
+        operation.getScope().pop();
         return null;
     }
 

@@ -22,8 +22,21 @@
             </div>
         </section>
 
+        <section id="link-table" hidden>
+            <div class="container mt-4">
+                <div class="row">
+                    <div class="col text-center mt-4">
+                        <a href="CaptchaAnswer?action=symbol-table" class="btn btn-outline-dark my-4">Reporte de Ejecución</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <%@include file="resources/assets/js/js.html" %>
+        <!--
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+        -->
+        <script src="resources/assets/js/sweetalert2.all.min.js"></script>
 
         <c:if test="${inserts != null}">
             <script>
@@ -34,6 +47,8 @@
         </c:if>
 
         <script>
+
+
             var modals = [];
             <c:if test="${alerts != null}">
                 <c:forEach var="a" items="${alerts}">
@@ -41,15 +56,19 @@
             console.log('Mensaje: ${a}');
                 </c:forEach>
             </c:if>
-                
+
+            <c:if test="${process != null}">
+            modals.push({icon: 'question', title: 'Tabla de simbolos', text: '¿Desea ver la tabla de simbolos?', footer: '<a href="CaptchaAnswer?action=symbol-table" target="_blank">Reporte de Ejecución</a>'});
+            </c:if>
+
             Swal.queue(modals).then(function () {
-                
+
             <c:if test="${url != null}">
                 let timerInterval;
                 Swal.fire({
                     title: 'Esta siendo redirigido a ${url}',
                     html: 'I will close in <b></b> milliseconds.',
-                    timer: 2500,
+                    timer: 2000,
                     timerProgressBar: true,
                     didOpen: () => {
                         Swal.showLoading();
@@ -72,10 +91,10 @@
                     }, 500);
                 });
             </c:if>
-            }).catch(function() {
-                <c:if test="${url != null}">
+            }).catch(function () {
+            <c:if test="${url != null}">
                 window.location.href = "${url}";
-                </c:if>
+            </c:if>
                 console.log("Canceled");
             });
         </script>

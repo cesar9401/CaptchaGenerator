@@ -129,16 +129,22 @@ public class EnviromentHandler {
      * @param global
      * @param e
      * @param assignment
+     * @param operation
      */
-    public void addSymbolTable(Token type, Token id, Variable value, boolean global, SymbolTable e, boolean assignment) {
+    public void addSymbolTable(Token type, Token id, Variable value, boolean global, SymbolTable e, boolean assignment, AstOperation operation) {
         if (type != null) {
             if (value != null) {
                 // Verificar que tipo declarado sea igual al tipo de variable
                 if (getVar(type) == value.getType() && value.getValue() != null) {
                     Variable v = new Variable(getVar(type), id.getValue(), global, value.getValue());
 
+                    /* scope */
+                    v.setScope(operation.getScope().peek());
                     if (!e.contains(v.getId())) {
                         e.add(v);
+
+                        /* Tabla de simbolos para reporte */
+                        operation.getMain().add(v);
                     } else {
                         /* La variable ya esta definida */
                         Err err = new Err(id.getLine(), id.getColumn(), "SEMANTICO", id.getValue());
@@ -170,8 +176,14 @@ public class EnviromentHandler {
             } else {
                 if (!assignment) {
                     Variable v = new Variable(getVar(type), id.getValue(), global, null);
+
+                    /* scope */
+                    v.setScope(operation.getScope().peek());
                     if (!e.contains(v.getId())) {
                         e.add(v);
+
+                        /* Tabla de simbolos para reporte */
+                        operation.getMain().add(v);
                     } else {
                         /* La variable ya esta definida */
                         Err err = new Err(id.getLine(), id.getColumn(), "SEMANTICO", id.getValue());

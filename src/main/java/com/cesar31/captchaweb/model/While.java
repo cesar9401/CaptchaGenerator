@@ -31,6 +31,9 @@ public class While implements Instruction {
             SymbolTable local = new SymbolTable();
             local.addAll(table);
 
+            /* scope */
+            operation.getScope().push("WHILE");
+
             for (Instruction i : instructions) {
                 Object o = i.run(local, operation);
 
@@ -42,6 +45,8 @@ public class While implements Instruction {
             }
         }
 
+        /* recuperar scope */
+        operation.getScope().pop();
         return null;
     }
 
