@@ -57,34 +57,23 @@
                 </c:forEach>
             </c:if>
 
+            <c:if test="${on_load != null}">
+            modals.push({icon: 'question', title: 'Tabla de simbolos', text: '¿Desea ver la tabla de simbolos de los procesos ON_LOAD?', footer: '<a href="CaptchaAnswer?action=symbol-table&captcha=${on_load}&process=ON_LOAD" target="_blank">Reporte de Ejecución</a>'});
+            </c:if>
+
             <c:if test="${process != null}">
-            modals.push({icon: 'question', title: 'Tabla de simbolos', text: '¿Desea ver la tabla de simbolos?', footer: '<a href="CaptchaAnswer?action=symbol-table" target="_blank">Reporte de Ejecución</a>'});
+            modals.push({icon: 'question', title: 'Tabla de simbolos', text: '¿Desea ver la tabla de simbolos?', footer: '<a href="CaptchaAnswer?action=symbol-table&captcha=${captcha}&process=${process}" target="_blank">Reporte de Ejecución</a>'});
             </c:if>
 
             Swal.queue(modals).then(function () {
 
             <c:if test="${url != null}">
-                let timerInterval;
+                //let timerInterval;
                 Swal.fire({
-                    title: 'Esta siendo redirigido a ${url}',
-                    html: 'I will close in <b></b> milliseconds.',
-                    timer: 2000,
-                    timerProgressBar: true,
-                    didOpen: () => {
-                        Swal.showLoading();
-                        timerInterval = setInterval(() => {
-                            const content = Swal.getContent();
-                            if (content) {
-                                const b = content.querySelector('b');
-                                if (b) {
-                                    b.textContent = Swal.getTimerLeft();
-                                }
-                            }
-                        }, 100);
-                    },
-                    willClose: () => {
-                        clearInterval(timerInterval);
-                    }
+                    title: 'Redirigiendo...',
+                    html: 'I will close in a few seconds.',
+                    timer: 1500,
+                    timerProgressBar: true
                 }).then((result) => {
                     setTimeout(function () {
                         window.location.href = "${url}";

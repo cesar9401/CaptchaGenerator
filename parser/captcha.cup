@@ -107,7 +107,7 @@ non terminal Token str, str_q, str_nq, string, type_var, pxl_per, process_name;
 non terminal Parameter id, name, href_src, bckgrnd_clr, font_size, font_family, text_align, type, cols_rows, clss, width_height, alt, onclick, opt, param;
 non terminal List<Parameter> params;
 non terminal HashMap<Param, Parameter> paragraph, button, h1, div, img, body, spam, input, txtarea, select, link, gcic, head, title, option, br, script;
-non terminal Component c_script, c_title, c_link, c_spam, c_h1, c_button, c_paragraph, c_img, c_input, c_txtarea, b_opt, c_br, c_option, h_opt, c_body, c_head, c_select, c_div;
+non terminal Component c_script, c_title, c_link, c_spam, c_h1, c_button, c_paragraph, c_img, c_input, c_txtarea, b_opt, ins_opt, c_br, c_option, h_opt, c_body, c_head, c_select, c_div;
 non terminal List<Component> body_opt, make_option, head_opt;
 non terminal Captcha c_gcic;
 
@@ -174,6 +174,11 @@ body_opt ::=
 				;
 
 b_opt ::=
+				ins_opt:c {: RESULT = c; :}
+				| c_script :c {: RESULT = c; :}
+				;
+
+ins_opt ::=
 				c_h1:c {: RESULT = c; :}
 				| c_paragraph :c {: RESULT = c; :}
 				|	c_spam :c {: RESULT = c; :}
@@ -184,7 +189,6 @@ b_opt ::=
 				| c_button :c {: RESULT = c; :}
 				| c_div :c {: RESULT = c; :}
 				| c_br :c {: RESULT = c; :}
-				| c_script :c {: RESULT = c; :}
 				;
 
 c_script ::=
@@ -332,16 +336,30 @@ redirect ::=
 
 /* INSERT */
 insert ::=
+				/* <C_INPUT> */
 				INSERT LPAREN QS input:ins QS RPAREN SEMI
 					{:
 						RESULT = new LinkedList<>();
 						RESULT.add(new Insert(tag.makeTag(Tag.INPUT, ins, null), scriptCount));
 					:}
+
+				/* Insertar variables */
 				| INSERT LPAREN insert_op:options RPAREN SEMI
 					{:
 						RESULT = new LinkedList<>();
 						RESULT.add(new Insert(options, scriptCount));
 					:}
+
+				/* Insertar etiquetas completas */
+				| INSERT LPAREN QS ins_opt:c QS RPAREN SEMI
+					{:
+						RESULT = new LinkedList<>();
+						RESULT.add(new Insert(c, scriptCount));
+					:}
+
+				/* Insertar </C_INPUT> */
+				| INSERT LPAREN QS clinput QS RPAREN SEMI
+					{: RESULT = new LinkedList<>(); :}
 				;
 /* INSERT */
 
@@ -700,8 +718,8 @@ get ::=
 				;
 
 v ::=
-				INTEGER:n1 {: RESULT = new Operation(OperationType.integer, new Variable(Var.INTEGER, n1.getValue())); :}
-				| DECIMAL:n1 {: RESULT = new Operation(OperationType.decimal, new Variable(Var.DECIMAL, n1.getValue())); :}
+				INTEGER:n1 {: RESULT = new Operation(OperationType.integer, new Variable(Var.INTEGER, n1)); :}
+				| DECIMAL:n1 {: RESULT = new Operation(OperationType.decimal, new Variable(Var.DECIMAL, n1)); :}
 				| string:s1 {: RESULT = new Operation(OperationType.string, new Variable(Var.STRING, s1.getValue())); :}
 				| CHAR:ch1 {: RESULT = new Operation(OperationType.character, new Variable(Var.CHAR, ch1.getValue())); :}
 				| ID_V:s {: RESULT = new Operation(OperationType.id, s); :}
@@ -945,11 +963,12 @@ str_nq ::=
 				| RANDOM_N:s {: RESULT = s; :}
 				| ALERT:s {: RESULT = s; :}
 				| EXIT:s {: RESULT = s; :}
+				| INSERT:s {: RESULT = s; :}
 				| GET:s {: RESULT = s; :}
 				| GLOBAL:s {: RESULT = s; :}
 				| ON_LOAD:s {: RESULT = s; :}
 				// | SMALLER:s {: RESULT = s; :}
-				| GREATER:s {: RESULT = s; :}
+				// | GREATER:s {: RESULT = s; :}
 				| LBRACE:s {: RESULT = s; :}
 				| RBRACE:s {: RESULT = s; :}
 				| LBRACKET:s {: RESULT = s; :}

@@ -19,7 +19,7 @@ public class MakeOperation {
 
     public MakeOperation() {
     }
-    
+
     public MakeOperation(List<Err> errors) {
         this.errors = errors;
     }
@@ -39,20 +39,6 @@ public class MakeOperation {
             return null;
         }
 
-//        if (a.getValue() == null || b.getValue() == null) {
-//            Err err = new Err(op.getLine(), op.getColumn(), "SEMANTICO", op.getValue());
-//            String description = "";
-//            if (a.getValue() == null && b.getValue() == null) {
-//                description = "No es posible realizar la operacion: null + null";
-//            } else if (a.getValue() == null) {
-//                description = "No es posible realizar la operacion: null + " + b.getValue();
-//            } else if (b.getValue() == null) {
-//                description = "No es posible realizar la operacion: " + a.getValue() + " + null";
-//            }
-//            err.setDescription(description);
-//            this.parser.getErrors().add(err);
-//            return null;
-//        }
         // integer + integer
         if (a.getType() == INTEGER && b.getType() == INTEGER) {
             Integer value = getInteger(a) + getInteger(b);
@@ -776,7 +762,11 @@ public class MakeOperation {
     }
 
     private Integer getInteger(Variable v) {
-        return Integer.valueOf(v.getValue());
+        try {
+            return Integer.valueOf(v.getValue());
+        } catch (NumberFormatException e) {
+            return 1;
+        }
     }
 
     private Double getDouble(Variable v) {

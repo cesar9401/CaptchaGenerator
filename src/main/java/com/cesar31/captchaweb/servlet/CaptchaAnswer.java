@@ -5,7 +5,6 @@ import com.cesar31.captchaweb.control.ParserControl;
 import com.cesar31.captchaweb.model.Captcha;
 import com.cesar31.captchaweb.model.SymbolTable;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -124,9 +123,11 @@ public class CaptchaAnswer extends HttpServlet {
     }
 
     private void getSymbolTable(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String name = (String) request.getSession().getAttribute("name");
-        if (name != null) {
-            SymbolTable table = (SymbolTable) request.getSession().getAttribute(name);
+        String captcha = request.getParameter("captcha");
+        String process = request.getParameter("process");
+
+        if (captcha != null && process != null) {
+            SymbolTable table = (SymbolTable) request.getSession().getAttribute(captcha + " - " + process);
             if (table != null) {
                 request.setAttribute("table", table);
                 request.getRequestDispatcher("symbol-table.jsp").forward(request, response);

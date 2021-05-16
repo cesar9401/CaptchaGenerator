@@ -37,6 +37,7 @@ public class DBHandler {
     private Captcha captcha;
     private HashMap<String, AST> scripts;
     private HashMap<Integer, AST> onload;
+    private SymbolTable onloadTable;
     private boolean redirect;
 
     /* Inserts and Alerts */
@@ -161,20 +162,19 @@ public class DBHandler {
                 }
             }
 
+            if (!operation.getErrors().isEmpty()) {
+                System.out.println("Error de ejecucion");
+            }
+
             /* Si es global, guardar variable en sesion  */
             table.forEach(v -> {
                 if (v.isGlobal()) {
-                    request.getSession().setAttribute(process + " - " + v.getId(), v);
+                    request.getSession().setAttribute(id + " - " + process + " - " + v.getId(), v);
                 }
             });
 
             // recuperar y guardar tabla para comparar ejecucion
-            checkTable(process, operation.getMain(), request, response);
-
-            System.out.println("\nGlobal");
-            operation.getMain().forEach(v -> {
-                System.out.println(v.toString());
-            });
+            checkTable(id, process, operation.getMain(), request, response);
 
             if (!operation.getInserts().isEmpty()) {
                 this.inserts.addAll(operation.getInserts());
@@ -204,16 +204,22 @@ public class DBHandler {
     public void executeOnLoad(String id, HttpServletRequest request, HttpServletResponse response) {
         if (this.onload != null) {
             if (!this.onload.isEmpty()) {
+                this.onloadTable = new SymbolTable(id, "ON_LOAD");
 
                 this.onload.forEach((iterator, ast) -> {
+                    String process = "ON_LOAD - " + ast.getScript();
+
                     AstOperation operation = new AstOperation();
 
                     /* No es necesario, pero para evitar algun posible error */
                     operation.setRequest(request);
                     operation.setResponse(response);
-                    operation.getScope().push("ON_LOAD");
+                    operation.getScope().push(process);
 
-                    SymbolTable table = new SymbolTable(id, "ON_LOAD");
+                    operation.getMain().setCaptcha(id);
+                    operation.getMain().setProcess(process);
+
+                    SymbolTable table = new SymbolTable(id, process);
 
                     for (Instruction i : ast.getInstructions()) {
                         Object o = i.run(table, operation);
@@ -224,6 +230,18 @@ public class DBHandler {
                             }
                         }
                     }
+
+                    if (!operation.getErrors().isEmpty()) {
+                        System.out.println("Error de ejecucion");
+                    }
+
+                    table.forEach(v -> {
+                        if (v.isGlobal()) {
+                            request.getSession().setAttribute(id + " - " + process + " - " + v.getId(), v);
+                        }
+                    });
+
+                    checkTableOnLoad(id, process, operation.getMain(), request, response);
 
                     if (!operation.getInserts().isEmpty()) {
                         this.inserts.addAll(operation.getInserts());
@@ -240,25 +258,80 @@ public class DBHandler {
                         this.redirect = true;
                     }
                 });
+
+                request.setAttribute("on_load", id);
+                request.getSession().setAttribute(id + " - " + "ON_LOAD", this.onloadTable);
             }
         }
     }
 
-    private void checkTable(String process, SymbolTable current, HttpServletRequest request, HttpServletResponse response) {
-        SymbolTable previous = (SymbolTable) request.getSession().getAttribute(process);
+    private void checkTableOnLoad(String id, String process, SymbolTable current, HttpServletRequest request, HttpServletResponse response) {
+        SymbolTable previous = (SymbolTable) request.getSession().getAttribute(id + " - " + process);
+        List<Variable> tmp = new ArrayList<>();
+
         if (previous != null) {
-            for (Variable v : current) {
-                for (Variable w : previous) {
-                    if (v.getId().equals(w.getId())) {
-                        v.setTried(v.getTried() + 1);
+            for (Variable prev : previous) {
+                boolean isPresent = false;
+                for (Variable cur : current) {
+                    if (cur.getId().equals(prev.getId())) {
+                        cur.setTried(prev.getTried() + 1);
+                        isPresent = true;
+                        break;
                     }
+                }
+
+                if (!isPresent) {
+                    tmp.add(prev);
+                }
+            }
+
+            current.addAll(tmp);
+        }
+
+        orderTable(current);
+        request.getSession().setAttribute(id + " - " + process, current);
+        this.onloadTable.addAll(current);
+    }
+
+    private void checkTable(String id, String process, SymbolTable current, HttpServletRequest request, HttpServletResponse response) {
+        SymbolTable previous = (SymbolTable) request.getSession().getAttribute(id + " - " + process);
+        List<Variable> tmp = new ArrayList<>();
+
+        if (previous != null) {
+            for (Variable prev : previous) {
+                boolean isPresent = false;
+                for (Variable cur : current) {
+                    if (cur.getId().equals(prev.getId())) {
+                        cur.setTried(prev.getTried() + 1);
+                        isPresent = true;
+                        break;
+                    }
+                }
+
+                if (!isPresent) {
+                    tmp.add(prev);
+                }
+            }
+
+            current.addAll(tmp);
+        }
+
+        orderTable(current);
+        request.setAttribute("captcha", id);
+        request.setAttribute("process", process);
+        request.getSession().setAttribute(id + " - " + process, current);
+    }
+
+    private void orderTable(SymbolTable table) {
+        for (int i = 1; i < table.size(); i++) {
+            for (int j = 0; j < table.size() - i; j++) {
+                if (table.get(j).getLine() > table.get(j + 1).getLine()) {
+                    Variable aux = table.get(j);
+                    table.set(j, table.get(j + 1));
+                    table.set(j + 1, aux);
                 }
             }
         }
-
-        request.setAttribute("process", current);
-        request.getSession().setAttribute("name", process);
-        request.getSession().setAttribute(process, current);
     }
 
     /**

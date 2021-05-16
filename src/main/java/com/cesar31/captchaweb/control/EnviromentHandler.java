@@ -107,6 +107,14 @@ public class EnviromentHandler {
                         err.setDescription("Esta intentando asignar un valor null a la variable " + v.getId() + ". Verifique que alguno de los operadores no tenga valor nulo.");
                         this.errors.add(err);
                     }
+
+                } else if (v.getType() == INTEGER && a.getType() == BOOLEAN) {
+                    if(a.getValue() != null) {
+                        String value = Boolean.valueOf(a.getValue()) ? "1" : "0";
+                        v.setValue(value);
+                    } else {
+                    
+                    }
                 } else {
                     /* Error tipos distintos */
                     Err err = new Err(id.getLine(), id.getColumn(), "SEMANTICO", id.getValue());
@@ -137,6 +145,7 @@ public class EnviromentHandler {
                 // Verificar que tipo declarado sea igual al tipo de variable
                 if (getVar(type) == value.getType() && value.getValue() != null) {
                     Variable v = new Variable(getVar(type), id.getValue(), global, value.getValue());
+                    v.setLine(id.getLine());
 
                     /* scope */
                     v.setScope(operation.getScope().peek());
@@ -150,15 +159,35 @@ public class EnviromentHandler {
                         Err err = new Err(id.getLine(), id.getColumn(), "SEMANTICO", id.getValue());
                         err.setDescription("La variable " + id.getValue() + ", ya esta definida, intente con un id distinto.");
                         this.errors.add(err);
-                        // this.parser.getErrors().add(err);
                     }
                 } else {
-                    /* No son variables del mismo tipo */
-                    if (getVar(type) != value.getType()) {
+                    /* Asignacion de booleano a entero */
+                    if (getVar(type) == INTEGER && value.getType() == BOOLEAN) {
+                        if (value.getValue() != null) {
+                            String val = Boolean.valueOf(value.getValue()) ? "1" : "0";
+
+                            Variable v = new Variable(INTEGER, id.getValue(), global, val);
+                            v.setLine(id.getLine());
+                            v.setScope(operation.getScope().peek());
+                            
+                            if (!e.contains(v.getId())) {
+                                e.add(v);
+
+                                /* Tabla de simbolos para reporte */
+                                operation.getMain().add(v);
+                            } else {
+                                /* La variable ya esta definida */
+                                Err err = new Err(id.getLine(), id.getColumn(), "SEMANTICO", id.getValue());
+                                err.setDescription("La variable " + id.getValue() + ", ya esta definida, intente con un id distinto.");
+                                this.errors.add(err);
+                            }
+                        }
+
+                        /* No son variables del mismo tipo */
+                    } else if (getVar(type) != value.getType()) {
                         Err err = new Err(id.getLine(), id.getColumn(), "SEMANTICO", id.getValue());
                         err.setDescription("Esta intentando asignar una variable de tipo " + value.getType().toString().toLowerCase() + " a una variable de tipo " + type.getValue());
                         this.errors.add(err);
-                        // this.parser.getErrors().add(err);
                     }
 
                     /* La variable no esta definida */
@@ -170,13 +199,12 @@ public class EnviromentHandler {
                         }
                         err.setDescription(description);
                         this.errors.add(err);
-                        // this.parser.getErrors().add(err);
                     }
                 }
             } else {
                 if (!assignment) {
                     Variable v = new Variable(getVar(type), id.getValue(), global, null);
-
+                    v.setLine(id.getLine());
                     /* scope */
                     v.setScope(operation.getScope().peek());
                     if (!e.contains(v.getId())) {

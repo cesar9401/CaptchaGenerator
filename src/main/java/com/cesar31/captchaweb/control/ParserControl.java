@@ -4,11 +4,9 @@ import com.cesar31.captchaweb.model.AST;
 import com.cesar31.captchaweb.model.Captcha;
 import com.cesar31.captchaweb.model.Component;
 import com.cesar31.captchaweb.model.Err;
-import com.cesar31.captchaweb.model.Instruction;
 import com.cesar31.captchaweb.model.Param;
 import static com.cesar31.captchaweb.model.Param.*;
 import com.cesar31.captchaweb.model.Parameter;
-import com.cesar31.captchaweb.model.SymbolTable;
 import com.cesar31.captchaweb.model.Tag;
 import com.cesar31.captchaweb.model.Token;
 import com.cesar31.captchaweb.parser.CaptchaLex;
@@ -30,7 +28,7 @@ public class ParserControl {
 
     private String path;
     // private HttpServletRequest request;
-    private String link;
+    private String name;
 
     private String source;
 
@@ -77,8 +75,8 @@ public class ParserControl {
             if (id != null) {
                 DBHandler db = new DBHandler();
 
-                String name = id.getValue() + ".gcic";
-                if (!db.getList(path + "script/").contains(name)) {
+                String newId = id.getValue() + ".gcic";
+                if (!db.getList(path + "script/").contains(newId)) {
                     if (this.errors.isEmpty()) {
                         /* No hay errores, archivos para almacenamiento */
 
@@ -90,13 +88,13 @@ public class ParserControl {
 
                         // archivo json
                         String json = getJson(captcha);
-                        db.writeFile(path + name, json);
+                        db.writeFile(path + newId, json);
 
                         /* original */
-                        db.writeFile(path + "script/" + name, source);
+                        db.writeFile(path + "script/" + newId, source);
 
                         /* Captcha guardado, mostrar enlace */
-                        this.link = "http://localhost:8080/CaptchaGenerator/CaptchaMain?id=" + name;
+                        this.name = newId;
                     }
                 } else {
                     Token t = captcha.getParams().get(Param.ID).getToken();
@@ -258,7 +256,7 @@ public class ParserControl {
         return background;
     }
 
-    public String getLink() {
-        return link;
+    public String getName() {
+        return name;
     }
 }

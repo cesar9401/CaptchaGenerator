@@ -6,7 +6,7 @@ import java.io.Serializable;
  *
  * @author cesar31
  */
-public class Variable implements Serializable{
+public class Variable implements Serializable {
 
     private Var type;
     private String id;
@@ -14,6 +14,9 @@ public class Variable implements Serializable{
     private String value;
     private String scope;
     private Integer tried;
+    private Integer line;
+
+    private Token token;
 
     public Variable() {
         this.tried = 1;
@@ -38,6 +41,14 @@ public class Variable implements Serializable{
         this();
         this.type = type;
         this.value = value;
+    }
+
+    public Variable(Var type, Token token) {
+        this();
+        this.type = type;
+        this.token = token;
+
+        this.value = token.getValue();
     }
 
     public Variable(String id) {
@@ -90,6 +101,22 @@ public class Variable implements Serializable{
 
     public void setTried(Integer tried) {
         this.tried = tried;
+    }
+
+    public Integer getLine() {
+        return line;
+    }
+
+    public void setLine(Integer line) {
+        this.line = line;
+    }
+
+    public Token getToken() {
+        return token;
+    }
+
+    public void setToken(Token token) {
+        this.token = token;
     }
 
     @Override

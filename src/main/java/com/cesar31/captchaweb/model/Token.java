@@ -1,11 +1,13 @@
 
 package com.cesar31.captchaweb.model;
 
+import java.io.Serializable;
+
 /**
  *
  * @author cesar31
  */
-public class Token {
+public class Token implements Serializable{
     
     private int type;
     private String value;

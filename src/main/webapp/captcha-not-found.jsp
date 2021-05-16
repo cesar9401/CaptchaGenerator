@@ -20,7 +20,6 @@
                         <h1>404</h1>
                     </div>
                     <h2>Page not found</h2>
-                    <p>El captcha busca no está disponible, revise si la url ingresada es la correcta o puede que el captcha ya no este disponible.</p>
                     <a href="index.jsp">home page</a>
                 </div>
             </div>

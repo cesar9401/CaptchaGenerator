@@ -75,7 +75,7 @@
                 tb.tBodies[0].rows[i].cells[0].innerHTML = i + 1;
                 setTimeout(function () {
                     tb.tBodies[0].rows[i].removeAttribute("hidden");
-                }, 1500 * (i + 1));
+                }, 750 * (i + 1));
             }
         </script>
     </body>

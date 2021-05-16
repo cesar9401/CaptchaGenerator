@@ -49,24 +49,50 @@ public class Operation implements Instruction {
         this.type = type;
         this.token = token;
     }
-    
+
     @Override
     public Variable run(SymbolTable table, AstOperation operation) {
         switch (type) {
             case GET:
-                if(operation.getRequest() != null) {
+                if (operation.getRequest() != null) {
                     String res = operation.getRequest().getParameter(token.getValue());
                     // System.out.println(token.getValue());
-                    if(res != null) {
+                    if (res != null) {
                         return new Variable(Var.STRING, res);
                     } else {
                         System.out.println("Respuesta null");
                     }
                 }
-                
+
                 return new Variable(Var.STRING, "");
             case integer:
+                /* verificar conversion */
+                try {
+                Integer value = Integer.valueOf(v.getValue());
+            } catch (NumberFormatException e) {
+                if (v.getToken() != null) {
+                    Token t = v.getToken();
+                    Err err = new Err(t.getLine(), t.getColumn(), "SEMANTICO", t.getValue());
+                    err.setDescription("El valor ingresado " + t.getValue() + ", supera los 4 bytes permitidos para variables de tipo entero. Se permiten valores entre el rango -2147483648 a 2147483647.");
+                    operation.getErrors().add(err);
+                }
+            }
+            return this.v;
+
             case decimal:
+                String value = v.getValue();
+                int index = value.indexOf(".");
+                int count = value.substring(index + 1).length();
+
+                if (count > 4) {
+                    if (v.getToken() != null) {
+                        Token t = v.getToken();
+                        Err err = new Err(t.getLine(), t.getColumn(), "SINTACTICO", t.getValue());
+                        err.setDescription("El valor ingresado " + t.getValue() + ", supera las 4 cifras decimales permitidas. Debe de asignar solo 4 cifras decimales.");
+                        operation.getErrors().add(err);
+                    }
+                }
+                return this.v;
             case character:
             case string:
             case bool:
@@ -79,7 +105,7 @@ public class Operation implements Instruction {
                     String description = "No se puede encontrar la variable " + token.getValue() + ", esta no se ha definido.";
                     err.setDescription(description);
                     operation.getErrors().add(err);
-                    
+
                     return null;
                 } else if (variable.getValue() == null) {
                     /* La variable no tiene un valor definido */
@@ -87,7 +113,7 @@ public class Operation implements Instruction {
                     String description = "La variable " + token.getValue() + ", no tiene un valor definido, no es posible realizar la asignacion.";
                     err.setDescription(description);
                     operation.getErrors().add(err);
-                    
+
                     return null;
                 }
 
@@ -135,7 +161,7 @@ public class Operation implements Instruction {
 
     @Override
     public Variable test(SymbolTable table, AstOperation operation) {
-        if(type == OperationType.GET) {
+        if (type == OperationType.GET) {
             return new Variable(Var.STRING, token.getValue());
         }
         return this.run(table, operation);

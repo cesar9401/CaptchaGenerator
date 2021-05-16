@@ -3,7 +3,6 @@ package com.cesar31.captchaweb.servlet;
 import com.cesar31.captchaweb.control.DBHandler;
 import com.cesar31.captchaweb.control.ParserControl;
 import com.cesar31.captchaweb.model.Captcha;
-import com.cesar31.captchaweb.model.Param;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -106,9 +105,9 @@ public class CaptchaMain extends HttpServlet {
         if (control.getErrors().isEmpty()) {
             /* Sin errores, mostrar link */
 
-            String link = control.getLink();
-            System.out.println(link);
-            request.setAttribute("link", link);
+            String name = control.getName();
+            System.out.println(name);
+            request.setAttribute("name", name);
             request.getRequestDispatcher("index.jsp").forward(request, response);
         } else {
 

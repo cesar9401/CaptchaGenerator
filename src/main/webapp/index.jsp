@@ -24,8 +24,18 @@
                 </div>
             </section>
 
-
-
         <%@include file="resources/assets/js/js.html" %>
+        <script src="resources/assets/js/sweetalert2.all.min.js"></script>
+
+        <c:if test="${name != null}">
+            <script>
+                Swal.fire({
+                    title: 'Captcha Agregado',
+                    text: 'Se ha agregado correctamente al captcha ${name}, click en el enlace para ver el resultado.',
+                    icon: 'success',
+                    footer: '<a href="CaptchaMain?id=${name}">Ver Captcha</a>'
+                });
+            </script>
+        </c:if>
     </body>
 </html>
