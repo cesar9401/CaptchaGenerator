@@ -1,0 +1,266 @@
+{
+  "tag" : "GCIC",
+  "content" : null,
+  "params" : {
+    "NAME" : {
+      "type" : "NAME",
+      "value" : "Mi Captcha GCIC",
+      "token" : null
+    },
+    "ID" : {
+      "type" : "ID",
+      "value" : "prueba1",
+      "token" : {
+        "type" : 59,
+        "value" : "prueba1",
+        "line" : 1,
+        "column" : 13
+      }
+    }
+  },
+  "children" : [ ],
+  "head" : {
+    "tag" : "HEAD",
+    "content" : null,
+    "params" : { },
+    "children" : [ {
+      "tag" : "TITLE",
+      "content" : "Prueba 1 ",
+      "params" : { },
+      "children" : [ ]
+    }, {
+      "tag" : "LINK",
+      "content" : null,
+      "params" : {
+        "FONT_FAMILY" : {
+          "type" : "FONT_FAMILY",
+          "value" : "sans-serif",
+          "token" : null
+        },
+        "COLOR" : {
+          "type" : "COLOR",
+          "value" : "#8E44AD",
+          "token" : null
+        },
+        "TEXT_ALIGN" : {
+          "type" : "TEXT_ALIGN",
+          "value" : "center",
+          "token" : null
+        },
+        "HREF" : {
+          "type" : "HREF",
+          "value" : "http://ryca.cunoc.edu.gt/sireca/",
+          "token" : {
+            "type" : 82,
+            "value" : "http://ryca.cunoc.edu.gt/sireca/",
+            "line" : 4,
+            "column" : 16
+          }
+        }
+      },
+      "children" : [ ]
+    } ]
+  },
+  "body" : {
+    "tag" : "BODY",
+    "content" : null,
+    "params" : {
+      "BACKGROUND" : {
+        "type" : "BACKGROUND",
+        "value" : "#778899",
+        "token" : {
+          "type" : 55,
+          "value" : "#778899",
+          "line" : 8,
+          "column" : 25
+        }
+      }
+    },
+    "children" : [ {
+      "tag" : "H1",
+      "content" : "Bienvenido ",
+      "params" : {
+        "FONT_SIZE" : {
+          "type" : "FONT_SIZE",
+          "value" : "16px",
+          "token" : {
+            "type" : 57,
+            "value" : "16px",
+            "line" : 9,
+            "column" : 26
+          }
+        },
+        "FONT_FAMILY" : {
+          "type" : "FONT_FAMILY",
+          "value" : "sans-serif",
+          "token" : null
+        },
+        "COLOR" : {
+          "type" : "COLOR",
+          "value" : "#8E44AD",
+          "token" : null
+        },
+        "TEXT_ALIGN" : {
+          "type" : "TEXT_ALIGN",
+          "value" : "center",
+          "token" : null
+        }
+      },
+      "children" : [ ]
+    }, {
+      "tag" : "P",
+      "content" : "Escriba EXIT para ser redirigido ",
+      "params" : {
+        "FONT_FAMILY" : {
+          "type" : "FONT_FAMILY",
+          "value" : "sans-serif",
+          "token" : null
+        },
+        "COLOR" : {
+          "type" : "COLOR",
+          "value" : "#8E44AD",
+          "token" : null
+        },
+        "TEXT_ALIGN" : {
+          "type" : "TEXT_ALIGN",
+          "value" : "left",
+          "token" : {
+            "type" : 90,
+            "value" : "left",
+            "line" : 10,
+            "column" : 26
+          }
+        }
+      },
+      "children" : [ ]
+    }, {
+      "tag" : "INPUT",
+      "content" : null,
+      "params" : {
+        "TYPE" : {
+          "type" : "TYPE",
+          "value" : "text",
+          "token" : {
+            "type" : 89,
+            "value" : "text",
+            "line" : 11,
+            "column" : 43
+          }
+        },
+        "FONT_FAMILY" : {
+          "type" : "FONT_FAMILY",
+          "value" : "sans-serif",
+          "token" : null
+        },
+        "ID" : {
+          "type" : "ID",
+          "value" : "inputNumero",
+          "token" : {
+            "type" : 59,
+            "value" : "inputNumero",
+            "line" : 11,
+            "column" : 22
+          }
+        },
+        "COLOR" : {
+          "type" : "COLOR",
+          "value" : "#8E44AD",
+          "token" : null
+        },
+        "TEXT_ALIGN" : {
+          "type" : "TEXT_ALIGN",
+          "value" : "center",
+          "token" : null
+        }
+      },
+      "children" : [ ]
+    }, {
+      "tag" : "BUTTON",
+      "content" : "Hacer torre ",
+      "params" : {
+        "ONCLICK" : {
+          "type" : "ONCLICK",
+          "value" : "PROCESS_hacerTorre()",
+          "token" : {
+            "type" : 94,
+            "value" : "PROCESS_hacerTorre()",
+            "line" : 12,
+            "column" : 49
+          }
+        },
+        "FONT_FAMILY" : {
+          "type" : "FONT_FAMILY",
+          "value" : "sans-serif",
+          "token" : null
+        },
+        "BACKGROUND" : {
+          "type" : "BACKGROUND",
+          "value" : "#F1C40F",
+          "token" : {
+            "type" : 55,
+            "value" : "#F1C40F",
+            "line" : 12,
+            "column" : 85
+          }
+        },
+        "ID" : {
+          "type" : "ID",
+          "value" : "botonCalculo",
+          "token" : {
+            "type" : 59,
+            "value" : "botonCalculo",
+            "line" : 12,
+            "column" : 24
+          }
+        },
+        "COLOR" : {
+          "type" : "COLOR",
+          "value" : "#8E44AD",
+          "token" : null
+        },
+        "TEXT_ALIGN" : {
+          "type" : "TEXT_ALIGN",
+          "value" : "center",
+          "token" : null
+        }
+      },
+      "children" : [ ]
+    }, {
+      "tag" : "DIV",
+      "content" : null,
+      "params" : {
+        "ID" : {
+          "type" : "ID",
+          "value" : "__script__0__",
+          "token" : null
+        }
+      },
+      "children" : [ ]
+    }, {
+      "tag" : "SPAN",
+      "content" : "Se acabó ",
+      "params" : {
+        "FONT_FAMILY" : {
+          "type" : "FONT_FAMILY",
+          "value" : "sans-serif",
+          "token" : null
+        },
+        "COLOR" : {
+          "type" : "COLOR",
+          "value" : "#8E44AD",
+          "token" : null
+        },
+        "TEXT_ALIGN" : {
+          "type" : "TEXT_ALIGN",
+          "value" : "center",
+          "token" : null
+        }
+      },
+      "children" : [ ]
+    } ]
+  },
+  "times" : 5,
+  "success" : 1,
+  "mistakes" : 4,
+  "date" : "2021-05-17"
+}

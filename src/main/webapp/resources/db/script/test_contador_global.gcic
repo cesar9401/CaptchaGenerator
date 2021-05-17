@@ -1,0 +1,114 @@
+
+<C_GCIC [id= "test_contador_global"] [name= "Test Global"]>
+    <C_HEAD>
+        <C_LINK
+        !! El link al que redirige mi captcha
+        [href= "http://ingenieria.cunoc.usac.edu.gt/portal/articulos/30cceae7fa031f70e4d4d9ef958c064da7c197b2.pdf"]>
+        </C_LINK>
+        <C_TITLE>Captcha de Prueba</C_TITLE>
+    </C_HEAD>
+
+    <C_BODY [background= "#f5b7b1"] >
+
+		<C_SCRIPTING>
+			ON_LOAD() [
+				ALERT_INFO("Alerta desde proceso ON_LOAD1: " + REVERSE("12345"));
+				INSERT("Insert desde onload1");
+			]
+		</C_SCRIPTING>
+
+    <C_H1 [id= "title_1"] [text-align= "center"] [color= "#000"] >
+      Titulo de mi Captcha :v!
+    </C_H1>
+    <C_BR>
+
+		<C_SPAM [id= "mostrar_1"] [text-align= "center"] [color= "#3366ff"] >
+    	¿ Qué resultado genera la operación siguiente: 5+5 ?
+	  </C_SPAM>
+
+		<C_INPUT [color="navy"] [id="input_1"] [type="text"]></C_INPUT>
+		<C_BR>
+
+    <C_BUTTON [id= "boton_1"] [onclick="PROCESS_calc1()"] [background="#F1C40F"]>
+    	Procesar calc1
+    </C_BUTTON>
+
+		<C_BUTTON [id= "boton_2"] [onclick="PROCESS_calc2()"] [background="#5499C7"]>
+    	Procesar calc2
+    </C_BUTTON>
+
+		<C_BUTTON [id= "boton_test"] [onclick="PROCESS_test()"] [background="navy"]>
+    	Procesar test
+    </C_BUTTON>
+
+  	<C_SCRIPTING>
+			ON_LOAD() [
+				ALERT_INFO("Alerta desde proceso ON_LOAD2 " + REVERSE("12345"));
+				INSERT("Insert desde onload2");
+			]
+
+			PROCESS_calc1() [
+				char ch1 = '1';
+				char ch2 = '2';
+				string st1 = "cadena: " + ch1 + ch2;
+				string st2 = REVERSE(st1);
+
+				ALERT_INFO("Este mensaje es de process_calc1 :v");
+
+				integer var1;
+				REPEAT(var1 = 0) HUNTIL (5*2-1)
+					INIT {:
+						INSERT('Iteracion no: ', var1);
+					:} END
+			]
+
+			PROCESS_calc2() [
+				string cadenita = DESC("cadena1" + "cadena2");
+				integer i = 0;
+				IF(i == 1) THEN
+					ALERT_INFO("El valor de i es: " + i);
+				ELSE
+					ALERT_INFO("El valor de i es: " + i);
+			]
+
+    </C_SCRIPTING>
+
+  	<C_SCRIPTING>
+			!! PROCESS_test
+			PROCESS_test() [
+				integer @global contador = 5;
+				string result_caja = getElementById('input_1');
+				string mensaje_final = "El captcha no logró ser valido :( intente mas tarde";
+				string mensaje_acierto = "El captcha fue valido";
+				string mensaje_fallo = "El captcha no fue valido, intente otra vez";
+				string result = "10";
+
+						IF(contador > 0) THEN
+							INIT{:
+								IF(result_caja == result) THEN
+									INIT{:
+										ALERT_INFO(mensaje_acierto);
+										REDIRECT();
+										EXIT();
+									:}END
+								ELSE
+									INIT{:
+										ALERT_INFO(mensaje_fallo);
+										contador = contador - 1;
+									:}END
+							:}END
+						ELSE
+							ALERT_INFO("Se ha quedado sin intentos, pruebe mas tarde");
+
+				INSERT("Funciones: ");
+				INSERT('ASC: ', ASC("cadena"));
+				INSERT('DESC: ', DESC("cadena"));
+				INSERT('LETPAR_NUM: ', LETPAR_NUM("esta es una cadena"));
+				INSERT('LETIMPAR_NUM: ', LETIMPAR_NUM("esta es una cadena"));
+				INSERT('REVERSE: ', REVERSE("reverse :v"));
+				INSERT('CARACTER_ALEATORIO: ', CARACTER_ALEATORIO( ));
+				INSERT('NUM_ALEATORIO: ', NUM_ALEATORIO());
+			]
+    </C_SCRIPTING>
+  </C_BODY>
+</C_GCIC>

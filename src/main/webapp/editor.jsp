@@ -20,8 +20,11 @@
                         <div class="col">
                             <form>
                                 <div class="row my-3">
-                                    <div class="col">
+                                    <div class="col-12 col-sm-10">
                                         <input class="form-control" name="data" type="file" id="data">
+                                    </div>
+                                    <div class="col-12 col-sm-2 d-grid">
+                                        <button id="save" type="button" class="btn btn-light">Save</button>
                                     </div>
                                 </div>
                             </form>
@@ -115,6 +118,27 @@
         <script src="resources/assets/js/editor.js"></script>
         <script src="resources/assets/js/upload.js"></script>
 
+        <script>
+            let button = document.getElementById('save');
+            let text = document.getElementById('source');
+            
+            button.addEventListener('click', () => {
+                let source = text.value;
+                if(source !== undefined) {
+                    if(source.trim() !== "") {
+                        save(source);
+                    }
+                }
+            });
+            
+            function save(source) {
+                let link = document.createElement('a');
+                link.href = 'data:text/plain;charset=UTF-8,' + escape(source);
+                link.download = 'output.gcic';
+                link.click();
+            }
+        </script>
+        
         <c:if test="${errors != null}">
             <script>
                 document.getElementById('errors').removeAttribute('hidden');

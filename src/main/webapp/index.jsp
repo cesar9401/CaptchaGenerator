@@ -24,6 +24,28 @@
                 </div>
             </section>
 
+
+            <section id="manual">
+                <div class="container">
+                    <div class="row mt-4">
+                        <div class="col mt-4 text-center">
+                            <h1>Manual T&eacute;cnico y de Usuario</h1>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col text-center my-4">
+                            <a href="CaptchaAnswer?action=tecnico" target="_blank">Manual T&eacute;cnico</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-center my-4">
+                            <a href="CaptchaAnswer?action=usuario" target="_blank">Manual de Usuario</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         <%@include file="resources/assets/js/js.html" %>
         <script src="resources/assets/js/sweetalert2.all.min.js"></script>
 

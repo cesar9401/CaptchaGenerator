@@ -1,0 +1,86 @@
+<C_GCIC [id="prueba2"]>
+    <C_HEAD>
+        <C_LINK
+        [href= "http://ryca.cunoc.edu.gt/sireca/"]>
+        </C_LINK>
+        <C_TITLE>Prueba 1</C_TITLE>
+    </C_HEAD>
+
+    <C_BODY [background="#768999"]>
+      	<C_SCRIPTING>
+        	ON_LOAD()[
+            string nombreHumano = REVERSE("0" + NUM_ALEATORIO() + CARACTER_ALEATORIO() + CARACTER_ALEATORIO());
+            ALERT_INFO("Hola, humano. Tu nombre será: " + nombreHumano);
+            INSERT("Tu nombre: ",nombreHumano);
+        	]
+    		</C_SCRIPTING>
+
+				<C_H1 [font-size="16px"]>Bienvenido</C_H1>
+        <C_P [text-align="left"]>Escriba un texto para ver si es palíndromo o no</C_P>
+        <C_P [text-align="center"]>Tiene 5 oportunidades</C_P>
+        <C_INPUT [id="inputValor"] [type="text"]></C_INPUT>
+        <C_BUTTON [id= "botonVerificar"] [onclick="PROCESS_verificar()"] [background="#F1C40F"]>
+    	    Verificar
+    </C_BUTTON>
+    <C_SCRIPTING>
+
+        PROCESS_verificar()[
+            integer @global contadorOportunidades = 5;
+
+            IF(contadorOportunidades > 0) THEN
+            INIT{:
+            	string texto = getElementById('inputValor');
+            	string reversa = REVERSE(texto);
+
+							IF(texto == reversa) THEN
+  		          INIT{:
+									ALERT_INFO("Sí es palíndromo");
+									INSERT(texto);
+									INSERT(reversa);
+									integer numero = NUM_ALEATORIO();
+
+									WHILE(numero < 3 || numero > 7) THENWHILE
+										INIT{:
+											numero = NUM_ALEATORIO();
+										:}END
+
+									ALERT_INFO("Aleatorio: " + numero);
+									integer var1;
+									integer var2 = 1;
+									string valor = numero + "";
+									string nuevo = "";
+
+									REPEAT(var1 = 1) HUNTIL (numero)
+										INIT {:
+											var2 = var2 + 2;
+											integer var3;
+
+											REPEAT(var3 = 1) HUNTIL (var2)
+												INIT{:
+													nuevo = nuevo + valor;
+													INSERT(nuevo);
+												:} END
+
+											!! Redirigir aqui
+											REDIRECT();
+											EXIT();
+									:} END
+								:} END
+            	ELSE
+                INIT{:
+                  ALERT_INFO("No es palíndromo");
+                  contadorOportunidades = contadorOportunidades - 1;
+                  ALERT_INFO("Te quedan: " + contadorOportunidades + " oportunidades");
+                :} END
+            	:}END
+
+            	ELSE
+            INIT{:
+              ALERT_INFO("Ya no te quedan oportunidades");
+							!!REDIRECT();
+            :}END
+        ]
+    </C_SCRIPTING>
+    <C_SPAM>Se acabó</C_SPAM>
+    </C_BODY>
+</C_GCIC>

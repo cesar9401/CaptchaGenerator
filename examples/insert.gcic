@@ -1,0 +1,87 @@
+
+<C_GCIC [id= "_$test_insert"] [name= "INSERT"]>
+    <C_HEAD>
+        <C_LINK
+        !! El link al que redirige mi captcha
+        [href= "https://www.udemy.com/"]>
+        </C_LINK>
+        <C_TITLE>Test INSERT</C_TITLE>
+    </C_HEAD>
+    <C_BODY [background= "#A9DFBF"] >
+
+		<C_SCRIPTING>
+			ON_LOAD() [
+				integer @global count = 0;
+				count = count + 1;
+				ALERT_INFO("Insertando elementos :V");
+
+			INSERT('    <C_H1 [id= "title_1"] [text-align= "center"] [color= "#000"] >
+      	Titulo de mi Captcha :v!
+    		</C_H1>');
+
+			INSERT('<C_SPAM [id= "mostrar_1"] [text-align= "center"] [color= "#3366ff"] >
+    			¿ Qué resultado genera la operación siguiente: 20 - 12 ?
+	 				 </C_SPAM>');
+
+			INSERT('<C_INPUT [color="navy"] [id="input_1"] [type="text"]></C_INPUT>');
+
+			INSERT('<C_BR>');
+
+			INSERT('    <C_BUTTON [id= "boton_1"] [onclick="PROCESS_calc1()"] [background="#F1C40F"]>
+    	Procesar calc1
+    </C_BUTTON>');
+
+			]
+
+			PROCESS_calc1() [
+				integer @global contadorRespuesta = 0;
+				integer @global incorrecto = 0;
+
+				string var = "Ejecutando proceso calcular";
+				string va2 = "Este es un mensaje";
+				ALERT_INFO(var);
+
+				string caja = getElementById('input_1');
+
+				IF(caja == 'EXIT') THEN
+					INIT{:
+						ALERT_INFO('Adios :v');
+						REDIRECT();
+						EXIT();
+					:}END
+
+				IF(caja == "8") THEN
+					INIT{:
+						contadorRespuesta = contadorRespuesta + 1;
+						INSERT('Respuesta correcta: ' + contadorRespuesta + ' veces');
+						REDIRECT();
+						EXIT();
+					:}END
+				ELSE
+					INIT{:
+						incorrecto = incorrecto + 1;
+						INSERT("Respuesta incorrecta: " + incorrecto + ' veces');
+					:}END
+			]
+		</C_SCRIPTING>
+
+		<C_SCRIPTING>
+			ON_LOAD () [
+				integer @global contador = 0;
+				contador = contador + 1;
+
+				integer numerito = NUM_ALEATORIO();
+			]
+		</C_SCRIPTING>
+
+		<C_SCRIPTING>
+			ON_LOAD () [
+				integer @global aleatorio = 0;
+				aleatorio = NUM_ALEATORIO() * NUM_ALEATORIO();
+
+				ALERT_INFO('El numero aleatorio es: ' + aleatorio);
+			]
+		</C_SCRIPTING>
+
+  </C_BODY>
+</C_GCIC>

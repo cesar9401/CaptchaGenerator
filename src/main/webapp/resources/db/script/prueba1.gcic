@@ -1,0 +1,63 @@
+<C_GCIC [id="prueba1"]>
+    <C_HEAD>
+        <C_LINK
+        [href= "http://ryca.cunoc.edu.gt/sireca/"]>
+        </C_LINK>
+        <C_TITLE>Prueba 1</C_TITLE>
+    </C_HEAD>
+    <C_BODY [background="#778899"]>
+        <C_H1 [font-size="16px"]>Bienvenido</C_H1>
+        <C_P [text-align="left"]>Escriba EXIT para ser redirigido</C_P>
+        <C_INPUT [id="inputNumero"] [type="text"]></C_INPUT>
+        <C_BUTTON [id= "botonCalculo"] [onclick="PROCESS_hacerTorre()"] [background="#F1C40F"]>
+    	    Hacer torre
+    </C_BUTTON>
+    <C_SCRIPTING>
+        ON_LOAD() [
+					ALERT_INFO("Se creará una torre con un caracter y un numero aleatorio");
+				]
+
+				PROCESS_hacerTorre()[
+						integer @global contador = 0;
+            char letra = CARACTER_ALEATORIO();
+            string valor = letra + "";
+            string texto = getElementById('inputNumero');
+            integer numero = NUM_ALEATORIO();
+
+						IF(texto == "EXIT") THEN
+							INIT{:
+								REDIRECT();
+								EXIT();
+							:}END
+
+						contador = contador + 1;
+            IF(numero >= 3 && numero <= 7) THEN
+            	INIT{:
+                ALERT_INFO("Aleatorio: " + numero);
+                integer var1;
+                integer var2;
+                string nuevo = "";
+
+								REPEAT(var1 = 1) HUNTIL (numero)
+									INIT {:
+                		var2 = var1;
+										WHILE(var2 > 0) THENWHILE
+                  		INIT{:
+                    		nuevo = nuevo + valor;
+                      	var2 = var2 - 1;
+                    	:}END
+
+              			INSERT(nuevo);
+									:} END
+            :} END
+            ELSE
+              INIT{:
+              	ALERT_INFO("El aleatorio está fuera del rango (3,7) ");
+                ALERT_INFO("Aleatorio: " + numero);
+              :} END
+        ]
+
+    </C_SCRIPTING>
+		<C_SPAM>Se acabó</C_SPAM>
+  </C_BODY>
+</C_GCIC>

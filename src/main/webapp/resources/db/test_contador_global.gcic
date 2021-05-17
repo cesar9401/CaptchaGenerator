@@ -1,0 +1,414 @@
+{
+  "tag" : "GCIC",
+  "content" : null,
+  "params" : {
+    "NAME" : {
+      "type" : "NAME",
+      "value" : "Test Global",
+      "token" : {
+        "type" : 97,
+        "value" : "Test Global",
+        "line" : 2,
+        "column" : 45
+      }
+    },
+    "ID" : {
+      "type" : "ID",
+      "value" : "test_contador_global",
+      "token" : {
+        "type" : 59,
+        "value" : "test_contador_global",
+        "line" : 2,
+        "column" : 14
+      }
+    }
+  },
+  "children" : [ ],
+  "head" : {
+    "tag" : "HEAD",
+    "content" : null,
+    "params" : { },
+    "children" : [ {
+      "tag" : "TITLE",
+      "content" : "Captcha de Prueba ",
+      "params" : { },
+      "children" : [ ]
+    }, {
+      "tag" : "LINK",
+      "content" : null,
+      "params" : {
+        "FONT_FAMILY" : {
+          "type" : "FONT_FAMILY",
+          "value" : "sans-serif",
+          "token" : null
+        },
+        "COLOR" : {
+          "type" : "COLOR",
+          "value" : "#8E44AD",
+          "token" : null
+        },
+        "TEXT_ALIGN" : {
+          "type" : "TEXT_ALIGN",
+          "value" : "center",
+          "token" : null
+        },
+        "HREF" : {
+          "type" : "HREF",
+          "value" : "http://ingenieria.cunoc.usac.edu.gt/portal/articulos/30cceae7fa031f70e4d4d9ef958c064da7c197b2.pdf",
+          "token" : {
+            "type" : 82,
+            "value" : "http://ingenieria.cunoc.usac.edu.gt/portal/articulos/30cceae7fa031f70e4d4d9ef958c064da7c197b2.pdf",
+            "line" : 6,
+            "column" : 16
+          }
+        }
+      },
+      "children" : [ ]
+    } ]
+  },
+  "body" : {
+    "tag" : "BODY",
+    "content" : null,
+    "params" : {
+      "BACKGROUND" : {
+        "type" : "BACKGROUND",
+        "value" : "#f5b7b1",
+        "token" : {
+          "type" : 55,
+          "value" : "#f5b7b1",
+          "line" : 11,
+          "column" : 26
+        }
+      }
+    },
+    "children" : [ {
+      "tag" : "DIV",
+      "content" : null,
+      "params" : {
+        "ID" : {
+          "type" : "ID",
+          "value" : "__script__0__",
+          "token" : null
+        }
+      },
+      "children" : [ ]
+    }, {
+      "tag" : "H1",
+      "content" : "Titulo de mi Captcha : v ! ",
+      "params" : {
+        "FONT_FAMILY" : {
+          "type" : "FONT_FAMILY",
+          "value" : "sans-serif",
+          "token" : null
+        },
+        "ID" : {
+          "type" : "ID",
+          "value" : "title_1",
+          "token" : {
+            "type" : 59,
+            "value" : "title_1",
+            "line" : 20,
+            "column" : 16
+          }
+        },
+        "COLOR" : {
+          "type" : "COLOR",
+          "value" : "#000",
+          "token" : {
+            "type" : 55,
+            "value" : "#000",
+            "line" : 20,
+            "column" : 58
+          }
+        },
+        "TEXT_ALIGN" : {
+          "type" : "TEXT_ALIGN",
+          "value" : "center",
+          "token" : {
+            "type" : 90,
+            "value" : "center",
+            "line" : 20,
+            "column" : 40
+          }
+        }
+      },
+      "children" : [ ]
+    }, {
+      "tag" : "BR",
+      "content" : null,
+      "params" : { },
+      "children" : [ ]
+    }, {
+      "tag" : "SPAN",
+      "content" : "¿ Qué resultado genera la operación siguiente : 5 + 5 ? ",
+      "params" : {
+        "FONT_FAMILY" : {
+          "type" : "FONT_FAMILY",
+          "value" : "sans-serif",
+          "token" : null
+        },
+        "ID" : {
+          "type" : "ID",
+          "value" : "mostrar_1",
+          "token" : {
+            "type" : 59,
+            "value" : "mostrar_1",
+            "line" : 25,
+            "column" : 16
+          }
+        },
+        "COLOR" : {
+          "type" : "COLOR",
+          "value" : "#3366ff",
+          "token" : {
+            "type" : 55,
+            "value" : "#3366ff",
+            "line" : 25,
+            "column" : 60
+          }
+        },
+        "TEXT_ALIGN" : {
+          "type" : "TEXT_ALIGN",
+          "value" : "center",
+          "token" : {
+            "type" : 90,
+            "value" : "center",
+            "line" : 25,
+            "column" : 42
+          }
+        }
+      },
+      "children" : [ ]
+    }, {
+      "tag" : "INPUT",
+      "content" : null,
+      "params" : {
+        "TYPE" : {
+          "type" : "TYPE",
+          "value" : "text",
+          "token" : {
+            "type" : 89,
+            "value" : "text",
+            "line" : 29,
+            "column" : 48
+          }
+        },
+        "FONT_FAMILY" : {
+          "type" : "FONT_FAMILY",
+          "value" : "sans-serif",
+          "token" : null
+        },
+        "ID" : {
+          "type" : "ID",
+          "value" : "input_1",
+          "token" : {
+            "type" : 59,
+            "value" : "input_1",
+            "line" : 29,
+            "column" : 31
+          }
+        },
+        "COLOR" : {
+          "type" : "COLOR",
+          "value" : "navy",
+          "token" : {
+            "type" : 55,
+            "value" : "navy",
+            "line" : 29,
+            "column" : 19
+          }
+        },
+        "TEXT_ALIGN" : {
+          "type" : "TEXT_ALIGN",
+          "value" : "center",
+          "token" : null
+        }
+      },
+      "children" : [ ]
+    }, {
+      "tag" : "BR",
+      "content" : null,
+      "params" : { },
+      "children" : [ ]
+    }, {
+      "tag" : "BUTTON",
+      "content" : "Procesar calc1 ",
+      "params" : {
+        "ONCLICK" : {
+          "type" : "ONCLICK",
+          "value" : "PROCESS_calc1()",
+          "token" : {
+            "type" : 94,
+            "value" : "PROCESS_calc1()",
+            "line" : 32,
+            "column" : 40
+          }
+        },
+        "FONT_FAMILY" : {
+          "type" : "FONT_FAMILY",
+          "value" : "sans-serif",
+          "token" : null
+        },
+        "BACKGROUND" : {
+          "type" : "BACKGROUND",
+          "value" : "#F1C40F",
+          "token" : {
+            "type" : 55,
+            "value" : "#F1C40F",
+            "line" : 32,
+            "column" : 71
+          }
+        },
+        "ID" : {
+          "type" : "ID",
+          "value" : "boton_1",
+          "token" : {
+            "type" : 59,
+            "value" : "boton_1",
+            "line" : 32,
+            "column" : 20
+          }
+        },
+        "COLOR" : {
+          "type" : "COLOR",
+          "value" : "#8E44AD",
+          "token" : null
+        },
+        "TEXT_ALIGN" : {
+          "type" : "TEXT_ALIGN",
+          "value" : "center",
+          "token" : null
+        }
+      },
+      "children" : [ ]
+    }, {
+      "tag" : "BUTTON",
+      "content" : "Procesar calc2 ",
+      "params" : {
+        "ONCLICK" : {
+          "type" : "ONCLICK",
+          "value" : "PROCESS_calc2()",
+          "token" : {
+            "type" : 94,
+            "value" : "PROCESS_calc2()",
+            "line" : 36,
+            "column" : 38
+          }
+        },
+        "FONT_FAMILY" : {
+          "type" : "FONT_FAMILY",
+          "value" : "sans-serif",
+          "token" : null
+        },
+        "BACKGROUND" : {
+          "type" : "BACKGROUND",
+          "value" : "#5499C7",
+          "token" : {
+            "type" : 55,
+            "value" : "#5499C7",
+            "line" : 36,
+            "column" : 69
+          }
+        },
+        "ID" : {
+          "type" : "ID",
+          "value" : "boton_2",
+          "token" : {
+            "type" : 59,
+            "value" : "boton_2",
+            "line" : 36,
+            "column" : 18
+          }
+        },
+        "COLOR" : {
+          "type" : "COLOR",
+          "value" : "#8E44AD",
+          "token" : null
+        },
+        "TEXT_ALIGN" : {
+          "type" : "TEXT_ALIGN",
+          "value" : "center",
+          "token" : null
+        }
+      },
+      "children" : [ ]
+    }, {
+      "tag" : "BUTTON",
+      "content" : "Procesar test ",
+      "params" : {
+        "ONCLICK" : {
+          "type" : "ONCLICK",
+          "value" : "PROCESS_test()",
+          "token" : {
+            "type" : 94,
+            "value" : "PROCESS_test()",
+            "line" : 40,
+            "column" : 41
+          }
+        },
+        "FONT_FAMILY" : {
+          "type" : "FONT_FAMILY",
+          "value" : "sans-serif",
+          "token" : null
+        },
+        "BACKGROUND" : {
+          "type" : "BACKGROUND",
+          "value" : "navy",
+          "token" : {
+            "type" : 55,
+            "value" : "navy",
+            "line" : 40,
+            "column" : 71
+          }
+        },
+        "ID" : {
+          "type" : "ID",
+          "value" : "boton_test",
+          "token" : {
+            "type" : 59,
+            "value" : "boton_test",
+            "line" : 40,
+            "column" : 18
+          }
+        },
+        "COLOR" : {
+          "type" : "COLOR",
+          "value" : "#8E44AD",
+          "token" : null
+        },
+        "TEXT_ALIGN" : {
+          "type" : "TEXT_ALIGN",
+          "value" : "center",
+          "token" : null
+        }
+      },
+      "children" : [ ]
+    }, {
+      "tag" : "DIV",
+      "content" : null,
+      "params" : {
+        "ID" : {
+          "type" : "ID",
+          "value" : "__script__1__",
+          "token" : null
+        }
+      },
+      "children" : [ ]
+    }, {
+      "tag" : "DIV",
+      "content" : null,
+      "params" : {
+        "ID" : {
+          "type" : "ID",
+          "value" : "__script__2__",
+          "token" : null
+        }
+      },
+      "children" : [ ]
+    } ]
+  },
+  "times" : 4,
+  "success" : 1,
+  "mistakes" : 3,
+  "date" : "2021-05-17"
+}

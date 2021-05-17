@@ -4,7 +4,13 @@ import com.cesar31.captchaweb.control.DBHandler;
 import com.cesar31.captchaweb.control.ParserControl;
 import com.cesar31.captchaweb.model.Captcha;
 import com.cesar31.captchaweb.model.SymbolTable;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -40,6 +46,12 @@ public class CaptchaAnswer extends HttpServlet {
                 break;
             case "symbol-table":
                 getSymbolTable(request, response);
+                break;
+            case "tecnico":
+                getTecnico(request, response);
+                break;
+            case "usuario":
+                getUsuario(request, response);
                 break;
         }
 
@@ -136,6 +148,24 @@ public class CaptchaAnswer extends HttpServlet {
             }
         } else {
             request.getRequestDispatcher("captcha-not-found.jsp").forward(request, response);
+        }
+    }
+
+    private void getTecnico(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        File file = new File(request.getServletContext().getRealPath("/resources/assets/manuales/tecnico.pdf"));
+        try (FileInputStream input = new FileInputStream(file)) {
+            byte[] buffer = new byte[input.available()];
+            input.read(buffer, 0, input.available());
+            response.getOutputStream().write(buffer);
+        }
+    }
+
+    private void getUsuario(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        File file = new File(request.getServletContext().getRealPath("/resources/assets/manuales/usuario.pdf"));
+        try (FileInputStream input = new FileInputStream(file)) {
+            byte[] buffer = new byte[input.available()];
+            input.read(buffer, 0, input.available());
+            response.getOutputStream().write(buffer);
         }
     }
 }
